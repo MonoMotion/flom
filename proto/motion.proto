@@ -13,12 +13,8 @@ message Motion {
 
 message Frame {
   double timepoint = 1;
-  map<string, Position> positions = 2;
+  map<string, double> positions = 2;
   map<string, Target> targets = 3;
-}
-
-message Position {
-  double position = 1;
 }
 
 message Target {
@@ -37,18 +33,9 @@ message RotationValue {
 
 message Location {
   oneof location {
-    WorldLocation world = 1;
-    LocalLocation local = 2;
+    Vec3 world = 1;
+    Vec3 local = 2;
   }
-}
-
-message WorldLocation {
-  Vec3 vector = 1;
-}
-
-message LocalLocation {
-  Vec3 vector = 1;
-  string relative_to = 2;
 }
 
 message Vec3 {
@@ -59,18 +46,9 @@ message Vec3 {
 
 message Rotation {
   oneof rotation {
-    WorldRotation world = 1;
-    LocalRotation local = 2;
+    Quaternion world = 1;
+    Quaternion local = 2;
   }
-}
-
-message WorldRotation {
-  Quaternion quaternion = 1;
-}
-
-message LocalRotation {
-  Quaternion quaternion = 1;
-  string relative_to = 2;
 }
 
 message Quaternion {
