@@ -14,14 +14,14 @@ message Motion {
 message Frame {
   double timepoint = 1;
   map<string, Position> positions = 2;
-  map<string, Effect> effects = 3;
+  map<string, Target> targets = 3;
 }
 
 message Position {
   double position = 1;
 }
 
-message Effect {
+message Target {
   float weight = 1;
   LocationValue location = 2;
   RotationValue rotation = 3;
