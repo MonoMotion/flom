@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+message Motion {
+  string model_id = 1;
+  enum Loop {
+    None = 0;
+    Wrap = 1;
+  }
+  Loop loop = 2;
+  bool is_trained = 3;
+  repeated Frame frames = 4;
+}
+
+message Frame {
+  double timepoint = 1;
+  map<string, Position> positions = 2;
+  map<string, Effect> effects = 3;
+}
+
+message Position {
+  double position = 1;
+}
+
+message Effect {
+  float weight = 1;
+  LocationValue location = 2;
+  RotationValue rotation = 3;
+}
+
+message LocationValue {
+  Location location = 1;
+}
+
+message RotationValue {
+  Rotation rotation = 1;
+}
+
+message Location {
+  oneof location {
+    WorldLocation world = 1;
+    LocalLocation local = 2;
+  }
+}
+
+message WorldLocation {
+  Vec3 vector = 1;
+}
+
+message LocalLocation {
+  Vec3 vector = 1;
+  string relative_to = 2;
+}
+
+message Vec3 {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message Rotation {
+  oneof rotation {
+    WorldRotation world = 1;
+    LocalRotation local = 2;
+  }
+}
+
+message WorldRotation {
+  Quaternion quaternion = 1;
+}
+
+message LocalRotation {
+  Quaternion quaternion = 1;
+  string relative_to = 2;
+}
+
+message Quaternion {
+  double w = 1;
+  double x = 2;
+  double y = 3;
+  double z = 4;
+}
