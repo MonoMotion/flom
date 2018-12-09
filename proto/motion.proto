@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "frame.proto";
+
 message Motion {
   string model_id = 1;
   enum Loop {
@@ -9,51 +11,4 @@ message Motion {
   Loop loop = 2;
   bool is_trained = 3;
   repeated Frame frames = 4;
-}
-
-message Frame {
-  double timepoint = 1;
-  map<string, double> positions = 2;
-  map<string, Target> targets = 3;
-}
-
-message Target {
-  float weight = 1;
-  LocationValue location = 2;
-  RotationValue rotation = 3;
-}
-
-message LocationValue {
-  Location location = 1;
-}
-
-message RotationValue {
-  Rotation rotation = 1;
-}
-
-message Location {
-  oneof location {
-    Vec3 world = 1;
-    Vec3 local = 2;
-  }
-}
-
-message Vec3 {
-  double x = 1;
-  double y = 2;
-  double z = 3;
-}
-
-message Rotation {
-  oneof rotation {
-    Quaternion world = 1;
-    Quaternion local = 2;
-  }
-}
-
-message Quaternion {
-  double w = 1;
-  double x = 2;
-  double y = 3;
-  double z = 4;
 }

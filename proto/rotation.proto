@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+message Rotation {
+  oneof rotation {
+    Quaternion world = 1;
+    Quaternion local = 2;
+  }
+}
+
+message Quaternion {
+  double w = 1;
+  double x = 2;
+  double y = 3;
+  double z = 4;
+}
