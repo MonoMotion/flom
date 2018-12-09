@@ -4,7 +4,7 @@ import "location.proto";
 import "rotation.proto";
 
 message Frame {
-  double timepoint = 1;
+  double second = 1;
   map<string, double> positions = 2;
   map<string, Target> targets = 3;
 }
