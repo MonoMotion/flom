@@ -16,9 +16,9 @@ message Target {
 }
 
 message LocationValue {
-  Location location = 1;
+  Location value = 1;
 }
 
 message RotationValue {
-  Rotation rotation = 1;
+  Rotation value = 1;
 }
