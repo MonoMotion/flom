@@ -4,21 +4,27 @@ import "translation.proto";
 import "rotation.proto";
 
 message Frame {
+  /* duration of frame in second */
   double duration = 1;
+  /* changes of joint positions in rad */
   map<string, double> changes = 2;
+  /* expected effects in rotation and translation */
   map<string, Effect> effects = 3;
 }
 
 message Effect {
+  /* coefficient of importance (0~1) */
   float weight = 1;
   TranslationValue translation = 2;
   RotationValue rotation = 3;
 }
 
+/* wrapper to express optional value */
 message TranslationValue {
   Translation value = 1;
 }
 
+/* wrapper to express optional value */
 message RotationValue {
   Rotation value = 1;
 }
