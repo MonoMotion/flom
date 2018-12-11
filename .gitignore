@@ -83,5 +83,4 @@ tags
 
 # End of https://www.gitignore.io/api/c++,cmake,vim,linux
 
-src/build/
 build/

@@ -22,7 +22,7 @@ elseif(CONFIG STREQUAL "Release")
   add_compile_options(-O3 -Wno-error)
 endif()
 
-set(PROTO_DIR ../proto)
+set(PROTO_DIR ./proto)
 set(PROTO_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 include(FindProtobuf)
@@ -35,7 +35,7 @@ add_library(flom_proto ${PROTO_HEADER} ${PROTO_SRC})
 include_directories(${PROTO_INCLUDE_DIR})
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory(../third_party/nlohmann_json)
+add_subdirectory(third_party/nlohmann_json)
 
 include_directories(include/)
 
