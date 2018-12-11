@@ -22,7 +22,17 @@ elseif(CONFIG STREQUAL "Release")
   add_compile_options(-O3 -Wno-error)
 endif()
 
-include_directories(include/)
+set(PROTO_DIR ../proto)
 
-add_subdirectory(lib)
-add_subdirectory(bin)
+include(FindProtobuf)
+set(Protobuf_IMPORT_DIRS ${PROTO_DIR})
+find_package(Protobuf REQUIRED)
+include_directories(${PROTOBUF_INCLUDE_DIR})
+file(GLOB PROTO_FILES ${PROTO_DIR}/*.proto)
+protobuf_generate_cpp(PROTO_SRC PROTO_HEADER ${PROTO_FILES})
+add_library(proto ${PROTO_HEADER} ${PROTO_SRC})
+
+# include_directories(include/)
+#
+# add_subdirectory(lib)
+# add_subdirectory(bin)
