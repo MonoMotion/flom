@@ -9,6 +9,5 @@ message Motion {
     Wrap = 1;
   }
   Loop loop = 2;
-  bool is_trained = 3;
   repeated Frame frames = 4;
 }
