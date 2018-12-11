@@ -32,8 +32,11 @@ include_directories(${PROTOBUF_INCLUDE_DIR})
 file(GLOB PROTO_FILES ${PROTO_DIR}/*.proto)
 protobuf_generate_cpp(PROTO_SRC PROTO_HEADER ${PROTO_FILES})
 add_library(flom_proto ${PROTO_HEADER} ${PROTO_SRC})
-
 include_directories(${PROTO_INCLUDE_DIR})
+
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory(../third_party/nlohmann_json)
+
 include_directories(include/)
 
 add_subdirectory(lib)
