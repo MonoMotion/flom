@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-message Location {
-  oneof location {
+message Translation {
+  oneof Translation {
     Vec3 world = 1;
     Vec3 local = 2;
   }

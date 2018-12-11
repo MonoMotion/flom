@@ -1,22 +1,22 @@
 syntax = "proto3";
 
-import "location.proto";
+import "translation.proto";
 import "rotation.proto";
 
 message Frame {
-  double second = 1;
-  map<string, double> positions = 2;
-  map<string, Target> targets = 3;
+  double duration = 1;
+  map<string, double> changes = 2;
+  map<string, Effect> effects = 3;
 }
 
-message Target {
+message Effect {
   float weight = 1;
-  LocationValue location = 2;
+  TranslationValue translation = 2;
   RotationValue rotation = 3;
 }
 
-message LocationValue {
-  Location value = 1;
+message TranslationValue {
+  Translation value = 1;
 }
 
 message RotationValue {
