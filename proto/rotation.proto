@@ -5,6 +5,8 @@ message Rotation {
     Quaternion world = 1;
     Quaternion local = 2;
   }
+  /* coefficient of importance (0~1) */
+  float weight = 3;
 }
 
 message Quaternion {
