@@ -1,8 +1,11 @@
+#include <fstream>
+#include <stdexcept>
+
 #include "flom/flom.hpp"
 
-#include "nlohmann/json.hpp"
-
 int main(int argc, char* argv[]) {
-  auto const motion = flom::load();
+  std::ifstream f(argv[1]);
+  auto const motion = flom::import_legacy_json(f);
+
   return 0;
 }

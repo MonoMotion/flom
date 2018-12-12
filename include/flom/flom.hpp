@@ -5,7 +5,7 @@
 
 namespace flom {
 
-int load(void);
+proto::Motion import_legacy_json(std::ifstream &f);
 
 }
 
