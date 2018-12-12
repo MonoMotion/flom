@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-import "frame.proto";
-
 package flom.proto;
+
+import "frame.proto";
 
 message Motion {
   string model_id = 1;

@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package flom.proto;
+
 message Translation {
   oneof Translation {
     Vec3 world = 1;

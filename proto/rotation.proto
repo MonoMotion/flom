@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package flom.proto;
+
 message Rotation {
   oneof rotation {
     Quaternion world = 1;
