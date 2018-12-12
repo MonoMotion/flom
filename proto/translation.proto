@@ -1,10 +1,14 @@
 syntax = "proto3";
 
+package flom.proto;
+
 message Translation {
   oneof Translation {
     Vec3 world = 1;
     Vec3 local = 2;
   }
+  /* coefficient of importance (0~1) */
+  float weight = 3;
 }
 
 message Vec3 {

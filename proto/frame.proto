@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package flom.proto;
+
 import "translation.proto";
 import "rotation.proto";
 
@@ -13,8 +15,6 @@ message Frame {
 }
 
 message Effect {
-  /* coefficient of importance (0~1) */
-  float weight = 1;
   TranslationValue translation = 2;
   RotationValue rotation = 3;
 }
