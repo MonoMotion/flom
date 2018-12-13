@@ -8,14 +8,7 @@
 
 namespace flom {
 
-struct Effect {
-  std::optional<Translation> translation;
-  std::optional<Rotation> rotation;
-};
-
-Effect interpolate(double t, Effect const& a, Effect const& b);
-
-using qvm = boost::qvm;
+namespace qvm = boost::qvm;
 
 struct Translation {
   float weight;
@@ -35,6 +28,13 @@ template<typename T>
 T lerp(double t, T a, T b) {
   return a + t * (b - a);
 }
+
+struct Effect {
+  std::optional<Translation> translation;
+  std::optional<Rotation> rotation;
+};
+
+Effect interpolate(double t, Effect const& a, Effect const& b);
 
 }
 
