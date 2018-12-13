@@ -2,7 +2,6 @@
 #define FLOM_MOTION_HPP
 
 #include "flom/frame.hpp"
-#include "flom/range.hpp"
 #include "motion.pb.h"
 
 #include <string>
@@ -17,11 +16,13 @@ enum class LoopType {
   Wrap
 };
 
+struct FrameRange;
+
 class Motion {
   std::string model_id;
   LoopType loop;
   std::unordered_map<std::string, double> initial_positions;
-  std::map<double, Frame> frames;
+  std::map<double, Frame> raw_frames;
 
 public:
   static Motion load(std::ifstream&);

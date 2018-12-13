@@ -1,6 +1,7 @@
 #include "flom/motion.hpp"
 #include "flom/interpolation.hpp"
 #include "flom/proto_util.hpp"
+#include "flom/range.hpp"
 
 #include <cassert>
 
@@ -16,11 +17,11 @@
 namespace flom {
 
 Frame Motion::frame_at(double t) const {
-  auto const [l, u] = this->frames.equal_range(t);
+  auto const [l, u] = this->raw_frames.equal_range(t);
   if (l->first == t) {
     // found a frame with exactly same time
     return l->second; // causes copy...
-  } else if (u == this->frames.end()) {
+  } else if (u == this->raw_frames.end()) {
     // Out of frames
     if (this->loop == LoopType::Wrap) {
       return this->frame_at(t - std::next(l, -1)->first);
@@ -37,8 +38,8 @@ Frame Motion::frame_at(double t) const {
   }
 }
 
-FrameRange Motion::Frames(double fps) const {
-  return FrameRange(*this, fps);
+FrameRange Motion::frames(double fps) const {
+  return FrameRange{*this, fps};
 }
 
 Motion Motion::load(std::ifstream& f) {
@@ -72,7 +73,7 @@ Motion Motion::from_protobuf(proto::Motion const& motion_proto) {
   double t_sum = 0;
   for(auto const& frame_proto : motion_proto.frames()) {
     t_sum += frame_proto.duration();
-    auto& frame = m.frames[t_sum];
+    auto& frame = m.raw_frames[t_sum];
     auto const& changes_proto = frame_proto.changes();
     std::copy(std::cbegin(changes_proto), std::cend(changes_proto), std::inserter(frame.changes, std::end(frame.changes)));
     auto const& effects_proto = frame_proto.effects();
@@ -123,7 +124,7 @@ proto::Motion Motion::to_protobuf() const {
     (*m.mutable_initial_positions())[joint] = position;
   }
   double last_t;
-  for(auto const& [t, frame] : this->frames) {
+  for(auto const& [t, frame] : this->raw_frames) {
     auto* frame_proto = m.add_frames();
     frame_proto->set_duration(t - last_t);
     last_t = t;
@@ -246,7 +247,7 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
 
         last_effects[it.key()] = e;
       }
-      m.frames[duration] = std::move(f);
+      m.raw_frames[duration] = std::move(f);
     }
   }
   return m;

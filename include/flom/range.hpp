@@ -1,9 +1,11 @@
 #ifndef FLOM_RANGE_HPP
 #define FLOM_RANGE_HPP
 
+#include "flom/motion.hpp"
 #include "flom/frame.hpp"
 
 #include <iterator>
+#include <memory>
 
 namespace flom {
 
@@ -15,7 +17,7 @@ namespace flom {
 // (See http://www.boost.org/LICENSE_1_0.txt)
 //
 // using snake_case, following customs of iterator naming
-class frame_iterafor
+class frame_iterator
 {
 public:
   using iterator_category = std::forward_iterator_tag;
@@ -26,7 +28,7 @@ public:
 
 private:
   struct Impl {
-    std::reference_wrapper<Frame> frame;
+    std::reference_wrapper<const Motion> motion;
     double fps;
     long t_index;
     bool next_is_end;
@@ -35,9 +37,9 @@ private:
     Impl(Impl&&) = default;
     Impl& operator=(const Impl&) = delete;
     Impl& operator=(Impl&&) = default;
-    Impl(Frame& frame, double fps) : fps(fps), frame(frame), next_is_end(false) {}
+    Impl(Motion const& motion, double fps) : fps(fps), motion(motion), next_is_end(false) {}
     value_type get() {
-      return this->frame.frame_at(this->fps * this->t_index);
+      return this->motion.get().frame_at(this->fps * this->t_index);
     }
   };
 
@@ -51,8 +53,8 @@ public:
   frame_iterator& operator=(const frame_iterator&) = delete;
   frame_iterator& operator=(frame_iterator&&) = default;
 
-  frame_iterator(Frame& frame, double fps)
-    : pimpl(std::make_unique<Impl>(frame, fps)), is_end_iterator(false)
+  frame_iterator(Motion const& motion, double fps)
+    : pimpl(std::make_unique<Impl>(motion, fps)), is_end_iterator(false)
   {}
 
   void stop() noexcept { this->pimpl->next_is_end = true; }
@@ -65,13 +67,6 @@ public:
     this->pimpl->t_index++;
     return *this;
   }
-  frame_iterator operator++(int) noexcept
-  {
-    const auto re = *this;
-    if (this->pimpl->next_is_end) this->is_end_iterator = true;
-    this->pimpl->t_index++;
-    return re;
-  }
 
   constexpr bool operator==(const frame_iterator& r) const noexcept { return this->is_end_iterator == r.is_end_iterator; }
   constexpr bool operator!=(const frame_iterator& r) const noexcept { return !(*this == r); }
@@ -83,18 +78,18 @@ public:
   using iterator = frame_iterator;
 
 private:
-  Frame& frame;
+  Motion const& motion;
   double fps;
 
 public:
   FrameRange() = delete;
-  FrameRange(Frame& f, double fps) : frame(f), fps(fps) {}
+  FrameRange(Motion const& m, double fps) : motion(m), fps(fps) {}
   FrameRange(const FrameRange&) = default;
   FrameRange(FrameRange&&) = default;
   FrameRange& operator=(const FrameRange&) = default;
   FrameRange& operator=(FrameRange&&) = default;
 
-  iterator begin() noexcept { return { this->f, this->fps }; }
+  iterator begin() noexcept { return { this->motion, this->fps }; }
   iterator end() noexcept { return {}; }
 };
 
