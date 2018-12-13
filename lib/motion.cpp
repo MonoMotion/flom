@@ -1,5 +1,6 @@
 #include "flom/motion.hpp"
 #include "flom/interpolation.hpp"
+#include "flom/proto_util.hpp"
 
 #include <boost/qvm/quat_access.hpp>
 #include <boost/qvm/vec_access.hpp>
