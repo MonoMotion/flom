@@ -3,6 +3,9 @@
 
 #include "flom/effect.hpp"
 
+#include <unordered_map>
+#include <string>
+
 namespace flom {
 
 struct Frame {

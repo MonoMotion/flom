@@ -3,6 +3,10 @@
 
 #include "flom/frame.hpp"
 
+#include <string>
+#include <map>
+#include <fstream>
+
 namespace flom {
 
 enum class LoopType {

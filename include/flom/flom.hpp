@@ -4,6 +4,7 @@
 #include "motion.pb.h"
 #include "flom/motion.hpp"
 #include "flom/frame.hpp"
+#include "flom/effect.hpp"
 
 namespace flom {
 
