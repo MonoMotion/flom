@@ -32,6 +32,16 @@ private:
   proto::Motion to_protobuf() const;
 };
 
+namespace proto_util {
+
+boost::qvm::vec<double, 3> convert_vec3(proto::Vec3 const&);
+Translation convert_translation(proto::Translation const&);
+
+boost::qvm::quat<double> convert_quat(proto::Quaternion const&);
+Rotation convert_rotation(proto::Rotation const&);
+
+}
+
 }
 
 #endif

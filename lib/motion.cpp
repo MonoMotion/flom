@@ -40,4 +40,42 @@ proto::Motion Motion::to_protobuf() const {
   throw std::runtime_error("Not implemented");
 }
 
+namespace proto_util {
+
+boost::qvm::vec<double, 3> convert_vec3(proto::Vec3 const& vec_proto) {
+  return boost::qvm::vec<double, 3> { vec_proto.x(), vec_proto.y(), vec_proto.z() };
+}
+
+Translation convert_translation(proto::Translation const& trans_proto) {
+  Translation trans;
+  if (trans_proto.has_world()) {
+    trans.coord_system = CoordinateSystem::World;
+    trans.vec = convert_vec3(trans_proto.world());
+  } else if (trans_proto.has_local()) {
+    trans.coord_system = CoordinateSystem::Local;
+    trans.vec = convert_vec3(trans_proto.local());
+  }
+  trans.weight = trans_proto.weight();
+  return std::move(trans);
+}
+
+boost::qvm::quat<double> convert_quat(proto::Quaternion const& quat_proto) {
+  return boost::qvm::quat<double> { quat_proto.w(), quat_proto.x(), quat_proto.y(), quat_proto.z() };
+}
+
+Rotation convert_rotation(proto::Rotation const& rot_proto) {
+  Rotation rot;
+  if (rot_proto.has_world()) {
+    rot.coord_system = CoordinateSystem::World;
+    rot.quat = convert_quat(rot_proto.world());
+  } else if (rot_proto.has_local()) {
+    rot.coord_system = CoordinateSystem::Local;
+    rot.quat = convert_quat(rot_proto.local());
+  }
+  rot.weight = rot_proto.weight();
+  return std::move(rot);
+}
+
+}
+
 }
