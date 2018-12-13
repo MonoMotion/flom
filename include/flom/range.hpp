@@ -41,6 +41,9 @@ private:
     value_type get() {
       return this->motion.get().frame_at(this->fps * this->t_index);
     }
+    bool check_bound() const {
+      return this->motion.get().is_in_range_at(this->fps * this->t_index);
+    }
   };
 
   std::unique_ptr<Impl> pimpl;
@@ -65,6 +68,7 @@ public:
   {
     if (this->pimpl->next_is_end) this->is_end_iterator = true;
     this->pimpl->t_index++;
+    this->pimpl->next_is_end = !this->pimpl->check_bound();
     return *this;
   }
 
