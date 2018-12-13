@@ -157,11 +157,9 @@ proto::Motion Motion::Impl::to_protobuf() const {
   for (auto const& [joint, position] : this->initial_positions) {
     (*m.mutable_initial_positions())[joint] = position;
   }
-  double last_t;
   for(auto const& [t, frame] : this->raw_frames) {
     auto* frame_proto = m.add_frames();
-    frame_proto->set_t(t - last_t);
-    last_t = t;
+    frame_proto->set_t(t);
     // TODO: Use <algorithm> (e.g. std::copy)
     for (auto const& [joint, change] : frame.positions) {
       (*frame_proto->mutable_positions())[joint] = change;
@@ -201,22 +199,13 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
   }
   {
     auto const frames = json_data["frames"];
-    {
-      auto const initial_positions = frames[0]["position"];
-      for (auto it = std::cbegin(initial_positions); it != std::cend(initial_positions); ++it) {
-        m.impl->initial_positions[it.key()] = it.value();
-      }
-    }
-    std::unordered_map<std::string, double> last_positions (std::cbegin(m.impl->initial_positions), std::cend(m.impl->initial_positions));
-    std::unordered_map<std::string, Effector> last_effectors;
     for(auto const& frame : frames) {
       Frame f;
       const double time = frame["timepoint"];
       auto const positions = frame["position"];
       // TODO: Use <algorithm> (e.g. std::copy)
       for (auto it = std::cbegin(positions); it != std::cend(positions); ++it) {
-        f.positions[it.key()] = static_cast<double>(it.value()) - last_positions.at(it.key());
-        last_positions[it.key()] = it.value();
+        f.positions[it.key()] = it.value();
       }
       auto const effectors = frame["effector"];
       for (auto it = std::cbegin(effectors); it != std::cend(effectors); ++it) {
@@ -250,36 +239,7 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
           e.rotation = std::move(rot);
         }
 
-        if (last_effectors.count(it.key()) != 0) {
-          // Don't define operator- for Effector,
-          // Because that would only be used here
-          auto const& last = last_effectors.at(it.key());
-          auto& new_effect = f.effectors[it.key()];
-          assert(static_cast<bool>(last.location) == static_cast<bool>(e.location));
-          assert(static_cast<bool>(last.rotation) == static_cast<bool>(e.rotation));
-          if (last.location && e.location) {
-            assert(last.location->weight == e.location->weight);
-            assert(last.location->coord_system == e.location->coord_system);
-            Location trans;
-            trans.weight = e.location->weight;
-            trans.coord_system = e.location->coord_system;
-            trans.vec = e.location->vec - last.location->vec;
-            new_effect.location = trans;
-          }
-          if (last.rotation && e.rotation) {
-            assert(last.rotation->weight == e.rotation->weight);
-            assert(last.rotation->coord_system == e.rotation->coord_system);
-            Rotation rot;
-            rot.weight = e.rotation->weight;
-            rot.coord_system = e.rotation->coord_system;
-            rot.quat = e.rotation->quat - last.rotation->quat;
-            new_effect.rotation = rot;
-          }
-        } else {
-          f.effectors[it.key()] = e;
-        }
-
-        last_effectors[it.key()] = e;
+        f.effectors[it.key()] = e;
       }
       m.impl->raw_frames[time] = std::move(f);
     }
