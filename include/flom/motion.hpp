@@ -6,6 +6,7 @@
 #include <string>
 #include <fstream>
 #include <memory>
+#include <unordered_map>
 
 namespace flom {
 
@@ -35,6 +36,15 @@ public:
   void dump(std::ofstream&) const;
   void dump_json(std::ofstream&) const;
   std::string dump_json_string() const;
+
+  LoopType loop() const;
+  void set_loop(LoopType);
+
+  std::string model_id() const;
+  void set_model_id(std::string const&);
+
+  std::unordered_map<std::string, double> const& initial_positions() const;
+  std::unordered_map<std::string, double>& initial_positions();
 
 private:
   Motion();

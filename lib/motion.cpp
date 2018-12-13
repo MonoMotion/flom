@@ -288,6 +288,31 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
   return m;
 }
 
+LoopType Motion::loop() const {
+  return this->impl->loop;
+}
+
+void Motion::set_loop(LoopType loop) {
+  this->impl->loop = loop;
+}
+
+std::string Motion::model_id() const {
+  return this->impl->model_id;
+}
+
+void Motion::set_model_id(std::string const& model_id) {
+  this->impl->model_id = model_id;
+}
+
+std::unordered_map<std::string, double> const& Motion::initial_positions() const {
+  return this->impl->initial_positions;
+}
+
+std::unordered_map<std::string, double>& Motion::initial_positions() {
+  return this->impl->initial_positions;
+}
+
+
 namespace proto_util {
 
 boost::qvm::vec<double, 3> unpack_vec3(proto::Vec3 const& vec_proto) {
