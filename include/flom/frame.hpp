@@ -9,7 +9,6 @@
 namespace flom {
 
 struct Frame {
-  double duration;
   std::unordered_map<std::string, double> changes;
   std::unordered_map<std::string, Effect> effects;
 };
