@@ -28,7 +28,34 @@ Motion Motion::load(std::ifstream& f) {
 }
 
 Motion Motion::from_protobuf(proto::Motion const& motion_proto) {
-  throw std::runtime_error("Not implemented");
+  Motion m;
+  m.model_id = motion_proto.model_id();
+  if(motion_proto.loop() == proto::Motion::Loop::Motion_Loop_Wrap) {
+    m.loop = LoopType::Wrap;
+  } else if(motion_proto.loop() == proto::Motion::Loop::Motion_Loop_None) {
+    m.loop = LoopType::None;
+  }
+  double t_sum = 0;
+  for(auto const& frame_proto : motion_proto.frames()) {
+    t_sum += frame_proto.duration();
+    auto& frame = m.frames[t_sum];
+    auto const& changes_proto = frame_proto.changes();
+    std::copy(std::cbegin(changes_proto), std::cend(changes_proto), std::inserter(frame.changes, std::end(frame.changes)));
+    auto const& effects_proto = frame_proto.effects();
+    std::transform(std::cbegin(effects_proto), std::cend(effects_proto), std::inserter(frame.effects, std::end(frame.effects)), [](auto const& p) {
+        auto const& effect_proto = p.second;
+        Effect e;
+        if (effect_proto.has_translation()) {
+          e.translation = proto_util::convert_translation(effect_proto.translation().value());
+        }
+        if (effect_proto.has_rotation()) {
+          e.rotation = proto_util::convert_rotation(effect_proto.rotation().value());
+        }
+        return std::make_pair(p.first, e);
+    });
+  }
+
+  return std::move(m);
 }
 
 void Motion::dump(std::ofstream& f) const {
