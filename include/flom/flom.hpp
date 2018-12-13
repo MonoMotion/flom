@@ -4,5 +4,6 @@
 #include "flom/motion.hpp"
 #include "flom/frame.hpp"
 #include "flom/effect.hpp"
+#include "flom/interpolation.hpp"
 
 #endif

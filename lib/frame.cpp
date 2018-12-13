@@ -1,4 +1,5 @@
 #include "flom/frame.hpp"
+#include "flom/interpolation.hpp"
 
 namespace flom {
 

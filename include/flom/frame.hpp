@@ -13,8 +13,6 @@ struct Frame {
   std::unordered_map<std::string, Effect> effects;
 };
 
-Frame interpolate(double t, Frame const& a, Frame const& b);
-
 }
 
 #endif
