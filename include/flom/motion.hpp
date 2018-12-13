@@ -34,15 +34,17 @@ private:
 
 namespace proto_util {
 
-boost::qvm::vec<double, 3> convert_vec3(proto::Vec3 const&);
-void convert_vec3(boost::qvm::vec<double, 3> const& vec, proto::Vec3* v_proto);
-Translation convert_translation(proto::Translation const&);
-void convert_translation(Translation const&, proto::Translation*);
+void pack_vec3(boost::qvm::vec<double, 3> const&, proto::Vec3*);
+void pack_translation(Translation const&, proto::Translation*);
 
-boost::qvm::quat<double> convert_quat(proto::Quaternion const&);
-void convert_quat(boost::qvm::quat<double> const& quat, proto::Quaternion* q_proto);
-Rotation convert_rotation(proto::Rotation const&);
-void convert_rotation(Rotation const&, proto::Rotation*);
+boost::qvm::vec<double, 3> unpack_vec3(proto::Vec3 const&);
+Translation unpack_translation(proto::Translation const&);
+
+void pack_quat(boost::qvm::quat<double> const&, proto::Quaternion*);
+void pack_rotation(Rotation const&, proto::Rotation*);
+
+boost::qvm::quat<double> unpack_quat(proto::Quaternion const&);
+Rotation unpack_rotation(proto::Rotation const&);
 
 }
 

@@ -49,10 +49,10 @@ Motion Motion::from_protobuf(proto::Motion const& motion_proto) {
         auto const& effect_proto = p.second;
         Effect e;
         if (effect_proto.has_translation()) {
-          e.translation = proto_util::convert_translation(effect_proto.translation().value());
+          e.translation = proto_util::unpack_translation(effect_proto.translation().value());
         }
         if (effect_proto.has_rotation()) {
-          e.rotation = proto_util::convert_rotation(effect_proto.rotation().value());
+          e.rotation = proto_util::unpack_rotation(effect_proto.rotation().value());
         }
         return std::make_pair(p.first, e);
     });
@@ -86,10 +86,10 @@ proto::Motion Motion::to_protobuf() const {
     for (auto const& [link, effect] : frame.effects) {
         proto::Effect e;
         if (effect.translation) {
-          proto_util::convert_translation(*effect.translation, e.mutable_translation()->mutable_value());
+          proto_util::pack_translation(*effect.translation, e.mutable_translation()->mutable_value());
         }
         if (effect.rotation) {
-          proto_util::convert_rotation(*effect.rotation, e.mutable_rotation()->mutable_value());
+          proto_util::pack_rotation(*effect.rotation, e.mutable_rotation()->mutable_value());
         }
         (*frame_proto->mutable_effects())[link] = e;
     }
@@ -100,67 +100,67 @@ proto::Motion Motion::to_protobuf() const {
 
 namespace proto_util {
 
-boost::qvm::vec<double, 3> convert_vec3(proto::Vec3 const& vec_proto) {
+boost::qvm::vec<double, 3> unpack_vec3(proto::Vec3 const& vec_proto) {
   return boost::qvm::vec<double, 3> { vec_proto.x(), vec_proto.y(), vec_proto.z() };
 }
 
-void convert_vec3(boost::qvm::vec<double, 3> const& vec, proto::Vec3* v_proto) {
+void pack_vec3(boost::qvm::vec<double, 3> const& vec, proto::Vec3* v_proto) {
   v_proto->set_x(boost::qvm::X(vec));
   v_proto->set_y(boost::qvm::Y(vec));
   v_proto->set_z(boost::qvm::Z(vec));
 }
 
-Translation convert_translation(proto::Translation const& trans_proto) {
+Translation unpack_translation(proto::Translation const& trans_proto) {
   Translation trans;
   if (trans_proto.has_world()) {
     trans.coord_system = CoordinateSystem::World;
-    trans.vec = convert_vec3(trans_proto.world());
+    trans.vec = unpack_vec3(trans_proto.world());
   } else if (trans_proto.has_local()) {
     trans.coord_system = CoordinateSystem::Local;
-    trans.vec = convert_vec3(trans_proto.local());
+    trans.vec = unpack_vec3(trans_proto.local());
   }
   trans.weight = trans_proto.weight();
   return std::move(trans);
 }
 
-void convert_translation(Translation const& trans, proto::Translation* trans_proto) {
+void pack_translation(Translation const& trans, proto::Translation* trans_proto) {
   if (trans.coord_system == CoordinateSystem::World) {
-    convert_vec3(trans.vec, trans_proto->mutable_world());
+    pack_vec3(trans.vec, trans_proto->mutable_world());
   } else if (trans.coord_system == CoordinateSystem::Local) {
-     convert_vec3(trans.vec, trans_proto->mutable_local());
+    pack_vec3(trans.vec, trans_proto->mutable_local());
   }
   trans_proto->set_weight(trans.weight);
 }
 
-boost::qvm::quat<double> convert_quat(proto::Quaternion const& quat_proto) {
+boost::qvm::quat<double> unpack_quat(proto::Quaternion const& quat_proto) {
   return boost::qvm::quat<double> { quat_proto.w(), quat_proto.x(), quat_proto.y(), quat_proto.z() };
 }
 
-void convert_quat(boost::qvm::quat<double> const& quat, proto::Quaternion* q_proto) {
+void pack_quat(boost::qvm::quat<double> const& quat, proto::Quaternion* q_proto) {
   q_proto->set_w(boost::qvm::S(quat));
   q_proto->set_x(boost::qvm::X(quat));
   q_proto->set_y(boost::qvm::Y(quat));
   q_proto->set_z(boost::qvm::Z(quat));
 }
 
-Rotation convert_rotation(proto::Rotation const& rot_proto) {
+Rotation unpack_rotation(proto::Rotation const& rot_proto) {
   Rotation rot;
   if (rot_proto.has_world()) {
     rot.coord_system = CoordinateSystem::World;
-    rot.quat = convert_quat(rot_proto.world());
+    rot.quat = unpack_quat(rot_proto.world());
   } else if (rot_proto.has_local()) {
     rot.coord_system = CoordinateSystem::Local;
-    rot.quat = convert_quat(rot_proto.local());
+    rot.quat = unpack_quat(rot_proto.local());
   }
   rot.weight = rot_proto.weight();
   return std::move(rot);
 }
 
-void convert_rotation(Rotation const& rot, proto::Rotation* rot_proto) {
+void pack_rotation(Rotation const& rot, proto::Rotation* rot_proto) {
   if (rot.coord_system == CoordinateSystem::World) {
-     convert_quat(rot.quat, rot_proto->mutable_world());
+     pack_quat(rot.quat, rot_proto->mutable_world());
   } else if (rot.coord_system == CoordinateSystem::Local) {
-     convert_quat(rot.quat, rot_proto->mutable_local());
+     pack_quat(rot.quat, rot_proto->mutable_local());
   }
   rot_proto->set_weight(rot.weight);
 }
