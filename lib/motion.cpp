@@ -47,7 +47,11 @@ Frame Motion::frame_at(double t) const {
   } else if (u == this->impl->raw_frames.end()) {
     // Out of frames
     if (this->impl->loop == LoopType::Wrap) {
-      return this->frame_at(t - std::next(l, -1)->first);
+      auto const& last = std::next(l, -1);
+      auto const motion_length = last->first;
+      auto const skip_episode = t / motion_length;
+      auto const trailing_t = t % motion_length;
+      return this->frame_at(trailing_t) + last->second * skip_episode;
     } else {
       throw std::out_of_range("Motion is over");
     }
