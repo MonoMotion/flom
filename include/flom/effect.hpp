@@ -1,5 +1,5 @@
-#ifndef FLOM_FRAME_HPP
-#define FLOM_FRAME_HPP
+#ifndef FLOM_EFFECT_HPP
+#define FLOM_EFFECT_HPP
 
 #include <optional>
 
