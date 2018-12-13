@@ -44,9 +44,13 @@ Motion Motion::load(std::ifstream& f) {
 }
 
 Motion Motion::load_json(std::ifstream& f) {
-  proto::Motion m;
   std::string s;
   f >> s;
+  return std::move(Motion::load_json_string(s));
+}
+
+Motion Motion::load_json_string(std::string const& s) {
+  proto::Motion m;
   google::protobuf::util::JsonStringToMessage(s, &m);
   return std::move(Motion::from_protobuf(m));
 }
@@ -91,10 +95,14 @@ void Motion::dump(std::ofstream& f) const {
 }
 
 void Motion::dump_json(std::ofstream& f) const {
+  f << this->dump_json_string();
+}
+
+std::string Motion::dump_json_string() const {
   std::string s;
   auto const m = this->to_protobuf();
   google::protobuf::util::MessageToJsonString(m, &s);
-  f << s;
+  return std::move(s);
 }
 
 proto::Motion Motion::to_protobuf() const {
