@@ -3,6 +3,7 @@
 #include <utility>
 
 #include <boost/qvm/quat_operations.hpp>
+#include <boost/qvm/vec_operations.hpp>
 
 namespace flom {
 
