@@ -22,10 +22,14 @@ struct Translation {
   qvm::vec<double, 3> vec;
 };
 
+Translation interpolate(double t, Translation const& a, Translation const& b);
+
 struct Rotation {
   float weight;
   qvm::quat<double> quat;
 };
+
+Rotation interpolate(double t, Rotation const& a, Rotation const& b);
 
 }
 

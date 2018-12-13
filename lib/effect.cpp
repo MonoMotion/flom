@@ -9,12 +9,24 @@ namespace flom {
 Effect interpolate(double t, Effect const& a, Effect const& b) {
   Effect e;
   if (a.rotation && b.rotation) {
-    e.rotation = qvm::slerp(a.rotation->quat, b.rotation->quat, t);
+    e.rotation = interpolate(t, *a.rotation, *b.rotation);
   }
   if (a.translation && b.translation) {
-    e.translation = a.translation->vec + t * (b.translation->vec - a.translation->vec);
+    e.translation = interpolate(t, *a.translation, *b.translation);
   }
   return std::move(e);
+}
+
+Rotation interpolate(double t, Rotation const& a, Rotation const& b) {
+  Rotation result;
+  result.quat = qvm::slerp(a.quat, b.quat, t);
+  return std::move(result);
+}
+
+Translation interpolate(double t, Translation const& a, Translation const& b) {
+  Translation result;
+  result.vec = a.vec + t * (b.vec - a.vec);
+  return std::move(result);
 }
 
 }
