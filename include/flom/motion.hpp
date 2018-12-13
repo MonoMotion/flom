@@ -23,7 +23,7 @@ class Motion {
 public:
   static Motion load(std::ifstream&);
 
-  Frame const& frame_at(double t) const;
+  Frame frame_at(double t) const;
 
   void dump(std::ofstream&) const;
 

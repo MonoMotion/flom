@@ -2,10 +2,10 @@
 
 namespace flom {
 
-Frame const& Motion::frame_at(double t) const {
+Frame Motion::frame_at(double t) const {
   auto const [l, u] = this->frames.equal_range(t);
   if (l->first == t) {
-    return l->second;
+    return l->second; // causes copy...
   } else if (u == this->frames.end()) {
     if (this->loop == LoopType::Wrap) {
       return this->frame_at(t - std::next(l, -1)->first);
@@ -17,7 +17,7 @@ Frame const& Motion::frame_at(double t) const {
     auto const t2 = u->first;
     auto const& f1 = std::next(l, -1)->second;
     auto const& f2 = u->second;
-    return interpolate((t - t1) / (t2 - t1), f1, f2);
+    return std::move(interpolate((t - t1) / (t2 - t1), f1, f2));
   }
 }
 
