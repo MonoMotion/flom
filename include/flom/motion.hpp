@@ -2,6 +2,7 @@
 #define FLOM_MOTION_HPP
 
 #include "flom/frame.hpp"
+#include "motion.pb.h"
 
 #include <string>
 #include <map>
@@ -24,7 +25,11 @@ public:
 
   Frame const& frame_at(double t) const;
 
-  void dump(std::ofstream&);
+  void dump(std::ofstream&) const;
+
+private:
+  static Motion from_protobuf(proto::Motion const&);
+  proto::Motion to_protobuf() const;
 };
 
 }

@@ -22,10 +22,21 @@ Frame const& Motion::frame_at(double t) const {
 }
 
 Motion Motion::load(std::ifstream& f) {
+  proto::Motion m;
+  m.ParseFromIstream(&f);
+  return std::move(Motion::from_protobuf(m));
+}
+
+Motion Motion::from_protobuf(proto::Motion const& motion_proto) {
   throw std::runtime_error("Not implemented");
 }
 
-void dump(std::ofstream&) {
+void Motion::dump(std::ofstream& f) const {
+  auto const m = this->to_protobuf();
+  m.SerializeToOstream(&f);
+}
+
+proto::Motion Motion::to_protobuf() const {
   throw std::runtime_error("Not implemented");
 }
 
