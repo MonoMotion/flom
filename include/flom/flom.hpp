@@ -5,10 +5,4 @@
 #include "flom/frame.hpp"
 #include "flom/effect.hpp"
 
-namespace flom {
-
-proto::Motion import_legacy_json(std::ifstream &f);
-
-}
-
 #endif

@@ -3,6 +3,8 @@
 #include <boost/qvm/quat_access.hpp>
 #include <boost/qvm/vec_access.hpp>
 
+#include "nlohmann/json.hpp"
+
 namespace flom {
 
 Frame Motion::frame_at(double t) const {
@@ -100,6 +102,74 @@ proto::Motion Motion::to_protobuf() const {
   }
 
   return std::move(m);
+}
+
+Motion Motion::load_legacy_json(std::ifstream &s) {
+  using json = nlohmann::json;
+
+  json json_data;
+  s >> json_data;
+
+  Motion m;
+  m.model_id = json_data["model"];
+  {
+    auto loop_type = json_data["loop"];
+    if(loop_type == "wrap") {
+      m.loop = LoopType::Wrap;
+    } else if(loop_type == "none") {
+      m.loop = LoopType::None;
+    } else {
+      throw std::runtime_error("Unknown loop type");
+    }
+  }
+  {
+    auto const frames = json_data["frames"];
+    std::transform(std::cbegin(frames), std::cend(frames), std::inserter(m.frames, std::end(m.frames)), [](auto const& frame) {
+      Frame f;
+      const double duration = frame["timepoint"];
+      auto const positions = frame["position"];
+      // TODO: Use <algorithm> (e.g. std::copy)
+      for (auto it = std::cbegin(positions); it != std::cend(positions); ++it) {
+        f.changes[it.key()] = it.value();
+      }
+      auto const effectors = frame["effector"];
+      for (auto it = std::cbegin(effectors); it != std::cend(effectors); ++it) {
+        Effect e;
+        auto const effect_data = it.value();
+        if (effect_data.count("location") != 0) {
+          Translation trans;
+          auto const trans_data = effect_data["location"];
+          auto const& value = trans_data["value"];
+          if (trans_data["space"] == "world") {
+            trans.coord_system = CoordinateSystem::World;
+          } else if (trans_data["space"] == "local") {
+            trans.coord_system = CoordinateSystem::Local;
+          }
+          trans.vec = boost::qvm::vec<double, 3>{ value[0], value[1], value[2] };
+          trans.weight = trans_data["weight"];
+          e.translation = std::move(trans);
+        }
+
+        if (effect_data.count("rotation") != 0) {
+          Rotation rot;
+          auto const rot_data = effect_data["rotation"];
+          auto const& value = rot_data["value"];
+          if (rot_data["space"] == "world") {
+            rot.coord_system = CoordinateSystem::World;
+          } else if (rot_data["space"] == "local") {
+            rot.coord_system = CoordinateSystem::Local;
+          }
+          rot.quat = boost::qvm::quat<double>{ value[0], value[1], value[2], value[3] };
+          rot.weight = rot_data["weight"];
+          e.rotation = std::move(rot);
+        }
+
+        f.effects[it.key()] = e;
+      }
+      return std::make_pair(duration, f);
+    });
+  }
+  return m;
 }
 
 namespace proto_util {

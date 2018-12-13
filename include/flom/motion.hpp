@@ -22,6 +22,7 @@ class Motion {
 
 public:
   static Motion load(std::ifstream&);
+  static Motion load_legacy_json(std::ifstream&);
 
   Frame frame_at(double t) const;
 
