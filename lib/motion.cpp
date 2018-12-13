@@ -37,6 +37,10 @@ Frame Motion::frame_at(double t) const {
   }
 }
 
+FrameRange Motion::Frames(double fps) const {
+  return FrameRange(*this, fps);
+}
+
 Motion Motion::load(std::ifstream& f) {
   proto::Motion m;
   m.ParseFromIstream(&f);
