@@ -26,7 +26,6 @@ class Motion::Impl {
 public:
   std::string model_id;
   LoopType loop;
-  std::unordered_map<std::string, double> initial_positions;
   std::map<double, Frame> raw_frames;
 
   static Motion from_protobuf(proto::Motion const&);
@@ -101,8 +100,6 @@ Motion Motion::Impl::from_protobuf(proto::Motion const& motion_proto) {
   } else if(motion_proto.loop() == proto::Motion::Loop::Motion_Loop_None) {
     m.impl->loop = LoopType::None;
   }
-  auto const& initial_positions_proto = motion_proto.initial_positions();
-  std::copy(std::cbegin(initial_positions_proto), std::cend(initial_positions_proto), std::inserter(m.impl->initial_positions, std::end(m.impl->initial_positions)));
   double t_sum = 0;
   for(auto const& frame_proto : motion_proto.frames()) {
     t_sum += frame_proto.t();
@@ -153,9 +150,6 @@ proto::Motion Motion::Impl::to_protobuf() const {
     m.set_loop(proto::Motion::Loop::Motion_Loop_Wrap);
   } else if(this->loop == LoopType::None) {
     m.set_loop(proto::Motion::Loop::Motion_Loop_None);
-  }
-  for (auto const& [joint, position] : this->initial_positions) {
-    (*m.mutable_initial_positions())[joint] = position;
   }
   for(auto const& [t, frame] : this->raw_frames) {
     auto* frame_proto = m.add_frames();
@@ -262,14 +256,6 @@ std::string Motion::model_id() const {
 
 void Motion::set_model_id(std::string const& model_id) {
   this->impl->model_id = model_id;
-}
-
-std::unordered_map<std::string, double> const& Motion::initial_positions() const {
-  return this->impl->initial_positions;
-}
-
-std::unordered_map<std::string, double>& Motion::initial_positions() {
-  return this->impl->initial_positions;
 }
 
 
