@@ -31,6 +31,11 @@ struct Rotation {
 
 Rotation interpolate(double t, Rotation const& a, Rotation const& b);
 
+template<typename T>
+T lerp(double t, T a, T b) {
+  return a + t * (b - a);
+}
+
 }
 
 #endif
