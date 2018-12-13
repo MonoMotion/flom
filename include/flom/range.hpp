@@ -37,7 +37,7 @@ private:
     Impl(Impl&&) = default;
     Impl& operator=(const Impl&) = delete;
     Impl& operator=(Impl&&) = default;
-    Impl(Motion const& motion, double fps) : fps(fps), t_index(0), motion(motion), next_is_end(false) {}
+    Impl(Motion const& motion_, double fps_) : motion(motion_), fps(fps_), t_index(0), next_is_end(false) {}
     value_type get() {
       return this->motion.get().frame_at(this->fps * this->t_index);
     }
@@ -87,7 +87,7 @@ private:
 
 public:
   FrameRange() = delete;
-  FrameRange(Motion const& m, double fps) : motion(m), fps(fps) {}
+  FrameRange(Motion const& motion_, double fps_) : motion(motion_), fps(fps_) {}
   FrameRange(const FrameRange&) = default;
   FrameRange(FrameRange&&) = default;
   FrameRange& operator=(const FrameRange&) = default;
