@@ -1,6 +1,8 @@
 #ifndef FLOM_MOTION_HPP
 #define FLOM_MOTION_HPP
 
+#include "flom/frame.hpp"
+
 namespace flom {
 
 enum class LoopType {

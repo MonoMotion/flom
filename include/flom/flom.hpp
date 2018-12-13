@@ -3,6 +3,7 @@
 
 #include "motion.pb.h"
 #include "flom/motion.hpp"
+#include "flom/frame.hpp"
 
 namespace flom {
 
