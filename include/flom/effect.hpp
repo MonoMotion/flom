@@ -13,7 +13,9 @@ struct Effect {
   std::optional<Rotation> rotation;
 };
 
-using = boost::qvm;
+Effect interpolate(double t, Effect const& a, Effect const& b);
+
+using qvm = boost::qvm;
 
 struct Translation {
   float weight;
