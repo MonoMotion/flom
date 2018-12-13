@@ -2,6 +2,7 @@
 #define FLOM_FLOM_HPP
 
 #include "motion.pb.h"
+#include "flom/motion.hpp"
 
 namespace flom {
 
