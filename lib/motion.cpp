@@ -8,14 +8,17 @@ namespace flom {
 Frame Motion::frame_at(double t) const {
   auto const [l, u] = this->frames.equal_range(t);
   if (l->first == t) {
+    // found a frame with exactly same time
     return l->second; // causes copy...
   } else if (u == this->frames.end()) {
+    // Out of frames
     if (this->loop == LoopType::Wrap) {
       return this->frame_at(t - std::next(l, -1)->first);
     } else {
       throw std::out_of_range("Motion is over");
     }
   } else {
+    // Between two frames -> interpolate
     auto const t1 = std::next(l, -1)->first;
     auto const t2 = u->first;
     auto const& f1 = std::next(l, -1)->second;
@@ -54,6 +57,7 @@ Motion Motion::from_protobuf(proto::Motion const& motion_proto) {
         if (effect_proto.has_rotation()) {
           e.rotation = proto_util::unpack_rotation(effect_proto.rotation().value());
         }
+        // TODO: Delete copy
         return std::make_pair(p.first, e);
     });
   }
