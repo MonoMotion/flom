@@ -24,11 +24,13 @@ class Motion {
 
 public:
   static Motion load(std::ifstream&);
+  static Motion load_json(std::ifstream&);
   static Motion load_legacy_json(std::ifstream&);
 
   Frame frame_at(double t) const;
 
   void dump(std::ofstream&) const;
+  void dump_json(std::ofstream&) const;
 
 private:
   static Motion from_protobuf(proto::Motion const&);

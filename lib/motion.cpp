@@ -9,6 +9,8 @@
 #include <boost/qvm/quat_operations.hpp>
 #include <boost/qvm/vec_operations.hpp>
 
+#include <google/protobuf/util/json_util.h>
+
 #include "nlohmann/json.hpp"
 
 namespace flom {
@@ -38,6 +40,14 @@ Frame Motion::frame_at(double t) const {
 Motion Motion::load(std::ifstream& f) {
   proto::Motion m;
   m.ParseFromIstream(&f);
+  return std::move(Motion::from_protobuf(m));
+}
+
+Motion Motion::load_json(std::ifstream& f) {
+  proto::Motion m;
+  std::string s;
+  f >> s;
+  google::protobuf::util::JsonStringToMessage(s, &m);
   return std::move(Motion::from_protobuf(m));
 }
 
@@ -78,6 +88,13 @@ Motion Motion::from_protobuf(proto::Motion const& motion_proto) {
 void Motion::dump(std::ofstream& f) const {
   auto const m = this->to_protobuf();
   m.SerializeToOstream(&f);
+}
+
+void Motion::dump_json(std::ofstream& f) const {
+  std::string s;
+  auto const m = this->to_protobuf();
+  google::protobuf::util::MessageToJsonString(m, &s);
+  f << s;
 }
 
 proto::Motion Motion::to_protobuf() const {
