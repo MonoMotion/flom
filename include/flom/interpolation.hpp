@@ -1,7 +1,7 @@
 #ifndef FLOM_INTERPOLATION_HPP
 #define FLOM_INTERPOLATION_HPP
 
-#include "flom/effect.hpp"
+#include "flom/effector.hpp"
 #include "flom/frame.hpp"
 
 namespace flom {

@@ -1,4 +1,4 @@
-#include "flom/effect.hpp"
+#include "flom/effector.hpp"
 #include "flom/interpolation.hpp"
 
 #include <utility>

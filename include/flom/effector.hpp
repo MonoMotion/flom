@@ -1,5 +1,5 @@
-#ifndef FLOM_EFFECT_HPP
-#define FLOM_EFFECT_HPP
+#ifndef FLOM_EFFECTOR_HPP
+#define FLOM_EFFECTOR_HPP
 
 #include <optional>
 #include <type_traits>

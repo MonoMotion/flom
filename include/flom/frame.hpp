@@ -1,7 +1,7 @@
 #ifndef FLOM_FRAME_HPP
 #define FLOM_FRAME_HPP
 
-#include "flom/effect.hpp"
+#include "flom/effector.hpp"
 
 #include <unordered_map>
 #include <string>
