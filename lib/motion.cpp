@@ -101,7 +101,9 @@ void Motion::dump_json(std::ofstream& f) const {
 std::string Motion::dump_json_string() const {
   std::string s;
   auto const m = this->to_protobuf();
-  google::protobuf::util::MessageToJsonString(m, &s);
+  google::protobuf::util::JsonPrintOptions opt;
+  opt.always_print_primitive_fields = true;
+  google::protobuf::util::MessageToJsonString(m, &s, opt);
   return std::move(s);
 }
 
