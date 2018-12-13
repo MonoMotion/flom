@@ -45,6 +45,8 @@ Motion Motion::from_protobuf(proto::Motion const& motion_proto) {
   } else if(motion_proto.loop() == proto::Motion::Loop::Motion_Loop_None) {
     m.loop = LoopType::None;
   }
+  auto const& initial_positions_proto = motion_proto.initial_positions();
+  std::copy(std::cbegin(initial_positions_proto), std::cend(initial_positions_proto), std::inserter(m.initial_positions, std::end(m.initial_positions)));
   double t_sum = 0;
   for(auto const& frame_proto : motion_proto.frames()) {
     t_sum += frame_proto.duration();
@@ -81,6 +83,9 @@ proto::Motion Motion::to_protobuf() const {
     m.set_loop(proto::Motion::Loop::Motion_Loop_Wrap);
   } else if(this->loop == LoopType::None) {
     m.set_loop(proto::Motion::Loop::Motion_Loop_None);
+  }
+  for (auto const& [joint, position] : this->initial_positions) {
+    (*m.mutable_initial_positions())[joint] = position;
   }
   double last_t;
   for(auto const& [t, frame] : this->frames) {
