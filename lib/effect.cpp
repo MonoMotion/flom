@@ -8,13 +8,13 @@
 
 namespace flom {
 
-Effect interpolate(double t, Effect const& a, Effect const& b) {
-  Effect e;
+Effector interpolate(double t, Effector const& a, Effector const& b) {
+  Effector e;
   if (a.rotation && b.rotation) {
     e.rotation = interpolate(t, *a.rotation, *b.rotation);
   }
-  if (a.translation && b.translation) {
-    e.translation = interpolate(t, *a.translation, *b.translation);
+  if (a.location && b.location) {
+    e.location = interpolate(t, *a.location, *b.location);
   }
   return std::move(e);
 }
@@ -26,8 +26,8 @@ Rotation interpolate(double t, Rotation const& a, Rotation const& b) {
   return std::move(result);
 }
 
-Translation interpolate(double t, Translation const& a, Translation const& b) {
-  Translation result;
+Location interpolate(double t, Location const& a, Location const& b) {
+  Location result;
   result.vec = lerp(t, a.vec, b.vec);
   result.weight = lerp(t, a.weight, b.weight);
   return std::move(result);

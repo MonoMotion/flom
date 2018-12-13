@@ -15,12 +15,12 @@ enum class CoordinateSystem {
   Local,
 };
 
-struct Translation {
+struct Location {
   float weight;
   CoordinateSystem coord_system;
   qvm::vec<double, 3> vec;
 
-  Translation() : weight(0) {}
+  Location() : weight(0) {}
 };
 
 struct Rotation {
@@ -31,8 +31,8 @@ struct Rotation {
   Rotation() : weight(0) {}
 };
 
-struct Effect {
-  std::optional<Translation> translation;
+struct Effector {
+  std::optional<Location> location;
   std::optional<Rotation> rotation;
 };
 

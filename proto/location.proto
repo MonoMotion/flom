@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package flom.proto;
 
-message Translation {
-  oneof Translation {
+message Location {
+  oneof Location {
     Vec3 world = 1;
     Vec3 local = 2;
   }

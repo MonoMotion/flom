@@ -105,16 +105,16 @@ Motion Motion::Impl::from_protobuf(proto::Motion const& motion_proto) {
   std::copy(std::cbegin(initial_positions_proto), std::cend(initial_positions_proto), std::inserter(m.impl->initial_positions, std::end(m.impl->initial_positions)));
   double t_sum = 0;
   for(auto const& frame_proto : motion_proto.frames()) {
-    t_sum += frame_proto.duration();
+    t_sum += frame_proto.t();
     auto& frame = m.impl->raw_frames[t_sum];
-    auto const& changes_proto = frame_proto.changes();
-    std::copy(std::cbegin(changes_proto), std::cend(changes_proto), std::inserter(frame.changes, std::end(frame.changes)));
-    auto const& effects_proto = frame_proto.effects();
-    std::transform(std::cbegin(effects_proto), std::cend(effects_proto), std::inserter(frame.effects, std::end(frame.effects)), [](auto const& p) {
+    auto const& positions_proto = frame_proto.positions();
+    std::copy(std::cbegin(positions_proto), std::cend(positions_proto), std::inserter(frame.positions, std::end(frame.positions)));
+    auto const& effectors_proto = frame_proto.effectors();
+    std::transform(std::cbegin(effectors_proto), std::cend(effectors_proto), std::inserter(frame.effectors, std::end(frame.effectors)), [](auto const& p) {
         auto const& effect_proto = p.second;
-        Effect e;
-        if (effect_proto.has_translation()) {
-          e.translation = proto_util::unpack_translation(effect_proto.translation().value());
+        Effector e;
+        if (effect_proto.has_location()) {
+          e.location = proto_util::unpack_location(effect_proto.location().value());
         }
         if (effect_proto.has_rotation()) {
           e.rotation = proto_util::unpack_rotation(effect_proto.rotation().value());
@@ -160,21 +160,21 @@ proto::Motion Motion::Impl::to_protobuf() const {
   double last_t;
   for(auto const& [t, frame] : this->raw_frames) {
     auto* frame_proto = m.add_frames();
-    frame_proto->set_duration(t - last_t);
+    frame_proto->set_t(t - last_t);
     last_t = t;
     // TODO: Use <algorithm> (e.g. std::copy)
-    for (auto const& [joint, change] : frame.changes) {
-      (*frame_proto->mutable_changes())[joint] = change;
+    for (auto const& [joint, change] : frame.positions) {
+      (*frame_proto->mutable_positions())[joint] = change;
     }
-    for (auto const& [link, effect] : frame.effects) {
-        proto::Effect e;
-        if (effect.translation) {
-          proto_util::pack_translation(*effect.translation, e.mutable_translation()->mutable_value());
+    for (auto const& [link, effect] : frame.effectors) {
+        proto::Effector e;
+        if (effect.location) {
+          proto_util::pack_location(*effect.location, e.mutable_location()->mutable_value());
         }
         if (effect.rotation) {
           proto_util::pack_rotation(*effect.rotation, e.mutable_rotation()->mutable_value());
         }
-        (*frame_proto->mutable_effects())[link] = e;
+        (*frame_proto->mutable_effectors())[link] = e;
     }
   }
 
@@ -208,22 +208,22 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
       }
     }
     std::unordered_map<std::string, double> last_positions (std::cbegin(m.impl->initial_positions), std::cend(m.impl->initial_positions));
-    std::unordered_map<std::string, Effect> last_effects;
+    std::unordered_map<std::string, Effector> last_effectors;
     for(auto const& frame : frames) {
       Frame f;
-      const double duration = frame["timepoint"];
+      const double time = frame["timepoint"];
       auto const positions = frame["position"];
       // TODO: Use <algorithm> (e.g. std::copy)
       for (auto it = std::cbegin(positions); it != std::cend(positions); ++it) {
-        f.changes[it.key()] = static_cast<double>(it.value()) - last_positions.at(it.key());
+        f.positions[it.key()] = static_cast<double>(it.value()) - last_positions.at(it.key());
         last_positions[it.key()] = it.value();
       }
       auto const effectors = frame["effector"];
       for (auto it = std::cbegin(effectors); it != std::cend(effectors); ++it) {
-        Effect e;
+        Effector e;
         auto const effect_data = it.value();
         if (effect_data.count("location") != 0) {
-          Translation trans;
+          Location trans;
           auto const trans_data = effect_data["location"];
           auto const& value = trans_data["value"];
           if (trans_data["space"] == "world") {
@@ -233,7 +233,7 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
           }
           trans.vec = boost::qvm::vec<double, 3>{ value[0], value[1], value[2] };
           trans.weight = trans_data["weight"];
-          e.translation = std::move(trans);
+          e.location = std::move(trans);
         }
 
         if (effect_data.count("rotation") != 0) {
@@ -250,21 +250,21 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
           e.rotation = std::move(rot);
         }
 
-        if (last_effects.count(it.key()) != 0) {
-          // Don't define operator- for Effect,
+        if (last_effectors.count(it.key()) != 0) {
+          // Don't define operator- for Effector,
           // Because that would only be used here
-          auto const& last = last_effects.at(it.key());
-          auto& new_effect = f.effects[it.key()];
-          assert(static_cast<bool>(last.translation) == static_cast<bool>(e.translation));
+          auto const& last = last_effectors.at(it.key());
+          auto& new_effect = f.effectors[it.key()];
+          assert(static_cast<bool>(last.location) == static_cast<bool>(e.location));
           assert(static_cast<bool>(last.rotation) == static_cast<bool>(e.rotation));
-          if (last.translation && e.translation) {
-            assert(last.translation->weight == e.translation->weight);
-            assert(last.translation->coord_system == e.translation->coord_system);
-            Translation trans;
-            trans.weight = e.translation->weight;
-            trans.coord_system = e.translation->coord_system;
-            trans.vec = e.translation->vec - last.translation->vec;
-            new_effect.translation = trans;
+          if (last.location && e.location) {
+            assert(last.location->weight == e.location->weight);
+            assert(last.location->coord_system == e.location->coord_system);
+            Location trans;
+            trans.weight = e.location->weight;
+            trans.coord_system = e.location->coord_system;
+            trans.vec = e.location->vec - last.location->vec;
+            new_effect.location = trans;
           }
           if (last.rotation && e.rotation) {
             assert(last.rotation->weight == e.rotation->weight);
@@ -276,12 +276,12 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
             new_effect.rotation = rot;
           }
         } else {
-          f.effects[it.key()] = e;
+          f.effectors[it.key()] = e;
         }
 
-        last_effects[it.key()] = e;
+        last_effectors[it.key()] = e;
       }
-      m.impl->raw_frames[duration] = std::move(f);
+      m.impl->raw_frames[time] = std::move(f);
     }
   }
   // copy occurs...
@@ -325,8 +325,8 @@ void pack_vec3(boost::qvm::vec<double, 3> const& vec, proto::Vec3* v_proto) {
   v_proto->set_z(boost::qvm::Z(vec));
 }
 
-Translation unpack_translation(proto::Translation const& trans_proto) {
-  Translation trans;
+Location unpack_location(proto::Location const& trans_proto) {
+  Location trans;
   if (trans_proto.has_world()) {
     trans.coord_system = CoordinateSystem::World;
     trans.vec = unpack_vec3(trans_proto.world());
@@ -338,7 +338,7 @@ Translation unpack_translation(proto::Translation const& trans_proto) {
   return std::move(trans);
 }
 
-void pack_translation(Translation const& trans, proto::Translation* trans_proto) {
+void pack_location(Location const& trans, proto::Location* trans_proto) {
   if (trans.coord_system == CoordinateSystem::World) {
     pack_vec3(trans.vec, trans_proto->mutable_world());
   } else if (trans.coord_system == CoordinateSystem::Local) {
