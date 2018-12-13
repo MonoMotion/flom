@@ -17,6 +17,9 @@
 namespace flom {
 
 Frame Motion::frame_at(double t) const {
+  if (t < 0) {
+    throw std::out_of_range("t must be positive");
+  }
   auto const [l, u] = this->raw_frames.equal_range(t);
   if (l->first == t) {
     // found a frame with exactly same time
