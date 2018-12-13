@@ -2,8 +2,12 @@
 #include "flom/interpolation.hpp"
 #include "flom/proto_util.hpp"
 
+#include <cassert>
+
 #include <boost/qvm/quat_access.hpp>
 #include <boost/qvm/vec_access.hpp>
+#include <boost/qvm/quat_operations.hpp>
+#include <boost/qvm/vec_operations.hpp>
 
 #include "nlohmann/json.hpp"
 
@@ -131,13 +135,22 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
   }
   {
     auto const frames = json_data["frames"];
-    std::transform(std::cbegin(frames), std::cend(frames), std::inserter(m.frames, std::end(m.frames)), [](auto const& frame) {
+    {
+      auto const initial_positions = frames[0]["position"];
+      for (auto it = std::cbegin(initial_positions); it != std::cend(initial_positions); ++it) {
+        m.initial_positions[it.key()] = it.value();
+      }
+    }
+    std::unordered_map<std::string, double> last_positions (std::cbegin(m.initial_positions), std::cend(m.initial_positions));
+    std::unordered_map<std::string, Effect> last_effects;
+    for(auto const& frame : frames) {
       Frame f;
       const double duration = frame["timepoint"];
       auto const positions = frame["position"];
       // TODO: Use <algorithm> (e.g. std::copy)
       for (auto it = std::cbegin(positions); it != std::cend(positions); ++it) {
-        f.changes[it.key()] = it.value();
+        f.changes[it.key()] = static_cast<double>(it.value()) - last_positions.at(it.key());
+        last_positions[it.key()] = it.value();
       }
       auto const effectors = frame["effector"];
       for (auto it = std::cbegin(effectors); it != std::cend(effectors); ++it) {
@@ -171,10 +184,39 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
           e.rotation = std::move(rot);
         }
 
-        f.effects[it.key()] = e;
+        if (last_effects.count(it.key()) != 0) {
+          // Don't define operator- for Effect,
+          // Because that would only be used here
+          auto const& last = last_effects.at(it.key());
+          auto& new_effect = f.effects[it.key()];
+          assert(static_cast<bool>(last.translation) == static_cast<bool>(e.translation));
+          assert(static_cast<bool>(last.rotation) == static_cast<bool>(e.rotation));
+          if (last.translation && e.translation) {
+            assert(last.translation->weight == e.translation->weight);
+            assert(last.translation->coord_system == e.translation->coord_system);
+            Translation trans;
+            trans.weight = e.translation->weight;
+            trans.coord_system = e.translation->coord_system;
+            trans.vec = e.translation->vec - last.translation->vec;
+            new_effect.translation = trans;
+          }
+          if (last.rotation && e.rotation) {
+            assert(last.rotation->weight == e.rotation->weight);
+            assert(last.rotation->coord_system == e.rotation->coord_system);
+            Rotation rot;
+            rot.weight = e.rotation->weight;
+            rot.coord_system = e.rotation->coord_system;
+            rot.quat = e.rotation->quat - last.rotation->quat;
+            new_effect.rotation = rot;
+          }
+        } else {
+          f.effects[it.key()] = e;
+        }
+
+        last_effects[it.key()] = e;
       }
-      return std::make_pair(duration, f);
-    });
+      m.frames[duration] = std::move(f);
+    }
   }
   return m;
 }
