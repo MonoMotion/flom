@@ -2,6 +2,7 @@
 #define FLOM_MOTION_HPP
 
 #include "flom/frame.hpp"
+#include "flom/range.hpp"
 #include "motion.pb.h"
 
 #include <string>
@@ -29,6 +30,8 @@ public:
   static Motion load_legacy_json(std::ifstream&);
 
   Frame frame_at(double t) const;
+
+  FrameRange frames(double fps) const;
 
   void dump(std::ofstream&) const;
   void dump_json(std::ofstream&) const;
