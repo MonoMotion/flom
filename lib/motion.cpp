@@ -7,7 +7,11 @@ Frame const& frame_at(double t) const {
   if (l->first == t) {
     return l->second;
   } else if (u == m.end()) {
-    // TBD
+    if (this->loop == LoopType::Wrap) {
+      return this->frame_at(t - std::next(l, -1)->first);
+    } else {
+      throw std::out_of_range("Motion is over");
+    }
   } else {
     auto const t1 = std::next(l, -1)->first;
     auto const t2 = u->first;
