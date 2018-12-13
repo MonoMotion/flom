@@ -19,16 +19,14 @@ enum class LoopType {
 struct FrameRange;
 
 class Motion {
-  std::string model_id;
-  LoopType loop;
-  std::unordered_map<std::string, double> initial_positions;
-  std::map<double, Frame> raw_frames;
-
 public:
   static Motion load(std::ifstream&);
   static Motion load_json(std::ifstream&);
   static Motion load_json_string(std::string const&);
   static Motion load_legacy_json(std::ifstream&);
+
+  Motion(Motion const&);
+  ~Motion();
 
   Frame frame_at(double t) const;
 
@@ -41,8 +39,10 @@ public:
   std::string dump_json_string() const;
 
 private:
-  static Motion from_protobuf(proto::Motion const&);
-  proto::Motion to_protobuf() const;
+  Motion();
+
+  class Impl;
+  std::unique_ptr<Impl> impl;
 };
 
 }

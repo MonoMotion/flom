@@ -16,17 +16,32 @@
 
 namespace flom {
 
+class Motion::Impl {
+public:
+  std::string model_id;
+  LoopType loop;
+  std::unordered_map<std::string, double> initial_positions;
+  std::map<double, Frame> raw_frames;
+
+  static Motion from_protobuf(proto::Motion const&);
+  proto::Motion to_protobuf() const;
+};
+
+Motion::Motion() : impl(std::make_unique<Motion::Impl>()) {}
+Motion::Motion(Motion const& m) : impl(std::make_unique<Motion::Impl>(*m.impl)) {}
+Motion::~Motion() {}
+
 Frame Motion::frame_at(double t) const {
   if (t < 0) {
     throw std::out_of_range("t must be positive");
   }
-  auto const [l, u] = this->raw_frames.equal_range(t);
+  auto const [l, u] = this->impl->raw_frames.equal_range(t);
   if (l->first == t) {
     // found a frame with exactly same time
     return l->second; // causes copy...
-  } else if (u == this->raw_frames.end()) {
+  } else if (u == this->impl->raw_frames.end()) {
     // Out of frames
-    if (this->loop == LoopType::Wrap) {
+    if (this->impl->loop == LoopType::Wrap) {
       return this->frame_at(t - std::next(l, -1)->first);
     } else {
       throw std::out_of_range("Motion is over");
@@ -46,10 +61,10 @@ FrameRange Motion::frames(double fps) const {
 }
 
 bool Motion::is_in_range_at(double t) const {
-  if (this->loop == LoopType::Wrap) {
+  if (this->impl->loop == LoopType::Wrap) {
     return true;
   } else {
-    auto const last_t = std::next(this->raw_frames.end(), -1)->first;
+    auto const last_t = std::next(this->impl->raw_frames.end(), -1)->first;
     return t <= last_t;
   }
 }
@@ -57,35 +72,35 @@ bool Motion::is_in_range_at(double t) const {
 Motion Motion::load(std::ifstream& f) {
   proto::Motion m;
   m.ParseFromIstream(&f);
-  return std::move(Motion::from_protobuf(m));
+  return Motion::Impl::from_protobuf(m);
 }
 
 Motion Motion::load_json(std::ifstream& f) {
   std::string s;
   f >> s;
-  return std::move(Motion::load_json_string(s));
+  return Motion::load_json_string(s);
 }
 
 Motion Motion::load_json_string(std::string const& s) {
   proto::Motion m;
   google::protobuf::util::JsonStringToMessage(s, &m);
-  return std::move(Motion::from_protobuf(m));
+  return Motion::Impl::from_protobuf(m);
 }
 
-Motion Motion::from_protobuf(proto::Motion const& motion_proto) {
+Motion Motion::Impl::from_protobuf(proto::Motion const& motion_proto) {
   Motion m;
-  m.model_id = motion_proto.model_id();
+  m.impl->model_id = motion_proto.model_id();
   if(motion_proto.loop() == proto::Motion::Loop::Motion_Loop_Wrap) {
-    m.loop = LoopType::Wrap;
+    m.impl->loop = LoopType::Wrap;
   } else if(motion_proto.loop() == proto::Motion::Loop::Motion_Loop_None) {
-    m.loop = LoopType::None;
+    m.impl->loop = LoopType::None;
   }
   auto const& initial_positions_proto = motion_proto.initial_positions();
-  std::copy(std::cbegin(initial_positions_proto), std::cend(initial_positions_proto), std::inserter(m.initial_positions, std::end(m.initial_positions)));
+  std::copy(std::cbegin(initial_positions_proto), std::cend(initial_positions_proto), std::inserter(m.impl->initial_positions, std::end(m.impl->initial_positions)));
   double t_sum = 0;
   for(auto const& frame_proto : motion_proto.frames()) {
     t_sum += frame_proto.duration();
-    auto& frame = m.raw_frames[t_sum];
+    auto& frame = m.impl->raw_frames[t_sum];
     auto const& changes_proto = frame_proto.changes();
     std::copy(std::cbegin(changes_proto), std::cend(changes_proto), std::inserter(frame.changes, std::end(frame.changes)));
     auto const& effects_proto = frame_proto.effects();
@@ -103,11 +118,12 @@ Motion Motion::from_protobuf(proto::Motion const& motion_proto) {
     });
   }
 
-  return std::move(m);
+  // copy occurs...
+  return m;
 }
 
 void Motion::dump(std::ofstream& f) const {
-  auto const m = this->to_protobuf();
+  auto const m = this->impl->to_protobuf();
   m.SerializeToOstream(&f);
 }
 
@@ -117,14 +133,14 @@ void Motion::dump_json(std::ofstream& f) const {
 
 std::string Motion::dump_json_string() const {
   std::string s;
-  auto const m = this->to_protobuf();
+  auto const m = this->impl->to_protobuf();
   google::protobuf::util::JsonPrintOptions opt;
   opt.always_print_primitive_fields = true;
   google::protobuf::util::MessageToJsonString(m, &s, opt);
   return std::move(s);
 }
 
-proto::Motion Motion::to_protobuf() const {
+proto::Motion Motion::Impl::to_protobuf() const {
   proto::Motion m;
   m.set_model_id(this->model_id);
   if(this->loop == LoopType::Wrap) {
@@ -166,13 +182,13 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
   s >> json_data;
 
   Motion m;
-  m.model_id = json_data["model"];
+  m.impl->model_id = json_data["model"];
   {
     auto loop_type = json_data["loop"];
     if(loop_type == "wrap") {
-      m.loop = LoopType::Wrap;
+      m.impl->loop = LoopType::Wrap;
     } else if(loop_type == "none") {
-      m.loop = LoopType::None;
+      m.impl->loop = LoopType::None;
     } else {
       throw std::runtime_error("Unknown loop type");
     }
@@ -182,10 +198,10 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
     {
       auto const initial_positions = frames[0]["position"];
       for (auto it = std::cbegin(initial_positions); it != std::cend(initial_positions); ++it) {
-        m.initial_positions[it.key()] = it.value();
+        m.impl->initial_positions[it.key()] = it.value();
       }
     }
-    std::unordered_map<std::string, double> last_positions (std::cbegin(m.initial_positions), std::cend(m.initial_positions));
+    std::unordered_map<std::string, double> last_positions (std::cbegin(m.impl->initial_positions), std::cend(m.impl->initial_positions));
     std::unordered_map<std::string, Effect> last_effects;
     for(auto const& frame : frames) {
       Frame f;
@@ -259,9 +275,10 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
 
         last_effects[it.key()] = e;
       }
-      m.raw_frames[duration] = std::move(f);
+      m.impl->raw_frames[duration] = std::move(f);
     }
   }
+  // copy occurs...
   return m;
 }
 
