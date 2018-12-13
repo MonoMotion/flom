@@ -2,11 +2,11 @@
 
 namespace flom {
 
-Frame const& frame_at(double t) const {
+Frame const& Motion::frame_at(double t) const {
   auto const [l, u] = this->frames.equal_range(t);
   if (l->first == t) {
     return l->second;
-  } else if (u == m.end()) {
+  } else if (u == this->frames.end()) {
     if (this->loop == LoopType::Wrap) {
       return this->frame_at(t - std::next(l, -1)->first);
     } else {
