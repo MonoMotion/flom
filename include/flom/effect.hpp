@@ -19,6 +19,8 @@ struct Translation {
   float weight;
   CoordinateSystem coord_system;
   qvm::vec<double, 3> vec;
+
+  Translation() : weight(0) {}
 };
 
 Translation interpolate(double t, Translation const& a, Translation const& b);
@@ -27,6 +29,8 @@ struct Rotation {
   float weight;
   CoordinateSystem coord_system;
   qvm::quat<double> quat;
+
+  Rotation() : weight(0) {}
 };
 
 Rotation interpolate(double t, Rotation const& a, Rotation const& b);
