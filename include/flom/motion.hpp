@@ -34,6 +34,8 @@ public:
 
   FrameRange frames(double fps) const;
 
+  bool is_in_range_at(double t) const;
+
   void dump(std::ofstream&) const;
   void dump_json(std::ofstream&) const;
   std::string dump_json_string() const;

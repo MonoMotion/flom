@@ -42,6 +42,15 @@ FrameRange Motion::frames(double fps) const {
   return FrameRange{*this, fps};
 }
 
+bool Motion::is_in_range_at(double t) const {
+  if (this->loop == LoopType::Wrap) {
+    return true;
+  } else {
+    auto const last_t = std::next(this->raw_frames.end(), -1)->first;
+    return t <= last_t;
+  }
+}
+
 Motion Motion::load(std::ifstream& f) {
   proto::Motion m;
   m.ParseFromIstream(&f);
