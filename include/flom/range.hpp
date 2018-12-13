@@ -37,7 +37,7 @@ private:
     Impl(Impl&&) = default;
     Impl& operator=(const Impl&) = delete;
     Impl& operator=(Impl&&) = default;
-    Impl(Motion const& motion, double fps) : fps(fps), motion(motion), next_is_end(false) {}
+    Impl(Motion const& motion, double fps) : fps(fps), t_index(0), motion(motion), next_is_end(false) {}
     value_type get() {
       return this->motion.get().frame_at(this->fps * this->t_index);
     }
