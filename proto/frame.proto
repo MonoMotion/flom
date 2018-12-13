@@ -2,26 +2,26 @@ syntax = "proto3";
 
 package flom.proto;
 
-import "translation.proto";
+import "location.proto";
 import "rotation.proto";
 
 message Frame {
-  /* duration of frame in second */
-  double duration = 1;
-  /* changes of joint positions in rad */
-  map<string, double> changes = 2;
-  /* expected effects in rotation and translation */
-  map<string, Effect> effects = 3;
+  /* time of frame in second */
+  double t = 1;
+  /* joint positions in rad */
+  map<string, double> positions = 2;
+  /* expected effectors rotation and location */
+  map<string, Effector> effectors = 3;
 }
 
-message Effect {
-  TranslationValue translation = 2;
+message Effector {
+  LocationValue location = 2;
   RotationValue rotation = 3;
 }
 
 /* wrapper to express optional value */
-message TranslationValue {
-  Translation value = 1;
+message LocationValue {
+  Location value = 1;
 }
 
 /* wrapper to express optional value */

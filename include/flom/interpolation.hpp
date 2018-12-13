@@ -6,9 +6,9 @@
 
 namespace flom {
 
-Translation interpolate(double t, Translation const& a, Translation const& b);
+Location interpolate(double t, Location const& a, Location const& b);
 Rotation interpolate(double t, Rotation const& a, Rotation const& b);
-Effect interpolate(double t, Effect const& a, Effect const& b);
+Effector interpolate(double t, Effector const& a, Effector const& b);
 Frame interpolate(double t, Frame const& a, Frame const& b);
 
 template<typename T>

@@ -43,9 +43,6 @@ public:
   std::string model_id() const;
   void set_model_id(std::string const&);
 
-  std::unordered_map<std::string, double> const& initial_positions() const;
-  std::unordered_map<std::string, double>& initial_positions();
-
 private:
   Motion();
 
