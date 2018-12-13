@@ -10,8 +10,14 @@ namespace flom {
 
 namespace qvm = boost::qvm;
 
+enum class CoordinateSystem {
+  World,
+  Local,
+};
+
 struct Translation {
   float weight;
+  CoordinateSystem coord_system;
   qvm::vec<double, 3> vec;
 };
 
@@ -19,6 +25,7 @@ Translation interpolate(double t, Translation const& a, Translation const& b);
 
 struct Rotation {
   float weight;
+  CoordinateSystem coord_system;
   qvm::quat<double> quat;
 };
 
