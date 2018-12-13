@@ -5,5 +5,6 @@
 #include "flom/frame.hpp"
 #include "flom/effect.hpp"
 #include "flom/interpolation.hpp"
+#include "flom/range.hpp"
 
 #endif
