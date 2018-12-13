@@ -6,6 +6,7 @@
 
 #include <string>
 #include <map>
+#include <unordered_map>
 #include <fstream>
 
 namespace flom {
@@ -18,6 +19,7 @@ enum class LoopType {
 class Motion {
   std::string model_id;
   LoopType loop;
+  std::unordered_map<std::string, double> initial_positions;
   std::map<double, Frame> frames;
 
 public:
