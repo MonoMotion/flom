@@ -16,11 +16,13 @@ enum class LoopType {
   Wrap
 };
 
+struct FrameRange;
+
 class Motion {
   std::string model_id;
   LoopType loop;
   std::unordered_map<std::string, double> initial_positions;
-  std::map<double, Frame> frames;
+  std::map<double, Frame> raw_frames;
 
 public:
   static Motion load(std::ifstream&);
@@ -29,6 +31,10 @@ public:
   static Motion load_legacy_json(std::ifstream&);
 
   Frame frame_at(double t) const;
+
+  FrameRange frames(double fps) const;
+
+  bool is_in_range_at(double t) const;
 
   void dump(std::ofstream&) const;
   void dump_json(std::ofstream&) const;
