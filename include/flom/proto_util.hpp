@@ -1,6 +1,11 @@
 #ifndef FLOM_PROTO_UTIL_HPP
 #define FLOM_PROTO_UTIL_HPP
 
+#include "motion.pb.h"
+#include "frame.pb.h"
+#include "rotation.pb.h"
+#include "translation.pb.h"
+
 namespace flom::proto_util {
 
 void pack_vec3(boost::qvm::vec<double, 3> const&, proto::Vec3*);

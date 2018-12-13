@@ -3,6 +3,12 @@
 #include "flom/proto_util.hpp"
 #include "flom/range.hpp"
 
+#include "motion.pb.h"
+
+#include <string>
+#include <map>
+#include <unordered_map>
+#include <fstream>
 #include <cassert>
 
 #include <boost/qvm/quat_access.hpp>

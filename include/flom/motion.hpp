@@ -2,12 +2,10 @@
 #define FLOM_MOTION_HPP
 
 #include "flom/frame.hpp"
-#include "motion.pb.h"
 
 #include <string>
-#include <map>
-#include <unordered_map>
 #include <fstream>
+#include <memory>
 
 namespace flom {
 
