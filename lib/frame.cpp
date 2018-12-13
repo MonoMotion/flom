@@ -16,4 +16,28 @@ Frame interpolate(double t, Frame const& a, Frame const& b) {
   return std::move(f);
 }
 
+Frame& Frame::operator+=(const Frame& x) {
+  for(auto&& [k, v1] : this->positions) {
+    auto const& v2 = x.positions.at(k);
+    v1 += v2;
+  }
+  for(auto&& [k, v1] : this->effectors) {
+    auto const& v2 = x.effectors.at(k);
+    v1 += v2;
+  }
+  return *this;
+}
+
+Frame& Frame::operator-=(const Frame& x) {
+  for(auto&& [k, v1] : this->positions) {
+    auto const& v2 = x.positions.at(k);
+    v1 -= v2;
+  }
+  for(auto&& [k, v1] : this->effectors) {
+    auto const& v2 = x.effectors.at(k);
+    v1 -= v2;
+  }
+  return *this;
+}
+
 }

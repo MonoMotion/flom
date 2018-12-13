@@ -33,6 +33,26 @@ Location interpolate(double t, Location const& a, Location const& b) {
   return std::move(result);
 }
 
+Effector& Effector::operator+=(const Effector& x) {
+  if (this->location && x.location) {
+    this->location->vec += x.location->vec;
+  }
+  if (this->rotation && x.rotation) {
+    this->rotation->quat += x.rotation->quat;
+  }
+  return *this;
+}
+
+Effector& Effector::operator-=(const Effector& x) {
+  if (this->location && x.location) {
+    this->location->vec += x.location->vec;
+  }
+  if (this->rotation && x.rotation) {
+    this->rotation->quat += x.rotation->quat;
+  }
+  return *this;
+}
+
 }
 
 
