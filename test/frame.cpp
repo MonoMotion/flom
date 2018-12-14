@@ -5,6 +5,7 @@
 #include <rapidcheck/boost_test.h>
 
 #include <flom/frame.hpp>
+#include <flom/interpolation.hpp>
 
 #include "generators.hpp"
 #include "printers.hpp"
@@ -49,10 +50,12 @@ RC_BOOST_PROP(interpolation, (const flom::Frame &f1)) {
   auto f2 = f1;
   auto const f3 = flom::interpolate(t, f1, f2);
   for (auto &&[key, val] : f3.positions) {
-    RC_ASSERT(val == flom::interpolate(t, f1.positions.at(key), f2.positions.at(key)));
+    RC_ASSERT(val ==
+              flom::interpolate(t, f1.positions.at(key), f2.positions.at(key)));
   }
   for (auto &&[key, val] : f3.effectors) {
-    RC_ASSERT(val == flom::interpolate(t, f1.effectors.at(key), f2.effectors.at(key)));
+    RC_ASSERT(val ==
+              flom::interpolate(t, f1.effectors.at(key), f2.effectors.at(key)));
   }
 }
 
