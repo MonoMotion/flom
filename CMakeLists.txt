@@ -27,6 +27,7 @@ include_directories(${PROTO_INCLUDE_DIR})
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(third_party/nlohmann_json)
 add_subdirectory(third_party/rapidcheck)
+include_directories(third_party/rapidcheck/extras/boost_test/include)
 
 include(cmake/clang-format.cmake)
 include(cmake/clang-tidy.cmake)

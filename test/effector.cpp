@@ -1,7 +1,9 @@
-#include <rapidcheck.h>
+#define BOOST_TEST_MAIN
+#include <boost/test/included/unit_test.hpp>
 
-#include <flom/effector.hpp>
+#include <rapidcheck/boost_test.h>
 
-int main() {
-  rc::check("Effector test", [](const flom::Effector &) { return true; });
+BOOST_AUTO_TEST_CASE(test1) {
+  const int x = 1;
+  BOOST_CHECK(x == 1);
 }
