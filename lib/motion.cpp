@@ -28,11 +28,17 @@ public:
   LoopType loop;
   std::map<double, Frame> raw_frames;
 
+  Impl()
+    : model_id(), loop(LoopType::None), raw_frames() {}
+  Impl(std::string const& model)
+    : model_id(model), loop(LoopType::None), raw_frames() {}
+
   static Motion from_protobuf(proto::Motion const&);
   proto::Motion to_protobuf() const;
 };
 
 Motion::Motion() : impl(std::make_unique<Motion::Impl>()) {}
+Motion::Motion(std::string const& model) : impl(std::make_unique<Motion::Impl>(model)) {}
 Motion::Motion(Motion const& m) : impl(std::make_unique<Motion::Impl>(*m.impl)) {}
 Motion::~Motion() {}
 
@@ -127,6 +133,10 @@ Motion Motion::Impl::from_protobuf(proto::Motion const& motion_proto) {
 
   // copy occurs...
   return m;
+}
+
+Frame& Motion::get_or_insert_frame(double t) {
+  return this->impl->raw_frames[t];
 }
 
 void Motion::dump(std::ofstream& f) const {

@@ -24,6 +24,10 @@ public:
   static Motion load_json_string(std::string const&);
   static Motion load_legacy_json(std::ifstream&);
 
+  Motion();
+  // With model name
+  Motion(std::string const&);
+
   Motion(Motion const&);
   ~Motion();
 
@@ -43,9 +47,9 @@ public:
   std::string model_id() const;
   void set_model_id(std::string const&);
 
-private:
-  Motion();
+  Frame& get_or_insert_frame(double t);
 
+private:
   class Impl;
   std::unique_ptr<Impl> impl;
 };
