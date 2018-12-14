@@ -107,18 +107,29 @@ template <> struct Arbitrary<flom::Frame> {
 template <> struct Arbitrary<flom::Motion> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
-        [](std::string const &model_id, flom::LoopType loop,
-           auto const &frames) {
+        [](std::string const &model_id, flom::LoopType loop, double fps, unsigned length,
+           auto const &joint_names, auto const& effector_names) {
           flom::Motion m(model_id);
           m.set_loop(loop);
-          for (auto const &[t, f] : frames) {
-            m.get_or_insert_frame(t) = f;
+          for(unsigned i = 0; i < length; ++i) {
+            auto& f = m.get_or_insert_frame(i * fps);
+            std::transform(std::cbegin(joint_names), std::cend(joint_names), std::inserter(f.positions, std::end(f.positions)), [](auto&& n) {
+                const double p = static_cast<double>(*gen::inRange(-157, 157)) / 100;
+                return std::make_pair(n, p);
+            });
+            std::transform(std::cbegin(effector_names), std::cend(effector_names), std::inserter(f.effectors, std::end(f.effectors)), [](auto&& n) {
+                auto const e = *gen::arbitrary<flom::Effector>();
+                return std::make_pair(n, e);
+            });
           }
           return m;
         },
         gen::arbitrary<std::string>(),
         gen::element(flom::LoopType::None, flom::LoopType::Wrap),
-        gen::arbitrary<std::unordered_map<double, flom::Frame>>());
+        gen::arbitrary<double>(),
+        gen::arbitrary<unsigned>(),
+        gen::arbitrary<std::vector<std::string>>(),
+        gen::arbitrary<std::vector<std::string>>());
   }
 };
 
