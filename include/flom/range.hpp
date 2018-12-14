@@ -50,7 +50,7 @@ private:
   bool is_end_iterator;
 
 public:
-  constexpr frame_iterator() noexcept : pimpl(), is_end_iterator(true){};
+  constexpr frame_iterator() noexcept : pimpl(), is_end_iterator(true) {}
   frame_iterator(const frame_iterator &) = delete;
   frame_iterator(frame_iterator &&) = default;
   frame_iterator &operator=(const frame_iterator &) = delete;
