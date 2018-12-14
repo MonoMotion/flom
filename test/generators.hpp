@@ -28,14 +28,14 @@ template <> struct Arbitrary<boost::qvm::quat<double>> {
     return gen::apply(
         [](int x, int y, int z) {
           auto q = boost::qvm::quat<double>();
-          boost::qvm::set_rotx(q, x / 100);
-          boost::qvm::set_roty(q, y / 100);
-          boost::qvm::set_rotz(q, z / 100);
+          boost::qvm::set_rotx(q, static_cast<double>(x) / 100);
+          boost::qvm::set_roty(q, static_cast<double>(y) / 100);
+          boost::qvm::set_rotz(q, static_cast<double>(z) / 100);
           return q;
         },
         gen::inRange(-157, 157), gen::inRange(-157, 157),
         gen::inRange(-157, 157));
-  }
+  };
 };
 
 template <> struct Arbitrary<flom::Location> {
@@ -44,7 +44,7 @@ template <> struct Arbitrary<flom::Location> {
         [](unsigned weight, flom::CoordinateSystem c,
            boost::qvm::vec<double, 3> const &v) {
           flom::Location l;
-          l.weight = weight / 100;
+          l.weight = static_cast<double>(weight) / 100;
           l.coord_system = c;
           l.vec = v;
           return l;
@@ -62,7 +62,7 @@ template <> struct Arbitrary<flom::Rotation> {
         [](unsigned weight, flom::CoordinateSystem c,
            boost::qvm::quat<double> const &q) {
           flom::Rotation r;
-          r.weight = weight / 100;
+          r.weight = static_cast<double>(weight) / 100;
           r.coord_system = c;
           r.quat = q;
           return r;
