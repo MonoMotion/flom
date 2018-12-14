@@ -10,6 +10,7 @@
 
 #include <flom/effector.hpp>
 #include <flom/frame.hpp>
+#include <flom/motion.hpp>
 
 #include <unordered_map>
 
@@ -101,6 +102,24 @@ template <> struct Arbitrary<flom::Frame> {
         gen::set(
             &flom::Frame::effectors,
             gen::arbitrary<std::unordered_map<std::string, flom::Effector>>()));
+  }
+};
+
+template <> struct Arbitrary<flom::Motion> {
+  static auto arbitrary() -> decltype(auto) {
+    return gen::apply(
+        [](std::string const &model_id, flom::LoopType loop,
+           auto const &frames) {
+          flom::Motion m(model_id);
+          m.set_loop(loop);
+          for (auto const &[t, f] : frames) {
+            m.get_or_insert_frame(t) = f;
+          }
+          return m;
+        },
+        gen::arbitrary<std::string>(),
+        gen::element(flom::LoopType::None, flom::LoopType::Wrap),
+        gen::arbitrary<std::unordered_map<double, flom::Frame>>());
   }
 };
 
