@@ -9,6 +9,9 @@
 #include <rapidcheck/boost_test.h>
 
 #include <flom/effector.hpp>
+#include <flom/frame.hpp>
+
+#include <unordered_map>
 
 namespace rc {
 
@@ -68,6 +71,36 @@ template <> struct Arbitrary<flom::Rotation> {
         gen::element(flom::CoordinateSystem::World,
                      flom::CoordinateSystem::Local),
         gen::arbitrary<boost::qvm::quat<double>>());
+  }
+};
+
+template <> struct Arbitrary<flom::Effector> {
+  static auto arbitrary() -> decltype(auto) {
+    return gen::apply(
+        [](Maybe<flom::Location> const &l, Maybe<flom::Rotation> const &r) {
+          flom::Effector e;
+          if (l) {
+            e.location = *l;
+          }
+          if (r) {
+            e.rotation = *r;
+          }
+          return e;
+        },
+        gen::maybe(gen::arbitrary<flom::Location>()),
+        gen::maybe(gen::arbitrary<flom::Rotation>()));
+  }
+};
+
+template <> struct Arbitrary<flom::Frame> {
+  static auto arbitrary() -> decltype(auto) {
+    return gen::build(
+        gen::construct<flom::Frame>(),
+        gen::set(&flom::Frame::positions,
+                 gen::arbitrary<std::unordered_map<std::string, double>>()),
+        gen::set(
+            &flom::Frame::effectors,
+            gen::arbitrary<std::unordered_map<std::string, flom::Effector>>()));
   }
 };
 
