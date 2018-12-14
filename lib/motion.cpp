@@ -29,7 +29,7 @@ Frame Motion::frame_at(double t) const {
     if (this->impl->loop == LoopType::Wrap) {
       auto const &last = std::next(l, -1);
       auto const motion_length = last->first;
-      unsigned const skip_episode = t / motion_length;
+      auto const skip_episode = static_cast<unsigned>(t / motion_length);
       auto const trailing_t = t - skip_episode * motion_length;
       return this->frame_at(trailing_t) + last->second * skip_episode;
     } else {
