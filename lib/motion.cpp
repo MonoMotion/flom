@@ -135,6 +135,10 @@ Motion Motion::Impl::from_protobuf(proto::Motion const& motion_proto) {
   return m;
 }
 
+Frame& Motion::get_or_insert_frame(double t) {
+  return this->impl->raw_frames[t];
+}
+
 void Motion::dump(std::ofstream& f) const {
   auto const m = this->impl->to_protobuf();
   m.SerializeToOstream(&f);
