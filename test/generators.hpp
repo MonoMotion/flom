@@ -127,16 +127,15 @@ template <> struct Arbitrary<flom::Motion> {
             gen::arbitrary<std::vector<std::string>>()
           ),
           [] (auto const& t) {
-            auto j = gen::exec([&t]() {
-              auto const& [joints, effectors] = t;
+            auto const& [joints, effectors] = t;
+            auto j = gen::exec([&joints = joints]() {
               std::unordered_map<std::string, double> nj;
               std::transform(std::cbegin(joints), std::cend(joints), std::inserter(nj, std::end(nj)), [](auto&& j) {
                   return std::make_pair(j, *gen::arbitrary<double>());
               });
               return nj;
             });
-            auto e = gen::exec([&t]() {
-              auto const& [joints, effectors] = t;
+            auto e = gen::exec([&effectors = effectors]() {
               std::unordered_map<std::string, flom::Effector> nj;
               std::transform(std::cbegin(effectors), std::cend(effectors), std::inserter(nj, std::end(nj)), [](auto&& j) {
                   return std::make_pair(j, *gen::arbitrary<flom::Effector>());
