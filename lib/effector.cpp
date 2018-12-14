@@ -8,7 +8,7 @@
 
 namespace flom {
 
-Effector interpolate(double t, Effector const& a, Effector const& b) {
+Effector interpolate(double t, Effector const &a, Effector const &b) {
   Effector e;
   if (a.rotation && b.rotation) {
     e.rotation = interpolate(t, *a.rotation, *b.rotation);
@@ -16,24 +16,24 @@ Effector interpolate(double t, Effector const& a, Effector const& b) {
   if (a.location && b.location) {
     e.location = interpolate(t, *a.location, *b.location);
   }
-  return std::move(e);
+  return e;
 }
 
-Rotation interpolate(double t, Rotation const& a, Rotation const& b) {
+Rotation interpolate(double t, Rotation const &a, Rotation const &b) {
   Rotation result;
   result.quat = qvm::slerp(a.quat, b.quat, t);
   result.weight = lerp(t, a.weight, b.weight);
-  return std::move(result);
+  return result;
 }
 
-Location interpolate(double t, Location const& a, Location const& b) {
+Location interpolate(double t, Location const &a, Location const &b) {
   Location result;
   result.vec = lerp(t, a.vec, b.vec);
   result.weight = lerp(t, a.weight, b.weight);
-  return std::move(result);
+  return result;
 }
 
-Effector& Effector::operator+=(const Effector& x) {
+Effector &Effector::operator+=(const Effector &x) {
   if (this->location && x.location) {
     this->location->vec += x.location->vec;
   }
@@ -43,7 +43,7 @@ Effector& Effector::operator+=(const Effector& x) {
   return *this;
 }
 
-Effector& Effector::operator-=(const Effector& x) {
+Effector &Effector::operator-=(const Effector &x) {
   if (this->location && x.location) {
     this->location->vec += x.location->vec;
   }
@@ -53,6 +53,4 @@ Effector& Effector::operator-=(const Effector& x) {
   return *this;
 }
 
-}
-
-
+} // namespace flom

@@ -1,7 +1,7 @@
 #include "flom/motion.hpp"
 #include "flom/interpolation.hpp"
-#include "flom/range.hpp"
 #include "flom/motion.impl.hpp"
+#include "flom/range.hpp"
 
 #include "motion.pb.h"
 
@@ -10,8 +10,10 @@
 namespace flom {
 
 Motion::Motion() : impl(std::make_unique<Motion::Impl>()) {}
-Motion::Motion(std::string const& model) : impl(std::make_unique<Motion::Impl>(model)) {}
-Motion::Motion(Motion const& m) : impl(std::make_unique<Motion::Impl>(*m.impl)) {}
+Motion::Motion(std::string const &model)
+    : impl(std::make_unique<Motion::Impl>(model)) {}
+Motion::Motion(Motion const &m)
+    : impl(std::make_unique<Motion::Impl>(*m.impl)) {}
 Motion::~Motion() {}
 
 Frame Motion::frame_at(double t) const {
@@ -25,7 +27,7 @@ Frame Motion::frame_at(double t) const {
   } else if (u == this->impl->raw_frames.end()) {
     // Out of frames
     if (this->impl->loop == LoopType::Wrap) {
-      auto const& last = std::next(l, -1);
+      auto const &last = std::next(l, -1);
       auto const motion_length = last->first;
       unsigned const skip_episode = t / motion_length;
       auto const trailing_t = t - skip_episode * motion_length;
@@ -37,15 +39,13 @@ Frame Motion::frame_at(double t) const {
     // Between two frames -> interpolate
     auto const t1 = std::next(l, -1)->first;
     auto const t2 = u->first;
-    auto const& f1 = std::next(l, -1)->second;
-    auto const& f2 = u->second;
-    return std::move(interpolate((t - t1) / (t2 - t1), f1, f2));
+    auto const &f1 = std::next(l, -1)->second;
+    auto const &f2 = u->second;
+    return interpolate((t - t1) / (t2 - t1), f1, f2);
   }
 }
 
-FrameRange Motion::frames(double fps) const {
-  return FrameRange{*this, fps};
-}
+FrameRange Motion::frames(double fps) const { return FrameRange{*this, fps}; }
 
 bool Motion::is_in_range_at(double t) const {
   if (this->impl->loop == LoopType::Wrap) {
@@ -56,24 +56,18 @@ bool Motion::is_in_range_at(double t) const {
   }
 }
 
-Frame& Motion::get_or_insert_frame(double t) {
+Frame &Motion::get_or_insert_frame(double t) {
   return this->impl->raw_frames[t];
 }
 
-LoopType Motion::loop() const {
-  return this->impl->loop;
-}
+LoopType Motion::loop() const { return this->impl->loop; }
 
-void Motion::set_loop(LoopType loop) {
-  this->impl->loop = loop;
-}
+void Motion::set_loop(LoopType loop) { this->impl->loop = loop; }
 
-std::string Motion::model_id() const {
-  return this->impl->model_id;
-}
+std::string Motion::model_id() const { return this->impl->model_id; }
 
-void Motion::set_model_id(std::string const& model_id) {
+void Motion::set_model_id(std::string const &model_id) {
   this->impl->model_id = model_id;
 }
 
-}
+} // namespace flom

@@ -39,6 +39,10 @@ include_directories(${PROTO_INCLUDE_DIR})
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(third_party/nlohmann_json)
 
+include(cmake/clang-format.cmake)
+include(cmake/clang-tidy.cmake)
+
+add_subdirectory(include/)
 include_directories(include/)
 
 add_subdirectory(lib)

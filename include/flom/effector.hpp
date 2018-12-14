@@ -4,12 +4,11 @@
 #include <optional>
 #include <type_traits>
 
-#include <boost/qvm/quat.hpp>
-#include <boost/qvm/vec.hpp>
-#include <boost/qvm/quat_operations.hpp>
-#include <boost/qvm/vec_operations.hpp>
 #include <boost/operators.hpp>
-
+#include <boost/qvm/quat.hpp>
+#include <boost/qvm/quat_operations.hpp>
+#include <boost/qvm/vec.hpp>
+#include <boost/qvm/vec_operations.hpp>
 
 namespace flom {
 
@@ -40,11 +39,11 @@ struct Effector : boost::operators<Effector> {
   std::optional<Location> location;
   std::optional<Rotation> rotation;
 
-  Effector& operator+=(const Effector& x);
-  Effector& operator-=(const Effector& x);
+  Effector &operator+=(const Effector &x);
+  Effector &operator-=(const Effector &x);
 
-  template<typename T, std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-  Effector& operator*=(T x) {
+  template <typename T, std::enable_if_t<std::is_arithmetic_v<T>> * = nullptr>
+  Effector &operator*=(T x) {
     if (this->location) {
       this->location->vec *= x;
     }
@@ -55,9 +54,11 @@ struct Effector : boost::operators<Effector> {
   }
 };
 
-template<typename T, std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-Effector operator*(const Effector& t1, T t2) { return Effector(t1) *= t2; }
-
+template <typename T, std::enable_if_t<std::is_arithmetic_v<T>> * = nullptr>
+Effector operator*(const Effector &t1, T t2) {
+  return Effector(t1) *= t2;
 }
+
+} // namespace flom
 
 #endif
