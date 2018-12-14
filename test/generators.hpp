@@ -131,7 +131,7 @@ template <> struct Arbitrary<flom::Motion> {
             auto j = gen::exec([&joints = joints]() {
               std::unordered_map<std::string, double> nj;
               std::transform(std::cbegin(joints), std::cend(joints), std::inserter(nj, std::end(nj)), [](auto&& j) {
-                  return std::make_pair(j, *gen::arbitrary<double>());
+                  return std::make_pair(j, static_cast<double>(*gen::inRange(-157, 157)) / 100);
               });
               return nj;
             });
