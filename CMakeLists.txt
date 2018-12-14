@@ -32,6 +32,7 @@ include_directories(third_party/rapidcheck/extras/boost_test/include)
 include(cmake/clang-format.cmake)
 include(cmake/clang-tidy.cmake)
 include(cmake/compile-options.cmake)
+include(cmake/test.cmake)
 
 add_subdirectory(include/)
 include_directories(include/)
