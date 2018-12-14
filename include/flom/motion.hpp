@@ -12,7 +12,7 @@ namespace flom {
 
 enum class LoopType { None, Wrap };
 
-struct FrameRange;
+class FrameRange;
 
 class Motion {
 public:
