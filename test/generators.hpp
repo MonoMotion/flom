@@ -107,29 +107,45 @@ template <> struct Arbitrary<flom::Frame> {
 template <> struct Arbitrary<flom::Motion> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
-        [](std::string const &model_id, flom::LoopType loop, double fps, unsigned length,
-           auto const &joint_names, auto const& effector_names) {
+        [](std::string const &model_id, flom::LoopType loop, double fps, auto const& frames) {
           flom::Motion m(model_id);
           m.set_loop(loop);
-          for(unsigned i = 0; i < length; ++i) {
-            auto& f = m.get_or_insert_frame(i * fps);
-            std::transform(std::cbegin(joint_names), std::cend(joint_names), std::inserter(f.positions, std::end(f.positions)), [](auto&& n) {
-                const double p = static_cast<double>(*gen::inRange(-157, 157)) / 100;
-                return std::make_pair(n, p);
-            });
-            std::transform(std::cbegin(effector_names), std::cend(effector_names), std::inserter(f.effectors, std::end(f.effectors)), [](auto&& n) {
-                auto const e = *gen::arbitrary<flom::Effector>();
-                return std::make_pair(n, e);
-            });
+          unsigned i = 0;
+          for (auto const& [p, e] : frames) {
+            auto& f = m.get_or_insert_frame(i++ * fps);
+            std::copy(std::cbegin(p), std::cend(p), std::inserter(f.positions, std::end(f.positions)));
+            std::copy(std::cbegin(e), std::cend(e), std::inserter(f.effectors, std::end(f.effectors)));
           }
           return m;
         },
         gen::arbitrary<std::string>(),
         gen::element(flom::LoopType::None, flom::LoopType::Wrap),
         gen::arbitrary<double>(),
-        gen::arbitrary<unsigned>(),
-        gen::arbitrary<std::vector<std::string>>(),
-        gen::arbitrary<std::vector<std::string>>());
+        gen::mapcat(
+           gen::pair(
+            gen::arbitrary<std::vector<std::string>>(),
+            gen::arbitrary<std::vector<std::string>>()
+          ),
+          [] (auto const& t) {
+            auto j = gen::exec([&t]() {
+              auto const& [joints, effectors] = t;
+              std::unordered_map<std::string, double> nj;
+              std::transform(std::cbegin(joints), std::cend(joints), std::inserter(nj, std::end(nj)), [](auto&& j) {
+                  return std::make_pair(j, *gen::arbitrary<double>());
+              });
+              return nj;
+            });
+            auto e = gen::exec([&t]() {
+              auto const& [joints, effectors] = t;
+              std::unordered_map<std::string, flom::Effector> nj;
+              std::transform(std::cbegin(effectors), std::cend(effectors), std::inserter(nj, std::end(nj)), [](auto&& j) {
+                  return std::make_pair(j, *gen::arbitrary<flom::Effector>());
+              });
+              return nj;
+            });
+            return gen::container<std::vector<std::pair<std::unordered_map<std::string, double>, std::unordered_map<std::string, flom::Effector>>>>(gen::pair(j, e));
+          }
+        ));
   }
 };
 
