@@ -8,6 +8,8 @@
 #include <rapidcheck.h>
 #include <rapidcheck/boost_test.h>
 
+#include <flom/effector.hpp>
+
 namespace rc {
 
 template <> struct Arbitrary<boost::qvm::vec<double, 3>> {
@@ -30,6 +32,42 @@ template <> struct Arbitrary<boost::qvm::quat<double>> {
         },
         gen::inRange(-157, 157), gen::inRange(-157, 157),
         gen::inRange(-157, 157));
+  }
+};
+
+template <> struct Arbitrary<flom::Location> {
+  static auto arbitrary() -> decltype(auto) {
+    return gen::apply(
+        [](unsigned weight, flom::CoordinateSystem c,
+           boost::qvm::vec<double, 3> const &v) {
+          flom::Location l;
+          l.weight = weight / 100;
+          l.coord_system = c;
+          l.vec = v;
+          return l;
+        },
+        gen::inRange<unsigned>(0, 100),
+        gen::element(flom::CoordinateSystem::World,
+                     flom::CoordinateSystem::Local),
+        gen::arbitrary<boost::qvm::vec<double, 3>>());
+  }
+};
+
+template <> struct Arbitrary<flom::Rotation> {
+  static auto arbitrary() -> decltype(auto) {
+    return gen::apply(
+        [](unsigned weight, flom::CoordinateSystem c,
+           boost::qvm::quat<double> const &q) {
+          flom::Rotation r;
+          r.weight = weight / 100;
+          r.coord_system = c;
+          r.quat = q;
+          return r;
+        },
+        gen::inRange<unsigned>(0, 100),
+        gen::element(flom::CoordinateSystem::World,
+                     flom::CoordinateSystem::Local),
+        gen::arbitrary<boost::qvm::quat<double>>());
   }
 };
 
