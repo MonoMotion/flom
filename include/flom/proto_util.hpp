@@ -1,10 +1,15 @@
 #ifndef FLOM_PROTO_UTIL_HPP
 #define FLOM_PROTO_UTIL_HPP
 
+#include "flom/effector.hpp"
+
 #include "motion.pb.h"
 #include "frame.pb.h"
 #include "rotation.pb.h"
 #include "location.pb.h"
+
+#include <boost/qvm/quat.hpp>
+#include <boost/qvm/vec.hpp>
 
 namespace flom::proto_util {
 
