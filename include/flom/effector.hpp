@@ -19,7 +19,7 @@ enum class CoordinateSystem {
   Local,
 };
 
-struct Location {
+struct Location : boost::operators<Location> {
   float weight;
   CoordinateSystem coord_system;
   qvm::vec<double, 3> vec;
@@ -27,13 +27,17 @@ struct Location {
   Location() : weight(0) {}
 };
 
-struct Rotation {
+bool operator==(const Location &, const Location &);
+
+struct Rotation : boost::operators<Rotation> {
   float weight;
   CoordinateSystem coord_system;
   qvm::quat<double> quat;
 
   Rotation() : weight(0) {}
 };
+
+bool operator==(const Rotation &, const Rotation &);
 
 struct Effector : boost::operators<Effector> {
   std::optional<Location> location;
@@ -58,6 +62,8 @@ template <typename T, std::enable_if_t<std::is_arithmetic_v<T>> * = nullptr>
 Effector operator*(const Effector &t1, T t2) {
   return Effector(t1) *= t2;
 }
+
+bool operator==(const Effector &, const Effector &);
 
 } // namespace flom
 
