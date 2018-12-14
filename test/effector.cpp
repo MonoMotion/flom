@@ -8,9 +8,20 @@
 
 BOOST_AUTO_TEST_SUITE(effector)
 
-BOOST_AUTO_TEST_CASE(test1) {
-  const int x = 1;
-  BOOST_CHECK(x == 1);
+RC_BOOST_PROP(mul_scalar_location,
+              (const from::Effector& e, double v)) {
+  RC_PRE(e.location);
+
+  auto e2 = e * v;
+  RC_ASSERT(e2.location->vec == e.location->vec * v);
+}
+
+RC_BOOST_PROP(mul_scalar_rotation,
+              (const from::Effector& e, double v)) {
+  RC_PRE(e.rotation);
+
+  auto e2 = e * v;
+  RC_ASSERT(e2.rotation->quat == e.rotation->quat * v);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
