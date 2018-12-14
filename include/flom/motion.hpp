@@ -25,6 +25,9 @@ public:
   static Motion load_legacy_json(std::ifstream&);
 
   Motion();
+  // With model name
+  Motion(std::string const&);
+
   Motion(Motion const&);
   ~Motion();
 

@@ -28,16 +28,17 @@ public:
   LoopType loop;
   std::map<double, Frame> raw_frames;
 
-  Motion::Impl(std::string const& model)
-    : model_id(model), loop(LoopType::None), raw_frames() {}
   Motion::Impl()
     : model_id(), loop(LoopType::None), raw_frames() {}
+  Motion::Impl(std::string const& model)
+    : model_id(model), loop(LoopType::None), raw_frames() {}
 
   static Motion from_protobuf(proto::Motion const&);
   proto::Motion to_protobuf() const;
 };
 
 Motion::Motion() : impl(std::make_unique<Motion::Impl>()) {}
+Motion::Motion(std::string const& model) : impl(std::make_unique<Motion::Impl>(model)) {}
 Motion::Motion(Motion const& m) : impl(std::make_unique<Motion::Impl>(*m.impl)) {}
 Motion::~Motion() {}
 
