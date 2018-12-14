@@ -45,10 +45,10 @@ Effector &Effector::operator+=(const Effector &x) {
 
 Effector &Effector::operator-=(const Effector &x) {
   if (this->location && x.location) {
-    this->location->vec += x.location->vec;
+    this->location->vec -= x.location->vec;
   }
   if (this->rotation && x.rotation) {
-    this->rotation->quat += x.rotation->quat;
+    this->rotation->quat -= x.rotation->quat;
   }
   return *this;
 }
