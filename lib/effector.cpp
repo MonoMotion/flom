@@ -67,4 +67,6 @@ bool operator==(const Effector &e1, const Effector &e2) {
   return e1.location == e2.location && e1.rotation == e2.rotation;
 }
 
+double interpolate(double t, double a, double b) { return lerp(t, a, b); }
+
 } // namespace flom
