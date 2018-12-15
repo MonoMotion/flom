@@ -41,17 +41,16 @@ template <> struct Arbitrary<boost::qvm::quat<double>> {
 template <> struct Arbitrary<flom::Location> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
-        [](unsigned weight, flom::CoordinateSystem c,
+        [](unsigned weight,
            boost::qvm::vec<double, 3> const &v) {
           flom::Location l;
           l.weight = static_cast<double>(weight) / 100;
-          l.coord_system = c;
+          // TODO: Evil, but will be deleted!
+          l.coord_system = flom::CoordinateSystem::World;
           l.vec = v;
           return l;
         },
         gen::inRange<unsigned>(0, 100),
-        gen::element(flom::CoordinateSystem::World,
-                     flom::CoordinateSystem::Local),
         gen::arbitrary<boost::qvm::vec<double, 3>>());
   }
 };
@@ -59,17 +58,16 @@ template <> struct Arbitrary<flom::Location> {
 template <> struct Arbitrary<flom::Rotation> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
-        [](unsigned weight, flom::CoordinateSystem c,
+        [](unsigned weight,
            boost::qvm::quat<double> const &q) {
           flom::Rotation r;
           r.weight = static_cast<double>(weight) / 100;
-          r.coord_system = c;
+          // TODO: Evil, but will be deleted!
+          r.coord_system = flom::CoordinateSystem::World;
           r.quat = q;
           return r;
         },
         gen::inRange<unsigned>(0, 100),
-        gen::element(flom::CoordinateSystem::World,
-                     flom::CoordinateSystem::Local),
         gen::arbitrary<boost::qvm::quat<double>>());
   }
 };
@@ -112,16 +110,16 @@ template <> struct Arbitrary<flom::Motion> {
           m.set_loop(loop);
           unsigned i = 0;
           for (auto const& [p, e] : frames) {
-            auto& f = m.get_or_insert_frame(i++ * fps);
+            auto& f = m.get_or_insert_frame(fps * i++);
             std::copy(std::cbegin(p), std::cend(p), std::inserter(f.positions, std::end(f.positions)));
             std::copy(std::cbegin(e), std::cend(e), std::inserter(f.effectors, std::end(f.effectors)));
           }
           return m;
         },
-        gen::arbitrary<std::string>(),
+        gen::nonEmpty<std::string>(),
         gen::element(flom::LoopType::None, flom::LoopType::Wrap),
-        gen::arbitrary<double>(),
-        gen::mapcat(
+        gen::nonZero<double>(),
+        gen::nonEmpty(gen::mapcat(
            gen::pair(
             gen::arbitrary<std::vector<std::string>>(),
             gen::arbitrary<std::vector<std::string>>()
@@ -135,16 +133,20 @@ template <> struct Arbitrary<flom::Motion> {
               });
               return nj;
             });
-            auto e = gen::exec([&effectors = effectors]() {
+            auto eg = gen::build(
+                gen::construct<flom::Effector>(),
+                gen::set(&flom::Effector::location, gen::arbitrary<flom::Location>()),
+                gen::set(&flom::Effector::rotation, gen::arbitrary<flom::Rotation>()));
+            auto e = gen::exec([&effectors = effectors, eg]() {
               std::unordered_map<std::string, flom::Effector> nj;
-              std::transform(std::cbegin(effectors), std::cend(effectors), std::inserter(nj, std::end(nj)), [](auto&& j) {
-                  return std::make_pair(j, *gen::arbitrary<flom::Effector>());
+              std::transform(std::cbegin(effectors), std::cend(effectors), std::inserter(nj, std::end(nj)), [&eg](auto&& j) {
+                  return std::make_pair(j, *eg);
               });
               return nj;
             });
             return gen::container<std::vector<std::pair<std::unordered_map<std::string, double>, std::unordered_map<std::string, flom::Effector>>>>(gen::pair(j, e));
           }
-        ));
+        )));
   }
 };
 
