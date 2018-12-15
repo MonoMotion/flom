@@ -40,4 +40,8 @@ Frame &Frame::operator-=(const Frame &x) {
   return *this;
 }
 
+bool operator==(const Frame &f1, const Frame &f2) {
+  return f1.positions == f2.positions && f1.effectors == f2.effectors;
+}
+
 } // namespace flom

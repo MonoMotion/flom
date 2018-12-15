@@ -34,6 +34,8 @@ Frame operator*(const Frame &t1, T t2) {
   return Frame(t1) *= t2;
 }
 
+bool operator==(const Frame &, const Frame &);
+
 } // namespace flom
 
 #endif
