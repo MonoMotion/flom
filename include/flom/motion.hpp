@@ -28,6 +28,8 @@ public:
   Motion(Motion const &);
   ~Motion();
 
+  bool is_valid() const;
+
   Frame frame_at(double t) const;
 
   FrameRange frames(double fps) const;

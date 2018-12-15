@@ -16,6 +16,8 @@ Motion::Motion(Motion const &m)
     : impl(std::make_unique<Motion::Impl>(*m.impl)) {}
 Motion::~Motion() {}
 
+bool Motion::is_valid() const { return this->impl && this->impl->is_valid(); }
+
 Frame Motion::frame_at(double t) const {
   if (t < 0) {
     throw std::out_of_range("t must be positive");
@@ -68,6 +70,18 @@ std::string Motion::model_id() const { return this->impl->model_id; }
 
 void Motion::set_model_id(std::string const &model_id) {
   this->impl->model_id = model_id;
+}
+
+bool Motion::Impl::is_valid() const {
+  // for internal use
+  //
+  // Arbitrary flom::Motion object,
+  // which is constructed only using public interface,
+  // must not be marked as invalid by this method.
+  //
+  // TODO: check whether all frames has same names
+  return this->raw_frames.size() > 1 && this->raw_frames.begin()->first == 0 &&
+         std::next(this->raw_frames.begin(), 1)->first != 0;
 }
 
 } // namespace flom
