@@ -48,6 +48,8 @@ public:
 
   Frame &get_or_insert_frame(double t);
 
+  double length() const;
+
 private:
   class Impl;
   std::unique_ptr<Impl> impl;

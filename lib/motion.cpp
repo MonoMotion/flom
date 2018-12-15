@@ -72,6 +72,10 @@ void Motion::set_model_id(std::string const &model_id) {
   this->impl->model_id = model_id;
 }
 
+double Motion::length() const {
+  return std::next(this->impl->raw_frames.end(), -1)->first;
+}
+
 bool Motion::Impl::is_valid() const {
   // for internal use
   //
