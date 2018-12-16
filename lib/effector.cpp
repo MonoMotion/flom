@@ -1,6 +1,8 @@
 #include "flom/effector.hpp"
 #include "flom/interpolation.hpp"
+#include "flom/constants.hpp"
 
+#include <limits>
 #include <utility>
 
 #include <boost/qvm/quat_operations.hpp>
@@ -34,9 +36,8 @@ bool operator==(const Rotation &r1, const Rotation &r2) {
 
 bool almost_equal(const Rotation &r1, const Rotation &r2) {
   return r1.coord_system == r2.coord_system && r1.weight == r2.weight &&
-         boost::qvm::cmp(r1.quat, r2.quat, [](auto e1, auto e2) {
-           return std::abs(e1 - e2) < 0.0001;
-         });
+         boost::qvm::cmp(r1.quat, r2.quat,
+                         [](auto e1, auto e2) { return almost_equal(e1, e2); });
 }
 
 Location interpolate(double t, Location const &a, Location const &b) {
@@ -53,9 +54,8 @@ bool operator==(const Location &l1, const Location &l2) {
 
 bool almost_equal(const Location &l1, const Location &l2) {
   return l1.coord_system == l2.coord_system && l1.weight == l2.weight &&
-         boost::qvm::cmp(l1.vec, l2.vec, [](auto e1, auto e2) {
-           return std::abs(e1 - e2) < 0.0001;
-         });
+         boost::qvm::cmp(l1.vec, l2.vec,
+                         [](auto e1, auto e2) { return almost_equal(e1, e2); });
 }
 
 Effector &Effector::operator+=(const Effector &x) {
@@ -99,5 +99,12 @@ bool almost_equal(const Effector &e1, const Effector &e2) {
 }
 
 double interpolate(double t, double a, double b) { return lerp(t, a, b); }
+bool almost_equal(double a, double b) {
+  // based on an implementation of cppreference.com
+  // https://en.cppreference.com/w/cpp/types/numeric_limits/epsilon
+  return std::abs(a - b) <= std::numeric_limits<double>::epsilon() *
+                                std::abs(a + b) * constants::compare_ulp ||
+         std::abs(a - b) < std::numeric_limits<double>::min();
+}
 
 } // namespace flom

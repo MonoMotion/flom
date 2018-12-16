@@ -68,6 +68,8 @@ Effector operator*(const Effector &t1, T t2) {
 bool operator==(const Effector &, const Effector &);
 bool almost_equal(const Effector &, const Effector &);
 
+bool almost_equal(double, double);
+
 } // namespace flom
 
 #endif

@@ -51,7 +51,7 @@ bool almost_equal(const Frame &f1, const Frame &f2) {
                        [&f2](auto const &p) {
                          auto const &[joint, pos1] = p;
                          auto const pos2 = f2.positions.at(joint);
-                         return std::abs(pos1 - pos2) < 0.0001;
+                         return almost_equal(pos1, pos2);
                        });
   auto e = std::all_of(std::cbegin(f1.effectors), std::cend(f1.effectors),
                        [&f2](auto const &p) {
