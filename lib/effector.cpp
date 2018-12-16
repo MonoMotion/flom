@@ -5,6 +5,7 @@
 
 #include <boost/qvm/quat_operations.hpp>
 #include <boost/qvm/vec_operations.hpp>
+#include <boost/qvm/vec_traits_array.hpp>
 
 namespace flom {
 
@@ -34,7 +35,7 @@ bool operator==(const Rotation &r1, const Rotation &r2) {
 bool almost_equal(const Rotation &r1, const Rotation &r2) {
   return r1.coord_system == r2.coord_system && r1.weight == r2.weight &&
          boost::qvm::cmp(r1.quat, r2.quat, [](auto e1, auto e2) {
-           return std::abs(e1 - e2) < 0.00001;
+           return std::abs(e1 - e2) < 0.0001;
          });
 }
 
@@ -52,10 +53,9 @@ bool operator==(const Location &l1, const Location &l2) {
 
 bool almost_equal(const Location &l1, const Location &l2) {
   return l1.coord_system == l2.coord_system && l1.weight == l2.weight &&
-         boost::qvm::mag(l1.vec - l2.vec) < 0.0001;
-  // TODO: Use code below
-  // boost::qvm::cmp(l1.vec, l2.vec, [](auto e1, auto e2) { return std::abs(e1 -
-  // e2) < 0.00001; });
+         boost::qvm::cmp(l1.vec, l2.vec, [](auto e1, auto e2) {
+           return std::abs(e1 - e2) < 0.0001;
+         });
 }
 
 Effector &Effector::operator+=(const Effector &x) {
