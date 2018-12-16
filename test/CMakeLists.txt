@@ -5,3 +5,6 @@ flom_add_test(test_effector)
 
 add_executable(test_frame frame.cpp)
 flom_add_test(test_frame)
+
+add_executable(test_motion motion.cpp)
+flom_add_test(test_motion)
