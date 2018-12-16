@@ -10,6 +10,7 @@
 #include <flom/effector.hpp>
 #include <flom/frame.hpp>
 #include <flom/motion.hpp>
+#include <flom/constants.hpp>
 
 #include <unordered_map>
 
@@ -25,6 +26,7 @@ template <> struct Arbitrary<boost::qvm::vec<double, 3>> {
 
 template <> struct Arbitrary<boost::qvm::quat<double>> {
   static auto arbitrary() -> decltype(auto) {
+    const int half_pi_100 = flom::constants::pi<double> / 2 * 100;
     return gen::apply(
         [](int x, int y, int z) {
           auto q = boost::qvm::quat<double>();
@@ -33,8 +35,8 @@ template <> struct Arbitrary<boost::qvm::quat<double>> {
           boost::qvm::set_rotz(q, static_cast<double>(z) / 100);
           return q;
         },
-        gen::inRange(-157, 157), gen::inRange(-157, 157),
-        gen::inRange(-157, 157));
+        gen::inRange(-half_pi_100, half_pi_100), gen::inRange(-half_pi_100, half_pi_100),
+        gen::inRange(-half_pi_100, half_pi_100));
   };
 };
 
@@ -129,7 +131,8 @@ template <> struct Arbitrary<flom::Motion> {
             auto j = gen::exec([&joints = joints]() {
               std::unordered_map<std::string, double> nj;
               std::transform(std::cbegin(joints), std::cend(joints), std::inserter(nj, std::end(nj)), [](auto&& j) {
-                  return std::make_pair(j, static_cast<double>(*gen::inRange(-157, 157)) / 100);
+                  const int half_pi_100 = flom::constants::pi<double> / 2 * 100;
+                  return std::make_pair(j, static_cast<double>(*gen::inRange(-half_pi_100, half_pi_100)) / 100);
               });
               return nj;
             });
