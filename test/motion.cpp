@@ -10,6 +10,7 @@
 #include <flom/motion.hpp>
 
 #include "generators.hpp"
+#include "operators.hpp"
 #include "printers.hpp"
 
 BOOST_AUTO_TEST_SUITE(motion)
@@ -24,7 +25,8 @@ RC_BOOST_PROP(retrieve_frame_wrap, (const flom::Motion &m, double t)) {
   auto frame = m.frame_at(t);
   auto expected_frame = m.frame_at(std::fmod(t, len)) + m.frame_at(len) * mul;
 
-  RC_ASSERT(flom::almost_equal(frame, expected_frame));
+  // Using non-strict version of operator== defined in operators.hpp
+  RC_ASSERT(frame == expected_frame);
 }
 
 RC_BOOST_PROP(retrieve_frame_none, (const flom::Motion &m, double t)) {
@@ -38,7 +40,8 @@ RC_BOOST_PROP(retrieve_frame_none, (const flom::Motion &m, double t)) {
   auto frame = m.frame_at(t);
   auto expected_frame = m.frame_at(std::fmod(t, len)) + m.frame_at(len) * mul;
 
-  RC_ASSERT(flom::almost_equal(frame, expected_frame));
+  // Using non-strict version of operator== defined in operators.hpp
+  RC_ASSERT(frame == expected_frame);
 }
 
 RC_BOOST_PROP(retrieve_frame_none_throw, (const flom::Motion &m, double t)) {
