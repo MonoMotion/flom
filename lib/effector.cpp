@@ -31,6 +31,13 @@ bool operator==(const Rotation &r1, const Rotation &r2) {
          r1.quat == r2.quat;
 }
 
+bool almost_equal(const Rotation &r1, const Rotation &r2) {
+  return r1.coord_system == r2.coord_system && r1.weight == r2.weight &&
+         boost::qvm::cmp(r1.quat, r2.quat, [](auto e1, auto e2) {
+           return std::abs(e1 - e2) < 0.00001;
+         });
+}
+
 Location interpolate(double t, Location const &a, Location const &b) {
   Location result;
   result.vec = lerp(t, a.vec, b.vec);
@@ -41,6 +48,14 @@ Location interpolate(double t, Location const &a, Location const &b) {
 bool operator==(const Location &l1, const Location &l2) {
   return l1.coord_system == l2.coord_system && l1.weight == l2.weight &&
          l1.vec == l2.vec;
+}
+
+bool almost_equal(const Location &l1, const Location &l2) {
+  return l1.coord_system == l2.coord_system && l1.weight == l2.weight &&
+         boost::qvm::mag(l1.vec - l2.vec) < 0.0001;
+  // TODO: Use code below
+  // boost::qvm::cmp(l1.vec, l2.vec, [](auto e1, auto e2) { return std::abs(e1 -
+  // e2) < 0.00001; });
 }
 
 Effector &Effector::operator+=(const Effector &x) {
@@ -65,6 +80,22 @@ Effector &Effector::operator-=(const Effector &x) {
 
 bool operator==(const Effector &e1, const Effector &e2) {
   return e1.location == e2.location && e1.rotation == e2.rotation;
+}
+
+bool almost_equal(const Effector &e1, const Effector &e2) {
+  // TODO: Refactor: Remove mutable variable
+  const bool l =
+      static_cast<bool>(e1.location) == static_cast<bool>(e2.location);
+  const bool r =
+      static_cast<bool>(e1.rotation) == static_cast<bool>(e2.rotation);
+  if (!l || !r)
+    return false;
+  bool result = true;
+  if (e1.location)
+    result = result && almost_equal(*e1.location, *e2.location);
+  if (e1.rotation)
+    result = result && almost_equal(*e1.location, *e2.location);
+  return result;
 }
 
 double interpolate(double t, double a, double b) { return lerp(t, a, b); }

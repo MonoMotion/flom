@@ -28,6 +28,7 @@ struct Location : boost::operators<Location> {
 };
 
 bool operator==(const Location &, const Location &);
+bool almost_equal(const Location &, const Location &);
 
 struct Rotation : boost::operators<Rotation> {
   float weight;
@@ -38,6 +39,7 @@ struct Rotation : boost::operators<Rotation> {
 };
 
 bool operator==(const Rotation &, const Rotation &);
+bool almost_equal(const Rotation &, const Rotation &);
 
 struct Effector : boost::operators<Effector> {
   std::optional<Location> location;
@@ -64,6 +66,7 @@ Effector operator*(const Effector &t1, T t2) {
 }
 
 bool operator==(const Effector &, const Effector &);
+bool almost_equal(const Effector &, const Effector &);
 
 } // namespace flom
 
