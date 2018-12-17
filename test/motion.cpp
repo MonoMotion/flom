@@ -57,4 +57,32 @@ RC_BOOST_PROP(retrieve_frame_none_throw, (const flom::Motion &m)) {
   RC_ASSERT_THROWS(m.frame_at(t));
 }
 
+RC_BOOST_PROP(frames_range_none, (const flom::Motion &m, double fps)) {
+  RC_PRE(fps >= 0);
+  RC_PRE(m.length() >= fps);
+  RC_PRE(m.loop() == flom::LoopType::None);
+  RC_PRE(m.is_valid());
+
+  unsigned long count = 0;
+  for (auto const &frame : m.frames(fps)) {
+    RC_ASSERT(frame == m.frame_at(count * fps));
+    count++;
+  }
+}
+
+RC_BOOST_PROP(frames_range_wrap, (const flom::Motion &m, double fps)) {
+  RC_PRE(fps >= 0);
+  RC_PRE(m.loop() == flom::LoopType::Wrap);
+  RC_PRE(m.is_valid());
+
+  unsigned long count = 0;
+  for (auto const &frame : m.frames(fps)) {
+    RC_ASSERT(frame == m.frame_at(count * fps));
+    count++;
+    if (count * fps > m.length() * 2) {
+      break;
+    }
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END()
