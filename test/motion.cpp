@@ -68,6 +68,10 @@ RC_BOOST_PROP(frames_range_none, (const flom::Motion &m, double fps)) {
   unsigned long count = 0;
   for (auto const &frame : m.frames(fps)) {
     RC_ASSERT(frame == m.frame_at(count * fps));
+    if (count * fps > m.length()) {
+      RC_FAIL("Iteration does not over");
+      break;
+    }
     count++;
   }
 }
@@ -80,10 +84,10 @@ RC_BOOST_PROP(frames_range_wrap, (const flom::Motion &m, double fps)) {
   unsigned long count = 0;
   for (auto const &frame : m.frames(fps)) {
     RC_ASSERT(frame == m.frame_at(count * fps));
-    count++;
     if (count * fps > m.length() * 2) {
       break;
     }
+    count++;
   }
 }
 
