@@ -18,7 +18,7 @@ namespace flom {
 Motion Motion::load(std::ifstream &f) {
   proto::Motion m;
   if (!m.ParseFromIstream(&f)) {
-    throw errors::ParseFailedError{};
+    throw errors::ParseError{};
   }
 
   return Motion::Impl::from_protobuf(m);
@@ -77,7 +77,7 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
 void Motion::dump(std::ofstream &f) const {
   auto const m = this->impl->to_protobuf();
   if (!m.SerializeToOstream(&f)) {
-    throw errors::SerializationFailedError{};
+    throw errors::SerializationError{};
   }
 }
 

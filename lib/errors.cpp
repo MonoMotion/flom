@@ -10,10 +10,9 @@ InvalidTimeError::InvalidTimeError(double t)
 OutOfFramesError::OutOfFramesError(double t)
     : std::out_of_range("No frame is avaliable at time " + std::to_string(t)) {}
 
-ParseFailedError::ParseFailedError()
-    : std::runtime_error("Could not parse input") {}
+ParseError::ParseError() : std::runtime_error("Could not parse input") {}
 
-SerializationFailedError::SerializationFailedError()
+SerializationError::SerializationError()
     : std::runtime_error("Could not serialize data") {}
 
 JSONLoadError::JSONLoadError(const std::string &message)

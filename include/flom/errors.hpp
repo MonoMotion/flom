@@ -15,16 +15,16 @@ public:
   explicit OutOfFramesError(double);
 };
 
-class ParseFailedError : public std::runtime_error {
+class ParseError : public std::runtime_error {
 public:
   // TODO: include additional information
-  ParseFailedError();
+  ParseError();
 };
 
-class SerializationFailedError : public std::runtime_error {
+class SerializationError : public std::runtime_error {
 public:
   // TODO: include additional information
-  SerializationFailedError();
+  SerializationError();
 };
 
 class JSONLoadError : public std::runtime_error {
