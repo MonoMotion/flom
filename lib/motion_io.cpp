@@ -1,3 +1,4 @@
+#include "flom/errors.hpp"
 #include "flom/motion.hpp"
 #include "flom/motion.impl.hpp"
 #include "flom/proto_util.hpp"
@@ -16,7 +17,10 @@ namespace flom {
 
 Motion Motion::load(std::ifstream &f) {
   proto::Motion m;
-  m.ParseFromIstream(&f);
+  if (!m.ParseFromIstream(&f)) {
+    throw errors::ParseFailedError{};
+  }
+
   return Motion::Impl::from_protobuf(m);
 }
 
