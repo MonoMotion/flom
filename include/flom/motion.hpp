@@ -25,7 +25,7 @@ public:
 
   Motion();
   // With model name
-  Motion(std::string const &);
+  explicit Motion(std::string const &);
 
   Motion(Motion const &);
   ~Motion();
