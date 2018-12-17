@@ -25,7 +25,13 @@ Effector interpolate(double t, Effector const &a, Effector const &b) {
 
 Rotation interpolate(double t, Rotation const &a, Rotation const &b) {
   Rotation result;
-  result.quat = qvm::slerp(a.quat, b.quat, t);
+  // if the difference is zero, slerp(a, b, t) returns a quaternion with NaNs.
+  // TODO: Confirm that this way is valid
+  if ((a.quat - b.quat) == boost::qvm::zero_quat<double>()) {
+    result.quat = a.quat;
+  } else {
+    result.quat = qvm::slerp(a.quat, b.quat, t);
+  }
   result.weight = lerp(t, a.weight, b.weight);
   return result;
 }
