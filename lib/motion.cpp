@@ -5,6 +5,7 @@
 
 #include "motion.pb.h"
 
+#include <cmath>
 #include <string>
 
 namespace flom {
@@ -19,7 +20,7 @@ Motion::~Motion() {}
 bool Motion::is_valid() const { return this->impl && this->impl->is_valid(); }
 
 Frame Motion::frame_at(double t) const {
-  if (t < 0) {
+  if (std::isnan(t) || t < 0) {
     throw std::out_of_range("t must be positive");
   }
   auto const [l, u] = this->impl->raw_frames.equal_range(t);
