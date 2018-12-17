@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iomanip>
 
+#include <flom/errors.hpp>
 #include <flom/motion.hpp>
 
 #include "generators.hpp"
@@ -68,7 +69,15 @@ RC_BOOST_PROP(retrieve_frame_none_throw, (const flom::Motion &m)) {
   unsigned long upper = std::numeric_limits<unsigned long>::max();
   double t = *rc::gen::inRange<unsigned long>(lower, upper);
 
-  RC_ASSERT_THROWS(m.frame_at(t));
+  RC_ASSERT_THROWS_AS(m.frame_at(t), flom::errors::OutOfFramesError);
+}
+
+RC_BOOST_PROP(invalid_time, (const flom::Motion &m)) {
+  RC_PRE(m.is_valid());
+
+  const double nan = std::numeric_limits<double>::quiet_NaN();
+  RC_ASSERT_THROWS_AS(m.frame_at(-1), flom::errors::InvalidTimeError);
+  RC_ASSERT_THROWS_AS(m.frame_at(nan), flom::errors::InvalidTimeError);
 }
 
 RC_BOOST_PROP(frames_range_none, (const flom::Motion &m, double fps)) {

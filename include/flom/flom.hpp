@@ -3,6 +3,7 @@
 
 #include "flom/constants.hpp"
 #include "flom/effector.hpp"
+#include "flom/errors.hpp"
 #include "flom/frame.hpp"
 #include "flom/interpolation.hpp"
 #include "flom/motion.hpp"

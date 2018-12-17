@@ -1,4 +1,5 @@
 #include "flom/motion.hpp"
+#include "flom/errors.hpp"
 #include "flom/interpolation.hpp"
 #include "flom/motion.impl.hpp"
 #include "flom/range.hpp"
@@ -21,7 +22,7 @@ bool Motion::is_valid() const { return this->impl && this->impl->is_valid(); }
 
 Frame Motion::frame_at(double t) const {
   if (std::isnan(t) || t < 0) {
-    throw std::out_of_range("t must be positive");
+    throw errors::InvalidTimeError(t);
   }
   auto const [l, u] = this->impl->raw_frames.equal_range(t);
   if (l->first == t) {
@@ -41,7 +42,7 @@ Frame Motion::frame_at(double t) const {
       auto const trailing_t = t - skip_episode * motion_length;
       return this->frame_at(trailing_t) + last->second * skip_episode;
     } else {
-      throw std::out_of_range("Motion is over");
+      throw errors::OutOfFramesError(t);
     }
   } else {
     // Between two frames -> interpolate

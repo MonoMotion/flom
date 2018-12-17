@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.7)
 
-add_library(flom_lib SHARED motion.cpp motion_io.cpp frame.cpp effector.cpp proto_util.cpp)
+add_library(flom_lib SHARED motion.cpp motion_io.cpp frame.cpp effector.cpp proto_util.cpp errors.cpp)
 add_dependencies(flom_lib flom_headers)
 flom_set_compile_options(flom_lib)
 set_target_properties(flom_lib PROPERTIES OUTPUT_NAME "flom")
