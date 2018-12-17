@@ -20,6 +20,7 @@ BOOST_AUTO_TEST_SUITE(motion)
 RC_BOOST_PROP(retrieve_frame_wrap, (const flom::Motion &m, double t)) {
   RC_PRE(t >= 0);
   RC_PRE(m.loop() == flom::LoopType::Wrap);
+  RC_PRE(m.length() > 0);
   RC_PRE(m.is_valid());
 
   auto len = m.length();
@@ -35,6 +36,7 @@ RC_BOOST_PROP(retrieve_frame_none, (const flom::Motion &m, double t)) {
   RC_PRE(t >= 0);
   RC_PRE(m.length() >= t);
   RC_PRE(m.loop() == flom::LoopType::None);
+  RC_PRE(m.length() > 0);
   RC_PRE(m.is_valid());
 
   auto len = m.length();
