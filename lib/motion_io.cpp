@@ -1,3 +1,4 @@
+#include "flom/errors.hpp"
 #include "flom/motion.hpp"
 #include "flom/motion.impl.hpp"
 #include "flom/proto_util.hpp"
@@ -16,7 +17,10 @@ namespace flom {
 
 Motion Motion::load(std::ifstream &f) {
   proto::Motion m;
-  m.ParseFromIstream(&f);
+  if (!m.ParseFromIstream(&f)) {
+    throw errors::ParseError{};
+  }
+
   return Motion::Impl::from_protobuf(m);
 }
 
@@ -28,7 +32,10 @@ Motion Motion::load_json(std::ifstream &f) {
 
 Motion Motion::load_json_string(std::string const &s) {
   proto::Motion m;
-  google::protobuf::util::JsonStringToMessage(s, &m);
+  auto const status = google::protobuf::util::JsonStringToMessage(s, &m);
+  if (!status.ok()) {
+    throw errors::JSONLoadError(status.ToString());
+  }
   return Motion::Impl::from_protobuf(m);
 }
 
@@ -69,7 +76,9 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
 }
 void Motion::dump(std::ofstream &f) const {
   auto const m = this->impl->to_protobuf();
-  m.SerializeToOstream(&f);
+  if (!m.SerializeToOstream(&f)) {
+    throw errors::SerializationError{};
+  }
 }
 
 void Motion::dump_json(std::ofstream &f) const {
@@ -81,7 +90,10 @@ std::string Motion::dump_json_string() const {
   auto const m = this->impl->to_protobuf();
   google::protobuf::util::JsonPrintOptions opt;
   opt.always_print_primitive_fields = true;
-  google::protobuf::util::MessageToJsonString(m, &s, opt);
+  auto const status = google::protobuf::util::MessageToJsonString(m, &s, opt);
+  if (!status.ok()) {
+    throw errors::JSONDumpError(status.ToString());
+  }
   return s;
 }
 
