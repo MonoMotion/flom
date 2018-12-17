@@ -85,8 +85,7 @@ bool Motion::Impl::is_valid() const {
   // must not be marked as invalid by this method.
   //
   // TODO: check whether all frames has same names
-  return this->raw_frames.size() > 1 && this->raw_frames.begin()->first == 0 &&
-         std::next(this->raw_frames.begin(), 1)->first != 0;
+  return this->raw_frames.size() > 0 && this->raw_frames.begin()->first == 0;
 }
 
 bool operator==(const Motion &m1, const Motion &m2) {
