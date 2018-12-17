@@ -44,11 +44,15 @@ RC_BOOST_PROP(retrieve_frame_none, (const flom::Motion &m, double t)) {
   RC_ASSERT(frame == expected_frame);
 }
 
-RC_BOOST_PROP(retrieve_frame_none_throw, (const flom::Motion &m, double t)) {
-  RC_PRE(t >= 0);
-  RC_PRE(m.length() < t);
-  RC_PRE(m.loop() == flom::LoopType::None);
+RC_BOOST_PROP(retrieve_frame_none_throw, (const flom::Motion &m)) {
   RC_PRE(m.is_valid());
+  RC_PRE(m.loop() == flom::LoopType::None);
+
+  // Using unsigned long because RapidCheck doesn't support gen::inRange<double>
+  RC_PRE(m.length() < std::numeric_limits<unsigned long>::max());
+  unsigned long lower = m.length() + 1;
+  unsigned long upper = std::numeric_limits<unsigned long>::max();
+  double t = *rc::gen::inRange<unsigned long>(lower, upper);
 
   RC_ASSERT_THROWS(m.frame_at(t));
 }
