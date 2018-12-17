@@ -64,10 +64,10 @@ public:
   value_type operator*() { return this->pimpl->get(); }
 
   frame_iterator &operator++() noexcept {
-    if (this->pimpl->next_is_end)
-      this->is_end_iterator = true;
     this->pimpl->t_index++;
     this->pimpl->next_is_end = !this->pimpl->check_bound();
+    if (this->pimpl->next_is_end)
+      this->is_end_iterator = true;
     return *this;
   }
 
