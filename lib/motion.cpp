@@ -32,6 +32,11 @@ Frame Motion::frame_at(double t) const {
     if (this->impl->loop == LoopType::Wrap) {
       auto const &last = std::next(l, -1);
       auto const motion_length = last->first;
+      if (motion_length == 0) {
+        // only one frame with t == 0
+        return last->second;
+      }
+
       auto const skip_episode = static_cast<unsigned>(t / motion_length);
       auto const trailing_t = t - skip_episode * motion_length;
       return this->frame_at(trailing_t) + last->second * skip_episode;
@@ -85,8 +90,7 @@ bool Motion::Impl::is_valid() const {
   // must not be marked as invalid by this method.
   //
   // TODO: check whether all frames has same names
-  return this->raw_frames.size() > 1 && this->raw_frames.begin()->first == 0 &&
-         std::next(this->raw_frames.begin(), 1)->first != 0;
+  return this->raw_frames.size() > 0 && this->raw_frames.begin()->first == 0;
 }
 
 bool operator==(const Motion &m1, const Motion &m2) {
