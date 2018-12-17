@@ -23,6 +23,8 @@ public:
 
   static Motion from_protobuf(proto::Motion const &);
   proto::Motion to_protobuf() const;
+
+  bool is_valid() const;
 };
 
 } // namespace flom

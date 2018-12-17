@@ -6,20 +6,8 @@ project(flom VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  add_compile_options(-pedantic -Wall -Weverything -Wno-float-equal -Wno-padded -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-missing-prototypes -Wno-range-loop-analysis)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  add_compile_options(-pedantic -Wall -Wextra -Wno-float-equal -Wno-padded -Wno-unused-parameter -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef)
-endif()
-
 if(NOT CONFIG)
   set(CONFIG Release)
-endif()
-
-if(CONFIG STREQUAL "Debug")
-  add_compile_options(-O0 -g3)
-elseif(CONFIG STREQUAL "Release")
-  add_compile_options(-O3)
 endif()
 
 set(PROTO_DIR ./proto)
@@ -38,12 +26,19 @@ include_directories(${PROTO_INCLUDE_DIR})
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(third_party/nlohmann_json)
+add_subdirectory(third_party/rapidcheck)
+include_directories(third_party/rapidcheck/extras/boost_test/include)
 
 include(cmake/clang-format.cmake)
 include(cmake/clang-tidy.cmake)
+include(cmake/compile-options.cmake)
+include(cmake/test.cmake)
 
 add_subdirectory(include/)
 include_directories(include/)
 
 add_subdirectory(lib)
 add_subdirectory(bin)
+
+enable_testing()
+add_subdirectory(test)
