@@ -21,6 +21,12 @@ public:
   ParseFailedError();
 };
 
+class SerializationFailedError : public std::runtime_error {
+public:
+  // TODO: include additional information
+  SerializationFailedError();
+};
+
 } // namespace flom::errors
 
 #endif

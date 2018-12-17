@@ -13,4 +13,7 @@ OutOfFramesError::OutOfFramesError(double t)
 ParseFailedError::ParseFailedError()
     : std::runtime_error("Could not parse input") {}
 
+SerializationFailedError::SerializationFailedError()
+    : std::runtime_error("Could not serialize data") {}
+
 } // namespace flom::errors
