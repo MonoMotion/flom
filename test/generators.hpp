@@ -30,9 +30,10 @@ template <> struct Arbitrary<boost::qvm::quat<double>> {
     return gen::apply(
         [](int x, int y, int z) {
           auto q = boost::qvm::quat<double>();
-          boost::qvm::set_rotx(q, static_cast<double>(x) / 100);
-          boost::qvm::set_roty(q, static_cast<double>(y) / 100);
-          boost::qvm::set_rotz(q, static_cast<double>(z) / 100);
+          boost::qvm::set_identity(q);
+          boost::qvm::rotate_x(q, static_cast<double>(x) / 100);
+          boost::qvm::rotate_y(q, static_cast<double>(y) / 100);
+          boost::qvm::rotate_z(q, static_cast<double>(z) / 100);
           return q;
         },
         gen::inRange(-half_pi_100, half_pi_100), gen::inRange(-half_pi_100, half_pi_100),
