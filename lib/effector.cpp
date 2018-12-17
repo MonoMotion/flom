@@ -1,6 +1,6 @@
 #include "flom/effector.hpp"
-#include "flom/interpolation.hpp"
 #include "flom/constants.hpp"
+#include "flom/interpolation.hpp"
 
 #include <limits>
 #include <utility>
@@ -8,6 +8,7 @@
 #include <boost/qvm/quat_operations.hpp>
 #include <boost/qvm/vec_operations.hpp>
 #include <boost/qvm/vec_traits_array.hpp>
+#include <boost/test/floating_point_comparison.hpp>
 
 namespace flom {
 
@@ -100,11 +101,8 @@ bool almost_equal(const Effector &e1, const Effector &e2) {
 
 double interpolate(double t, double a, double b) { return lerp(t, a, b); }
 bool almost_equal(double a, double b) {
-  // based on an implementation of cppreference.com
-  // https://en.cppreference.com/w/cpp/types/numeric_limits/epsilon
-  return std::abs(a - b) <= std::numeric_limits<double>::epsilon() *
-                                std::abs(a + b) * constants::compare_ulp ||
-         std::abs(a - b) < std::numeric_limits<double>::min();
+  return boost::math::fpc::close_at_tolerance<double>(
+      constants::float_point_tolerance)(a, b);
 }
 
 } // namespace flom
