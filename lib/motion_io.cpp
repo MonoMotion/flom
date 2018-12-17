@@ -40,10 +40,8 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
   } else if (motion_proto.loop() == proto::Motion::Loop::Motion_Loop_None) {
     m.impl->loop = LoopType::None;
   }
-  double t_sum = 0;
   for (auto const &frame_proto : motion_proto.frames()) {
-    t_sum += frame_proto.t();
-    auto &frame = m.impl->raw_frames[t_sum];
+    auto &frame = m.impl->raw_frames[frame_proto.t()];
     auto const &positions_proto = frame_proto.positions();
     std::copy(std::cbegin(positions_proto), std::cend(positions_proto),
               std::inserter(frame.positions, std::end(frame.positions)));
