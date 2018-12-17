@@ -85,4 +85,20 @@ RC_BOOST_PROP(frames_range_wrap, (const flom::Motion &m, double fps)) {
   }
 }
 
+RC_BOOST_PROP(in_range_t_none, (const flom::Motion &m, double t)) {
+  RC_PRE(t >= 0);
+  RC_PRE(m.loop() == flom::LoopType::None);
+  RC_PRE(m.is_valid());
+
+  RC_ASSERT((m.length() >= t) == m.is_in_range_at(t));
+}
+
+RC_BOOST_PROP(in_range_t_wrap, (const flom::Motion &m, double t)) {
+  RC_PRE(t >= 0);
+  RC_PRE(m.loop() == flom::LoopType::Wrap);
+  RC_PRE(m.is_valid());
+
+  RC_ASSERT(m.is_in_range_at(t));
+}
+
 BOOST_AUTO_TEST_SUITE_END()
