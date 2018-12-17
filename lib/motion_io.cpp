@@ -32,7 +32,10 @@ Motion Motion::load_json(std::ifstream &f) {
 
 Motion Motion::load_json_string(std::string const &s) {
   proto::Motion m;
-  google::protobuf::util::JsonStringToMessage(s, &m);
+  auto const status = google::protobuf::util::JsonStringToMessage(s, &m);
+  if (!status.ok()) {
+    throw errors::JSONLoadError(status.ToString());
+  }
   return Motion::Impl::from_protobuf(m);
 }
 
@@ -87,7 +90,10 @@ std::string Motion::dump_json_string() const {
   auto const m = this->impl->to_protobuf();
   google::protobuf::util::JsonPrintOptions opt;
   opt.always_print_primitive_fields = true;
-  google::protobuf::util::MessageToJsonString(m, &s, opt);
+  auto const status = google::protobuf::util::MessageToJsonString(m, &s, opt);
+  if (!status.ok()) {
+    throw errors::JSONDumpError(status.ToString());
+  }
   return s;
 }
 

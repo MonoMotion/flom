@@ -27,6 +27,16 @@ public:
   SerializationFailedError();
 };
 
+class JSONLoadError : public std::runtime_error {
+public:
+  explicit JSONLoadError(const std::string &);
+};
+
+class JSONDumpError : public std::runtime_error {
+public:
+  explicit JSONDumpError(const std::string &);
+};
+
 } // namespace flom::errors
 
 #endif
