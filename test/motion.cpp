@@ -60,7 +60,7 @@ RC_BOOST_PROP(retrieve_frame_none_throw, (const flom::Motion &m)) {
 }
 
 RC_BOOST_PROP(frames_range_none, (const flom::Motion &m, double fps)) {
-  RC_PRE(fps >= 0);
+  RC_PRE(fps > 0);
   RC_PRE(m.length() >= fps);
   RC_PRE(m.loop() == flom::LoopType::None);
   RC_PRE(m.is_valid());
@@ -77,7 +77,7 @@ RC_BOOST_PROP(frames_range_none, (const flom::Motion &m, double fps)) {
 }
 
 RC_BOOST_PROP(frames_range_wrap, (const flom::Motion &m, double fps)) {
-  RC_PRE(fps >= 0);
+  RC_PRE(fps > 0);
   RC_PRE(m.loop() == flom::LoopType::Wrap);
   RC_PRE(m.is_valid());
 
