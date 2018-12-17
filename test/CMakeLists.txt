@@ -7,4 +7,5 @@ add_executable(test_frame frame.cpp)
 flom_add_test(test_frame)
 
 add_executable(test_motion motion.cpp)
+target_link_libraries(test_motion PRIVATE stdc++fs)
 flom_add_test(test_motion)

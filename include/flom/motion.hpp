@@ -15,6 +15,8 @@ enum class LoopType { None, Wrap };
 class FrameRange;
 
 class Motion {
+  friend bool operator==(const Motion &, const Motion &);
+
 public:
   static Motion load(std::ifstream &);
   static Motion load_json(std::ifstream &);
@@ -54,6 +56,8 @@ private:
   class Impl;
   std::unique_ptr<Impl> impl;
 };
+
+bool operator==(const Motion &, const Motion &);
 
 } // namespace flom
 

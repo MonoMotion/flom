@@ -119,13 +119,14 @@ template <> struct Arbitrary<flom::Motion> {
           }
           return m;
         },
-        gen::nonEmpty<std::string>(),
+        // UTF8 string is required
+        gen::nonEmpty(gen::container<std::string>(gen::inRange('a', 'z'))),
         gen::element(flom::LoopType::None, flom::LoopType::Wrap),
         gen::nonZero<double>(),
         gen::nonEmpty(gen::mapcat(
            gen::pair(
-            gen::arbitrary<std::vector<std::string>>(),
-            gen::arbitrary<std::vector<std::string>>()
+             gen::container<std::vector<std::string>>(gen::container<std::string>(gen::inRange('a', 'z'))),
+             gen::container<std::vector<std::string>>(gen::container<std::string>(gen::inRange('a', 'z')))
           ),
           [] (auto const& t) {
             auto const& [joints, effectors] = t;

@@ -5,7 +5,9 @@
 #include <rapidcheck/boost_test.h>
 
 #include <cmath>
+#include <filesystem>
 #include <fstream>
+#include <iomanip>
 
 #include <flom/motion.hpp>
 
@@ -99,6 +101,48 @@ RC_BOOST_PROP(in_range_t_wrap, (const flom::Motion &m, double t)) {
   RC_PRE(m.is_valid());
 
   RC_ASSERT(m.is_in_range_at(t));
+}
+
+RC_BOOST_PROP(dump_load, (const flom::Motion &m)) {
+  auto const path = std::filesystem::temp_directory_path() / "out.fom";
+
+  {
+    std::ofstream f(path, std::ios::binary);
+
+    // no throws
+    m.dump(f);
+  }
+
+  {
+    std::ifstream f(path, std::ios::binary);
+
+    // no throws
+    auto const m2 = m.load(f);
+    std::filesystem::remove(path);
+
+    RC_ASSERT(m == m2);
+  }
+}
+
+RC_BOOST_PROP(dump_load_json, (const flom::Motion &m)) {
+  auto const path = std::filesystem::temp_directory_path() / "out.json";
+
+  {
+    std::ofstream f(path);
+
+    // no throws
+    m.dump_json(f);
+  }
+
+  {
+    std::ifstream f(path);
+
+    // no throws
+    auto const m2 = m.load_json(f);
+    std::filesystem::remove(path);
+
+    RC_ASSERT(m == m2);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -88,4 +88,10 @@ bool Motion::Impl::is_valid() const {
          std::next(this->raw_frames.begin(), 1)->first != 0;
 }
 
+bool operator==(const Motion &m1, const Motion &m2) {
+  return m1.impl->model_id == m2.impl->model_id &&
+         m1.impl->loop == m2.impl->loop &&
+         m1.impl->raw_frames == m2.impl->raw_frames;
+}
+
 } // namespace flom
