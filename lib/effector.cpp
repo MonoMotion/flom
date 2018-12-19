@@ -2,9 +2,11 @@
 #include "flom/constants.hpp"
 #include "flom/interpolation.hpp"
 
+#include <cmath>
 #include <limits>
 #include <utility>
 
+#include <boost/qvm/quat_access.hpp>
 #include <boost/qvm/quat_operations.hpp>
 #include <boost/qvm/vec_operations.hpp>
 #include <boost/qvm/vec_traits_array.hpp>
@@ -25,13 +27,13 @@ Effector interpolate(double t, Effector const &a, Effector const &b) {
 
 Rotation interpolate(double t, Rotation const &a, Rotation const &b) {
   Rotation result;
-  // if the difference is zero, slerp(a, b, t) returns a quaternion with NaNs.
-  // TODO: Confirm that this way is valid
-  if ((a.quat - b.quat) == boost::qvm::zero_quat<double>()) {
+
+  // TODO: Check possibility of NaNs before calling qvm::slerp
+  result.quat = qvm::slerp(a.quat, b.quat, t);
+  if (std::isnan(qvm::S(result.quat))) {
     result.quat = a.quat;
-  } else {
-    result.quat = qvm::slerp(a.quat, b.quat, t);
   }
+
   result.weight = lerp(t, a.weight, b.weight);
   return result;
 }
