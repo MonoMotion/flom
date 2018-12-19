@@ -38,7 +38,7 @@ template <> struct Arbitrary<boost::qvm::quat<double>> {
         },
         gen::inRange(-half_pi_100, half_pi_100), gen::inRange(-half_pi_100, half_pi_100),
         gen::inRange(-half_pi_100, half_pi_100));
-  };
+  }
 };
 
 template <> struct Arbitrary<flom::Location> {
