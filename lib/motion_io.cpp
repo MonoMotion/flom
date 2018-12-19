@@ -205,10 +205,12 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
           Rotation rot;
           auto const rot_data = effect_data["rotation"];
           auto const &value = rot_data["value"];
+          // Only last frame is used, so not good code, but this is for
+          // importing legacy format anyway (?)
           if (rot_data["space"] == "world") {
-            rot.coord_system = CoordinateSystem::World;
+            m.impl->effector_types[it.key()] = CoordinateSystem::World;
           } else if (rot_data["space"] == "local") {
-            rot.coord_system = CoordinateSystem::Local;
+            m.impl->effector_types[it.key()] = CoordinateSystem::Local;
           }
           rot.quat =
               boost::qvm::quat<double>{value[0], value[1], value[2], value[3]};
