@@ -37,12 +37,11 @@ Rotation interpolate(double t, Rotation const &a, Rotation const &b) {
 }
 
 bool operator==(const Rotation &r1, const Rotation &r2) {
-  return r1.coord_system == r2.coord_system && r1.weight == r2.weight &&
-         r1.quat == r2.quat;
+  return r1.weight == r2.weight && r1.quat == r2.quat;
 }
 
 bool almost_equal(const Rotation &r1, const Rotation &r2) {
-  return r1.coord_system == r2.coord_system && r1.weight == r2.weight &&
+  return r1.weight == r2.weight &&
          boost::qvm::cmp(r1.quat, r2.quat,
                          [](auto e1, auto e2) { return almost_equal(e1, e2); });
 }
@@ -55,12 +54,11 @@ Location interpolate(double t, Location const &a, Location const &b) {
 }
 
 bool operator==(const Location &l1, const Location &l2) {
-  return l1.coord_system == l2.coord_system && l1.weight == l2.weight &&
-         l1.vec == l2.vec;
+  return l1.weight == l2.weight && l1.vec == l2.vec;
 }
 
 bool almost_equal(const Location &l1, const Location &l2) {
-  return l1.coord_system == l2.coord_system && l1.weight == l2.weight &&
+  return l1.weight == l2.weight &&
          boost::qvm::cmp(l1.vec, l2.vec,
                          [](auto e1, auto e2) { return almost_equal(e1, e2); });
 }

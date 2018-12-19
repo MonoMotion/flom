@@ -4,6 +4,15 @@ package flom.proto;
 
 import "frame.proto";
 
+message EffectorType {
+  enum Type {
+    World = 0;
+    Local = 1;
+  }
+  Type location = 1;
+  Type rotation = 2;
+}
+
 message Motion {
   string model_id = 1;
   enum Loop {
@@ -11,5 +20,6 @@ message Motion {
     Wrap = 1;
   }
   Loop loop = 2;
+  map<string, EffectorType> effector_types = 3;
   repeated Frame frames = 4;
 }

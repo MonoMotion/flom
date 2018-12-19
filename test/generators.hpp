@@ -49,8 +49,6 @@ template <> struct Arbitrary<flom::Location> {
            boost::qvm::vec<double, 3> const &v) {
           flom::Location l;
           l.weight = static_cast<double>(weight) / 100;
-          // TODO: Evil, but will be deleted!
-          l.coord_system = flom::CoordinateSystem::World;
           l.vec = v;
           return l;
         },
@@ -66,8 +64,6 @@ template <> struct Arbitrary<flom::Rotation> {
            boost::qvm::quat<double> const &q) {
           flom::Rotation r;
           r.weight = static_cast<double>(weight) / 100;
-          // TODO: Evil, but will be deleted!
-          r.coord_system = flom::CoordinateSystem::World;
           r.quat = q;
           return r;
         },

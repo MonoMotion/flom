@@ -3,10 +3,7 @@ syntax = "proto3";
 package flom.proto;
 
 message Location {
-  oneof Location {
-    Vec3 world = 1;
-    Vec3 local = 2;
-  }
+  Vec3 vector = 1;
   /* coefficient of importance (0~1) */
   double weight = 3;
 }

@@ -12,6 +12,13 @@ namespace flom {
 
 enum class LoopType { None, Wrap };
 
+enum class CoordinateSystem { World, Local };
+
+struct EffectorType {
+  CoordinateSystem location;
+  CoordinateSystem rotation;
+};
+
 class FrameRange;
 
 class Motion {
@@ -49,6 +56,9 @@ public:
   void set_model_id(std::string const &);
 
   Frame &get_or_insert_frame(double t);
+
+  EffectorType effector_type(const std::string &) const;
+  void set_effector_type(const std::string &, EffectorType);
 
   double length() const;
 

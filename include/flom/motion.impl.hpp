@@ -16,10 +16,11 @@ public:
   std::string model_id;
   LoopType loop;
   std::map<double, Frame> raw_frames;
+  std::unordered_map<std::string, EffectorType> effector_types;
 
-  Impl() : model_id(), loop(LoopType::None), raw_frames() {}
+  Impl() : model_id(), loop(LoopType::None), raw_frames(), effector_types() {}
   Impl(std::string const &model)
-      : model_id(model), loop(LoopType::None), raw_frames() {}
+      : model_id(model), loop(LoopType::None), raw_frames(), effector_types() {}
 
   static Motion from_protobuf(proto::Motion const &);
   proto::Motion to_protobuf() const;

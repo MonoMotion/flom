@@ -47,6 +47,15 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
   } else if (motion_proto.loop() == proto::Motion::Loop::Motion_Loop_None) {
     m.impl->loop = LoopType::None;
   }
+  std::transform(
+      std::cbegin(motion_proto.effector_types()),
+      std::cend(motion_proto.effector_types()),
+      std::inserter(m.impl->effector_types, std::end(m.impl->effector_types)),
+      [](auto const &p) {
+        auto const &[link, type_proto] = p;
+        return std::make_pair(link,
+                              proto_util::unpack_effector_type(type_proto));
+      });
   for (auto const &frame_proto : motion_proto.frames()) {
     auto &frame = m.impl->raw_frames[frame_proto.t()];
     auto const &positions_proto = frame_proto.positions();
@@ -104,6 +113,9 @@ proto::Motion Motion::Impl::to_protobuf() const {
     m.set_loop(proto::Motion::Loop::Motion_Loop_Wrap);
   } else if (this->loop == LoopType::None) {
     m.set_loop(proto::Motion::Loop::Motion_Loop_None);
+  }
+  for (auto const &[link, type] : this->effector_types) {
+    proto_util::pack_effector_type(type, &(*m.mutable_effector_types())[link]);
   }
   for (auto const &[t, frame] : this->raw_frames) {
     auto *frame_proto = m.add_frames();
@@ -165,10 +177,12 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
           Location trans;
           auto const trans_data = effect_data["location"];
           auto const &value = trans_data["value"];
+          // Only last frame is used, so not good code, but this is for
+          // importing legacy format anyway (?)
           if (trans_data["space"] == "world") {
-            trans.coord_system = CoordinateSystem::World;
+            m.impl->effector_types[it.key()].location = CoordinateSystem::World;
           } else if (trans_data["space"] == "local") {
-            trans.coord_system = CoordinateSystem::Local;
+            m.impl->effector_types[it.key()].location = CoordinateSystem::Local;
           }
           trans.vec = boost::qvm::vec<double, 3>{value[0], value[1], value[2]};
           trans.weight = trans_data["weight"];
@@ -179,10 +193,12 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
           Rotation rot;
           auto const rot_data = effect_data["rotation"];
           auto const &value = rot_data["value"];
+          // Only last frame is used, so not good code, but this is for
+          // importing legacy format anyway (?)
           if (rot_data["space"] == "world") {
-            rot.coord_system = CoordinateSystem::World;
+            m.impl->effector_types[it.key()].rotation = CoordinateSystem::World;
           } else if (rot_data["space"] == "local") {
-            rot.coord_system = CoordinateSystem::Local;
+            m.impl->effector_types[it.key()].rotation = CoordinateSystem::Local;
           }
           rot.quat =
               boost::qvm::quat<double>{value[0], value[1], value[2], value[3]};
