@@ -99,7 +99,7 @@ bool almost_equal(const Effector &e1, const Effector &e2) {
   if (e1.location)
     result = result && almost_equal(*e1.location, *e2.location);
   if (e1.rotation)
-    result = result && almost_equal(*e1.location, *e2.location);
+    result = result && almost_equal(*e1.rotation, *e2.rotation);
   return result;
 }
 
