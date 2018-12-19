@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace flom {
 
@@ -61,6 +62,9 @@ public:
   void set_effector_type(const std::string &, EffectorType);
 
   double length() const;
+
+  std::vector<std::string> joint_names() const;
+  std::vector<std::string> effector_names() const;
 
 private:
   class Impl;
