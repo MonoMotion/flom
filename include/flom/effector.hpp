@@ -14,14 +14,8 @@ namespace flom {
 
 namespace qvm = boost::qvm;
 
-enum class CoordinateSystem {
-  World,
-  Local,
-};
-
 struct Location : boost::operators<Location> {
   double weight;
-  CoordinateSystem coord_system;
   qvm::vec<double, 3> vec;
 
   Location() : weight(0) {}
@@ -32,7 +26,6 @@ bool almost_equal(const Location &, const Location &);
 
 struct Rotation : boost::operators<Rotation> {
   double weight;
-  CoordinateSystem coord_system;
   qvm::quat<double> quat;
 
   Rotation() : weight(0) {}

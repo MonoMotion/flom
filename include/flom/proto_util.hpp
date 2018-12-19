@@ -2,6 +2,7 @@
 #define FLOM_PROTO_UTIL_HPP
 
 #include "flom/effector.hpp"
+#include "flom/motion.hpp"
 
 #include "frame.pb.h"
 #include "location.pb.h"
@@ -24,6 +25,12 @@ void pack_rotation(Rotation const &, proto::Rotation *);
 
 boost::qvm::quat<double> unpack_quat(proto::Quaternion const &);
 Rotation unpack_rotation(proto::Rotation const &);
+
+void pack_effector_type(EffectorType const &, proto::EffectorType *);
+proto::EffectorType::Type pack_coord_system(CoordinateSystem const &);
+
+EffectorType unpack_effector_type(proto::EffectorType const &);
+CoordinateSystem unpack_coord_system(proto::EffectorType::Type const &);
 
 } // namespace flom::proto_util
 

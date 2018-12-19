@@ -12,6 +12,13 @@ namespace flom {
 
 enum class LoopType { None, Wrap };
 
+enum class CoordinateSystem { World, Local };
+
+struct EffectorType {
+  CoordinateSystem location;
+  CoordinateSystem rotation;
+};
+
 class FrameRange;
 
 class Motion {

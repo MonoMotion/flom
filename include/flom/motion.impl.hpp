@@ -16,7 +16,7 @@ public:
   std::string model_id;
   LoopType loop;
   std::map<double, Frame> raw_frames;
-  std::unordered_map<std::string, CoordinateSystem> effector_types;
+  std::unordered_map<std::string, EffectorType> effector_types;
 
   Impl() : model_id(), loop(LoopType::None), raw_frames(), effector_types() {}
   Impl(std::string const &model)

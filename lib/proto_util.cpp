@@ -1,5 +1,6 @@
 #include "flom/proto_util.hpp"
 #include "flom/effector.hpp"
+#include "flom/motion.hpp"
 
 #include "location.pb.h"
 #include "rotation.pb.h"
@@ -59,6 +60,39 @@ Rotation unpack_rotation(proto::Rotation const &rot_proto) {
 void pack_rotation(Rotation const &rot, proto::Rotation *rot_proto) {
   pack_quat(rot.quat, rot_proto->mutable_quaternion());
   rot_proto->set_weight(rot.weight);
+}
+
+proto::EffectorType::Type pack_coord_system(CoordinateSystem const &c) {
+  switch (c) {
+  case CoordinateSystem::World:
+    return proto::EffectorType::Type::EffectorType_Type_World;
+  case CoordinateSystem::Local:
+    return proto::EffectorType::Type::EffectorType_Type_Local;
+  }
+}
+
+void pack_effector_type(EffectorType const &e, proto::EffectorType *proto) {
+  proto->set_location(pack_coord_system(e.location));
+  proto->set_rotation(pack_coord_system(e.rotation));
+}
+
+EffectorType unpack_effector_type(proto::EffectorType const &proto) {
+  EffectorType e;
+  e.location = unpack_coord_system(proto.location());
+  e.rotation = unpack_coord_system(proto.rotation());
+  return e;
+}
+
+CoordinateSystem unpack_coord_system(proto::EffectorType::Type const &proto) {
+  switch (proto) {
+  case proto::EffectorType::Type::EffectorType_Type_World:
+    return CoordinateSystem::World;
+  case proto::EffectorType::Type::EffectorType_Type_Local:
+    return CoordinateSystem::Local;
+  default:
+    assert(false); // unreachable
+    return CoordinateSystem::World;
+  }
 }
 
 } // namespace proto_util
