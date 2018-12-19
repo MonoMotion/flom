@@ -16,6 +16,8 @@
 
 namespace rc {
 
+static constexpr int half_pi_100 = static_cast<int>(flom::constants::pi<double> / 2 * 100);
+
 template <> struct Arbitrary<boost::qvm::vec<double, 3>> {
   static auto arbitrary() -> decltype(auto) {
     return gen::construct<boost::qvm::vec<double, 3>>(gen::arbitrary<double>(),
@@ -26,7 +28,6 @@ template <> struct Arbitrary<boost::qvm::vec<double, 3>> {
 
 template <> struct Arbitrary<boost::qvm::quat<double>> {
   static auto arbitrary() -> decltype(auto) {
-    const int half_pi_100 = flom::constants::pi<double> / 2 * 100;
     return gen::apply(
         [](int x, int y, int z) {
           auto q = boost::qvm::quat<double>();
@@ -38,7 +39,7 @@ template <> struct Arbitrary<boost::qvm::quat<double>> {
         },
         gen::inRange(-half_pi_100, half_pi_100), gen::inRange(-half_pi_100, half_pi_100),
         gen::inRange(-half_pi_100, half_pi_100));
-  };
+  }
 };
 
 template <> struct Arbitrary<flom::Location> {
@@ -132,9 +133,8 @@ template <> struct Arbitrary<flom::Motion> {
             auto const& [joints, effectors] = t;
             auto j = gen::exec([&joints = joints]() {
               std::unordered_map<std::string, double> nj;
-              std::transform(std::cbegin(joints), std::cend(joints), std::inserter(nj, std::end(nj)), [](auto&& j) {
-                  const int half_pi_100 = flom::constants::pi<double> / 2 * 100;
-                  return std::make_pair(j, static_cast<double>(*gen::inRange(-half_pi_100, half_pi_100)) / 100);
+              std::transform(std::cbegin(joints), std::cend(joints), std::inserter(nj, std::end(nj)), [](auto&& name) {
+                  return std::make_pair(name, static_cast<double>(*gen::inRange(-half_pi_100, half_pi_100)) / 100);
               });
               return nj;
             });
@@ -144,8 +144,8 @@ template <> struct Arbitrary<flom::Motion> {
                 gen::set(&flom::Effector::rotation, gen::arbitrary<flom::Rotation>()));
             auto e = gen::exec([&effectors = effectors, eg]() {
               std::unordered_map<std::string, flom::Effector> nj;
-              std::transform(std::cbegin(effectors), std::cend(effectors), std::inserter(nj, std::end(nj)), [&eg](auto&& j) {
-                  return std::make_pair(j, *eg);
+              std::transform(std::cbegin(effectors), std::cend(effectors), std::inserter(nj, std::end(nj)), [&eg](auto&& name) {
+                  return std::make_pair(name, *eg);
               });
               return nj;
             });

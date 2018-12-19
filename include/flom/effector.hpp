@@ -20,7 +20,7 @@ enum class CoordinateSystem {
 };
 
 struct Location : boost::operators<Location> {
-  float weight;
+  double weight;
   CoordinateSystem coord_system;
   qvm::vec<double, 3> vec;
 
@@ -31,7 +31,7 @@ bool operator==(const Location &, const Location &);
 bool almost_equal(const Location &, const Location &);
 
 struct Rotation : boost::operators<Rotation> {
-  float weight;
+  double weight;
   CoordinateSystem coord_system;
   qvm::quat<double> quat;
 

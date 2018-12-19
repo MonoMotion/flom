@@ -65,8 +65,8 @@ RC_BOOST_PROP(retrieve_frame_none_throw, (const flom::Motion &m)) {
 
   // Using unsigned long because RapidCheck doesn't support gen::inRange<double>
   RC_PRE(m.length() < std::numeric_limits<unsigned long>::max());
-  unsigned long lower = m.length() + 1;
-  unsigned long upper = std::numeric_limits<unsigned long>::max();
+  const auto lower = static_cast<unsigned long>(m.length() + 1);
+  const auto upper = std::numeric_limits<unsigned long>::max();
   double t = *rc::gen::inRange<unsigned long>(lower, upper);
 
   RC_ASSERT_THROWS_AS(m.frame_at(t), flom::errors::OutOfFramesError);
