@@ -6,7 +6,11 @@
 
 namespace flom {
 
-template <typename T> T lerp(double t, T a, T b) { return a + t * (b - a); }
+template <typename T, typename U,
+          std::enable_if_t<std::is_floating_point_v<U>> * = nullptr>
+T lerp(U t, T a, T b) {
+  return a + t * (b - a);
+}
 
 Location interpolate(double t, Location const &a, Location const &b);
 Rotation interpolate(double t, Rotation const &a, Rotation const &b);
