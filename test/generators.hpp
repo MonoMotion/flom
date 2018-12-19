@@ -133,8 +133,8 @@ template <> struct Arbitrary<flom::Motion> {
             auto const& [joints, effectors] = t;
             auto j = gen::exec([&joints = joints]() {
               std::unordered_map<std::string, double> nj;
-              std::transform(std::cbegin(joints), std::cend(joints), std::inserter(nj, std::end(nj)), [](auto&& j) {
-                  return std::make_pair(j, static_cast<double>(*gen::inRange(-half_pi_100, half_pi_100)) / 100);
+              std::transform(std::cbegin(joints), std::cend(joints), std::inserter(nj, std::end(nj)), [](auto&& name) {
+                  return std::make_pair(name, static_cast<double>(*gen::inRange(-half_pi_100, half_pi_100)) / 100);
               });
               return nj;
             });
@@ -144,8 +144,8 @@ template <> struct Arbitrary<flom::Motion> {
                 gen::set(&flom::Effector::rotation, gen::arbitrary<flom::Rotation>()));
             auto e = gen::exec([&effectors = effectors, eg]() {
               std::unordered_map<std::string, flom::Effector> nj;
-              std::transform(std::cbegin(effectors), std::cend(effectors), std::inserter(nj, std::end(nj)), [&eg](auto&& j) {
-                  return std::make_pair(j, *eg);
+              std::transform(std::cbegin(effectors), std::cend(effectors), std::inserter(nj, std::end(nj)), [&eg](auto&& name) {
+                  return std::make_pair(name, *eg);
               });
               return nj;
             });
