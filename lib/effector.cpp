@@ -41,7 +41,7 @@ bool operator==(const Rotation &r1, const Rotation &r2) {
 }
 
 bool almost_equal(const Rotation &r1, const Rotation &r2) {
-  return r1.weight == r2.weight &&
+  return almost_equal(r1.weight, r2.weight) &&
          boost::qvm::cmp(r1.quat, r2.quat,
                          [](auto e1, auto e2) { return almost_equal(e1, e2); });
 }
@@ -58,7 +58,7 @@ bool operator==(const Location &l1, const Location &l2) {
 }
 
 bool almost_equal(const Location &l1, const Location &l2) {
-  return l1.weight == l2.weight &&
+  return almost_equal(l1.weight, l2.weight) &&
          boost::qvm::cmp(l1.vec, l2.vec,
                          [](auto e1, auto e2) { return almost_equal(e1, e2); });
 }
