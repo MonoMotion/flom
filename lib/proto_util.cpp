@@ -84,12 +84,11 @@ EffectorType unpack_effector_type(proto::EffectorType const &proto) {
 }
 
 CoordinateSystem unpack_coord_system(proto::EffectorType::Type const &proto) {
-  switch (proto) {
-  case proto::EffectorType::Type::EffectorType_Type_World:
+  if (proto == proto::EffectorType::Type::EffectorType_Type_World) {
     return CoordinateSystem::World;
-  case proto::EffectorType::Type::EffectorType_Type_Local:
+  } else if (proto == proto::EffectorType::Type::EffectorType_Type_Local) {
     return CoordinateSystem::Local;
-  default:
+  } else {
     assert(false); // unreachable
     return CoordinateSystem::World;
   }
