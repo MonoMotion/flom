@@ -47,6 +47,22 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
   } else if (motion_proto.loop() == proto::Motion::Loop::Motion_Loop_None) {
     m.impl->loop = LoopType::None;
   }
+  std::transform(
+      std::cbegin(motion_proto.effector_types()),
+      std::cend(motion_proto.effector_types()),
+      std::inserter(m.impl->effector_types, std::end(m.impl->effector_types)),
+      [](auto const &p) {
+        auto const &[link, type_proto] = p;
+        switch (type_proto) {
+        case proto::Motion::CoordinateSystem::Motion_CoordinateSystem_World:
+          return std::make_pair(link, CoordinateSystem::World);
+        case proto::Motion::CoordinateSystem::Motion_CoordinateSystem_Local:
+          return std::make_pair(link, CoordinateSystem::Local);
+        default:
+          assert(false); // unreachable
+          return std::make_pair(link, CoordinateSystem::World);
+        }
+      });
   for (auto const &frame_proto : motion_proto.frames()) {
     auto &frame = m.impl->raw_frames[frame_proto.t()];
     auto const &positions_proto = frame_proto.positions();
@@ -104,6 +120,16 @@ proto::Motion Motion::Impl::to_protobuf() const {
     m.set_loop(proto::Motion::Loop::Motion_Loop_Wrap);
   } else if (this->loop == LoopType::None) {
     m.set_loop(proto::Motion::Loop::Motion_Loop_None);
+  }
+  for (auto const &[link, type] : this->effector_types) {
+    auto &type_proto = (*m.mutable_effector_types())[link];
+    if (type == CoordinateSystem::World) {
+      type_proto =
+          proto::Motion::CoordinateSystem::Motion_CoordinateSystem_World;
+    } else if (type == CoordinateSystem::Local) {
+      type_proto =
+          proto::Motion::CoordinateSystem::Motion_CoordinateSystem_Local;
+    }
   }
   for (auto const &[t, frame] : this->raw_frames) {
     auto *frame_proto = m.add_frames();
