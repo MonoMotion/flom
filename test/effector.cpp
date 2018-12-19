@@ -8,6 +8,7 @@
 #include <flom/interpolation.hpp>
 
 #include "generators.hpp"
+#include "operators.hpp"
 #include "printers.hpp"
 
 BOOST_AUTO_TEST_SUITE(effector)
