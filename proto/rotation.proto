@@ -3,10 +3,7 @@ syntax = "proto3";
 package flom.proto;
 
 message Rotation {
-  oneof rotation {
-    Quaternion world = 1;
-    Quaternion local = 2;
-  }
+  Quaternion quaternion = 1;
   /* coefficient of importance (0~1) */
   double weight = 3;
 }
