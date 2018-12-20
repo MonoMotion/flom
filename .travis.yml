@@ -41,7 +41,7 @@ install:
     mkdir -p boost && cd $_
     BOOST_URL="https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz"
     travis_retry wget --no-check-certificate --quiet -O - "${BOOST_URL}" | tar --strip-components=1 -xz
-    sudo cp boost /usr/include
+    sudo cp -r boost /usr/include
     cd ..
 
     mkdir -p cmake && cd $_
