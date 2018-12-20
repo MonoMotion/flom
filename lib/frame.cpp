@@ -62,4 +62,12 @@ bool almost_equal(const Frame &f1, const Frame &f2) {
   return p && e;
 }
 
+ranges::any_view<std::string> Frame::joint_names() const {
+  return this->positions | ranges::view::keys;
+}
+
+ranges::any_view<std::string> Frame::effector_names() const {
+  return this->effectors | ranges::view::keys;
+}
+
 } // namespace flom

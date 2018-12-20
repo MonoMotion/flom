@@ -7,12 +7,16 @@
 #include <unordered_map>
 
 #include <boost/operators.hpp>
+#include <range/v3/view.hpp>
 
 namespace flom {
 
 struct Frame : boost::operators<Frame> {
   std::unordered_map<std::string, double> positions;
   std::unordered_map<std::string, Effector> effectors;
+
+  ranges::any_view<std::string> joint_names() const;
+  ranges::any_view<std::string> effector_names() const;
 
   Frame &operator+=(const Frame &x);
   Frame &operator-=(const Frame &x);

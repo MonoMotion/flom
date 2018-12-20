@@ -102,24 +102,12 @@ bool Motion::Impl::is_valid() const {
   return this->raw_frames.size() > 0 && this->raw_frames.begin()->first == 0;
 }
 
-std::vector<std::string> Motion::joint_names() const {
-  auto const &pos = this->impl->raw_frames.begin()->second.positions;
-  std::vector<std::string> names;
-  names.reserve(pos.size());
-  std::transform(std::cbegin(pos), std::cend(pos),
-                 std::inserter(names, std::end(names)),
-                 [](auto &&p) { return p.first; });
-  return names;
+ranges::any_view<std::string> Motion::joint_names() const {
+  return this->impl->raw_frames.begin()->second.joint_names();
 }
 
-std::vector<std::string> Motion::effector_names() const {
-  auto const &eff = this->impl->raw_frames.begin()->second.effectors;
-  std::vector<std::string> names;
-  names.reserve(eff.size());
-  std::transform(std::cbegin(eff), std::cend(eff),
-                 std::inserter(names, std::end(names)),
-                 [](auto &&p) { return p.first; });
-  return names;
+ranges::any_view<std::string> Motion::effector_names() const {
+  return this->impl->raw_frames.begin()->second.effector_names();
 }
 
 bool operator==(const Motion &m1, const Motion &m2) {

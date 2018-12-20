@@ -63,8 +63,8 @@ public:
 
   double length() const;
 
-  std::vector<std::string> joint_names() const;
-  std::vector<std::string> effector_names() const;
+  ranges::any_view<std::string> joint_names() const;
+  ranges::any_view<std::string> effector_names() const;
 
 private:
   class Impl;
