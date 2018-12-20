@@ -1,0 +1,13 @@
+extraction:
+  cpp:
+    prepare:
+      packages:
+        - libboost-all-dev
+        - libprotobuf-dev
+        - protobuf-compiler
+        - libc++
+    configure:
+      command:
+        - mkdir build
+        - cd build
+        - cmake .. -DUSE_LIBCXX=ON -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF
