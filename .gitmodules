@@ -4,6 +4,3 @@
 [submodule "third_party/rapidcheck"]
 	path = third_party/rapidcheck
 	url = https://github.com/emil-e/rapidcheck
-[submodule "third_party/range-v3"]
-	path = third_party/range-v3
-	url = https://github.com/ericniebler/range-v3.git
