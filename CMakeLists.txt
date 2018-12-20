@@ -17,7 +17,7 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.9.6)
 cmake_policy(SET CMP0048 NEW)
 
 project(flom VERSION 0.1 LANGUAGES CXX)
@@ -31,6 +31,7 @@ endif()
 
 set(PROTO_DIR ./proto)
 set(PROTO_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR})
+set(Protobuf_USE_STATIC_LIBS ON)
 
 include(FindProtobuf)
 set(Protobuf_IMPORT_DIRS ${PROTO_DIR})
@@ -40,7 +41,7 @@ file(GLOB PROTO_FILES ${PROTO_DIR}/*.proto)
 protobuf_generate_cpp(PROTO_SRC PROTO_HEADER ${PROTO_FILES})
 add_library(flom_proto ${PROTO_HEADER} ${PROTO_SRC})
 set_target_properties(flom_proto PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-target_link_libraries(flom_proto ${PROTOBUF_LIBRARIES})
+target_link_libraries(flom_proto INTERFACE ${PROTOBUF_LIBRARIES})
 include_directories(SYSTEM ${PROTO_INCLUDE_DIR})
 
 find_package(Boost 1.65 REQUIRED)
