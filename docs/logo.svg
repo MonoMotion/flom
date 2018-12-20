@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="80.971519mm"
+   height="23.443607mm"
+   viewBox="0 0 80.971519 23.443607"
+   version="1.1"
+   id="svg2943"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="flom-logo.svg">
+  <defs
+     id="defs2937" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.1381501"
+     inkscape:cx="156.09139"
+     inkscape:cy="53.353503"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="7.03"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1440"
+     inkscape:window-height="805"
+     inkscape:window-x="0"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:measure-start="205.535,150.088"
+     inkscape:measure-end="68.3714,49.7151" />
+  <metadata
+     id="metadata2940">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-37.486267,-109.56413)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:19.7555542px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="64.255951"
+       y="123.8869"
+       id="text4041"><tspan
+         sodipodi:role="line"
+         id="tspan4039"
+         x="64.255951"
+         y="123.8869"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Bold';stroke-width:0.26458332">FLOM</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:19.7555542px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="65.584511"
+       y="132.95834"
+       id="text4045"><tspan
+         sodipodi:role="line"
+         id="tspan4043"
+         x="65.584511"
+         y="132.95834"
+         style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:semi-condensed;font-size:4.93888903px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Thin Semi-Condensed';stroke-width:0.26458332">MOTION FORMAT</tspan></text>
+    <g
+       id="g4222"
+       transform="translate(3.2881633,1.3407612)">
+      <g
+         transform="matrix(0.02830064,0,0,0.02830064,41.228104,108.66228)"
+         id="g4172"
+         style="opacity:1">
+        <g
+           id="g4160">
+	<polygon
+   class="st0"
+   points="0,348.081 71.821,419.911 255.992,235.74 440.18,419.911 512,348.081 255.992,92.089 "
+   style="fill:#000000"
+   id="polygon4158" />
+
+</g>
+      </g>
+      <g
+         transform="matrix(0.02830064,0,0,0.02830064,41.228104,116.41897)"
+         id="g4172-0"
+         style="opacity:1">
+        <g
+           id="g4160-2">
+          <polygon
+             class="st0"
+             points="0,348.081 71.821,419.911 255.992,235.74 440.18,419.911 512,348.081 255.992,92.089 "
+             style="fill:#000000"
+             id="polygon4158-6" />
+        </g>
+      </g>
+    </g>
+  </g>
+  <style
+     id="style4156"
+     type="text/css">
+	.st0{fill:#4B4B4B;}
+</style>
+</svg>
