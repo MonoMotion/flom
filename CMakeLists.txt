@@ -40,7 +40,7 @@ file(GLOB PROTO_FILES ${PROTO_DIR}/*.proto)
 protobuf_generate_cpp(PROTO_SRC PROTO_HEADER ${PROTO_FILES})
 add_library(flom_proto ${PROTO_HEADER} ${PROTO_SRC})
 set_target_properties(flom_proto PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-target_link_libraries(flom_proto INTERFACE ${PROTOBUF_LIBRARIES})
+target_link_libraries(flom_proto ${PROTOBUF_LIBRARIES})
 include_directories(SYSTEM ${PROTO_INCLUDE_DIR})
 
 find_package(Boost 1.65 REQUIRED)
