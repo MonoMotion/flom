@@ -1,0 +1,64 @@
+language: cpp
+sudo: true
+script: cmake
+
+git:
+  depth: 1
+
+env:
+  global:
+    - BOOST_VERSION="1.69.0"
+    - CMAKE_VERSION="3.13.2"
+    - RC_PARAMS="verbose_progress=1 verbose_shrinking=1"
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-trusty-5.0
+    packages:
+    - build-essential
+    - clang-5.0
+    - libclang-5.0-dev
+    - libclang1-5.0
+    - libstdc++6
+    - libstdc++-6-dev
+matrix:
+  include:
+  - os: linux
+    env: COMPILER='clang++-5.0' BUILD_TYPE='Release'
+  - os: linux
+    env: COMPILER='clang++-5.0' BUILD_TYPE='Debug'
+  - os: osx
+    env: COMPILER='clang++' BUILD_TYPE='Release'
+  - os: osx
+    env: COMPILER='clang++' BUILD_TYPE='Debug'
+
+install:
+- |
+  mkdir deps && cd $_
+  if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+    mkdir boost && cd $_
+    BOOST_URL="https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz"
+    travis_retry wget --no-check-certificate --quiet -O - "${BOOST_URL}" | tar --strip-components=1 xz
+    ./bootstrap.sh
+    sudo ./b2 headers
+    cd ..
+
+    mkdir cmake && cd $_
+    CMAKE_URL="https://cmake.org/files/v3.6/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz"
+    travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 xz
+    export PATH="$(pwd)/bin:${PATH}"
+    cd ..
+  elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+    brew list cmake &> /dev/null || brew install cmake
+    brew list boost &> /dev/null || brew install boost
+  fi
+
+before_script:
+  - cd ${TRAVIS_BUILD_DIR}
+  - cmake . -DFORMAT_BEFORE_BUILD=OFF -DCMAKE_CXX_COMPILER=${COMPILER} -DCONFIG=${BUILD_TYPE}
+
+script:
+- make -j"$(nproc)"
+- ctest -VV
