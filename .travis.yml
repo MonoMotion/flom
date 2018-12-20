@@ -66,6 +66,7 @@ install:
     brew list cmake &> /dev/null || brew install cmake
     brew list boost &> /dev/null || brew install boost
     brew list protobuf &> /dev/null || brew install protobuf
+    brew list llvm &> /dev/null || brew install llvm --with-clang
   fi
 
 before_script:
