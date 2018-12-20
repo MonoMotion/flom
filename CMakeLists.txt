@@ -43,6 +43,9 @@ set_target_properties(flom_proto PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(flom_proto ${PROTOBUF_LIBRARIES})
 include_directories(SYSTEM ${PROTO_INCLUDE_DIR})
 
+find_package(Boost REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(third_party/nlohmann_json)
 add_subdirectory(third_party/rapidcheck)
