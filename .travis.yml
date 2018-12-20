@@ -1,6 +1,7 @@
 language: cpp
 sudo: true
 script: cmake
+cache: apt
 
 git:
   depth: 1
