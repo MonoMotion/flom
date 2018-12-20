@@ -61,10 +61,10 @@ install:
     sudo ldconfig
     cd ../..
   elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-    brew list cmake &> /dev/null || brew install cmake
-    brew list boost &> /dev/null || brew install boost
-    brew list protobuf &> /dev/null || brew install protobuf
-    brew list llvm &> /dev/null || brew install llvm --with-clang
+    brew upgrade cmake || brew install cmake
+    brew upgrade boost || brew install boost
+    brew upgrade protobuf || brew install protobuf
+    brew upgrade llvm || brew install llvm --with-clang
     export PATH="/usr/local/opt/llvm/bin:$PATH"
     export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib"
   fi
