@@ -5,6 +5,8 @@
 #include "flom/motion.hpp"
 
 #include <iterator>
+#include <type_traits>
+#include <utility>
 #include <memory>
 
 namespace flom {
@@ -99,6 +101,76 @@ public:
   iterator begin() noexcept { return {this->motion, this->fps}; }
   iterator end() noexcept { return {}; }
 };
+
+
+template<int Idx, typename Base>
+class tuple_iterator {
+public:
+  using tuple_type = typename std::iterator_traits<Base>::value_type;
+
+  using iterator_category = std::bidirectional_iterator_tag;
+  using value_type = typename std::tuple_element<Idx, tuple_type>::type;
+  using difference_type = typename std::iterator_traits<Base>::difference_type;
+  using pointer = typename std::add_pointer_t<value_type>;
+  using reference = typename std::add_lvalue_reference_t<value_type>;
+
+  tuple_iterator(Base it_) : it(it_) {}
+
+  value_type operator*() const { return std::get<Idx>(*this->it); }
+  tuple_iterator& operator++() noexcept {
+    this->it ++;
+    return *this;
+  }
+
+  tuple_iterator& operator--() noexcept {
+    this->it --;
+    return *this;
+  }
+
+  pointer operator->() const noexcept {
+    return &std::get<Idx>(*this->it);
+  }
+
+  constexpr bool operator==(const tuple_iterator& t) const noexcept {
+    return this->it == t.it;
+  }
+
+  constexpr bool operator!=(const tuple_iterator& t) const noexcept {
+    return !(*this == t);
+  }
+private:
+  Base it;
+};
+
+template<int Idx, typename T>
+class TupleRange {
+public:
+  using value_type = typename std::tuple_element<Idx, typename T::value_type>::type;
+  using iterator = tuple_iterator<Idx, typename T::iterator>;
+  using const_iterator = tuple_iterator<Idx, typename T::const_iterator>;
+
+private:
+  T& v;
+
+public:
+  TupleRange() = delete;
+  TupleRange(T& v_) : v(v_) {}
+  TupleRange(const TupleRange &) = default;
+  TupleRange(TupleRange &&) = default;
+  TupleRange &operator=(const TupleRange &) = default;
+  TupleRange &operator=(TupleRange &&) = default;
+
+  iterator begin() noexcept { return {std::begin(this->v)}; }
+  iterator end() noexcept { return {std::end(this->v)}; }
+
+  const_iterator cbegin() const noexcept { return {std::cbegin(this->v)}; }
+  const_iterator cend() const noexcept { return {std::cend(this->v)}; }
+};
+
+// TODO: Delete V
+// TODO: Support map / unordered_map
+template<typename K, typename V>
+using KeyRange = TupleRange<0, std::unordered_map<K, V>>;
 
 } // namespace flom
 

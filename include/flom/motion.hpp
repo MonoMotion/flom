@@ -22,6 +22,9 @@ struct EffectorType {
 
 class FrameRange;
 
+template<typename T>
+class KeyRange;
+
 class Motion {
   friend bool operator==(const Motion &, const Motion &);
 
