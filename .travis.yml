@@ -1,7 +1,10 @@
 language: cpp
 sudo: true
 script: cmake
-cache: apt
+cache:
+  apt: true
+  directories:
+  - ${TRAVIS_BUILD_DIR}/deps/protobuf
 
 git:
   depth: 1
@@ -36,7 +39,7 @@ matrix:
 
 install:
 - |
-  mkdir deps && cd $_
+  mkdir "${TRAVIS_BUILD_DIR}/deps" && cd $_
   if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
     mkdir boost && cd $_
     BOOST_URL="https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz"
@@ -51,7 +54,7 @@ install:
     export PATH="$(pwd)/bin:${PATH}"
     cd ..
 
-    mkdir protobuf && cd $_
+    mkdir "protobuf/${PROTOBUF_VERSION}" && cd $_
     PROTOBUF_URL="https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-cpp-${PROTOBUF_VERSION}.tar.gz"
     travis_retry wget --no-check-certificate --quiet -O - "${PROTOBUF_URL}" | tar --strip-components=1 -xz
     ./configure
@@ -59,7 +62,7 @@ install:
     make check
     sudo make install
     sudo ldconfig
-    cd ..
+    cd ../..
   elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
     brew list cmake &> /dev/null || brew install cmake
     brew list boost &> /dev/null || brew install boost
