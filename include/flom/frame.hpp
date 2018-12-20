@@ -11,6 +11,7 @@
 
 namespace flom {
 
+// TODO: Hide Boost.Range
 template <typename K>
 using KeyRange =
     boost::any_range<K, boost::forward_traversal_tag,
