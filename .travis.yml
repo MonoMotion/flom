@@ -39,22 +39,22 @@ matrix:
 
 install:
 - |
-  mkdir "${TRAVIS_BUILD_DIR}/deps" && cd $_
+  mkdir -p "${TRAVIS_BUILD_DIR}/deps" && cd $_
   if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-    mkdir boost && cd $_
+    mkdir -p boost && cd $_
     BOOST_URL="https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz"
     travis_retry wget --no-check-certificate --quiet -O - "${BOOST_URL}" | tar --strip-components=1 -xz
     ./bootstrap.sh
     sudo ./b2 headers
     cd ..
 
-    mkdir cmake && cd $_
+    mkdir -p cmake && cd $_
     CMAKE_URL="https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz"
     travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz
     export PATH="$(pwd)/bin:${PATH}"
     cd ..
 
-    mkdir "protobuf/${PROTOBUF_VERSION}" && cd $_
+    mkdir -p "protobuf/${PROTOBUF_VERSION}" && cd $_
     PROTOBUF_URL="https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-cpp-${PROTOBUF_VERSION}.tar.gz"
     travis_retry wget --no-check-certificate --quiet -O - "${PROTOBUF_URL}" | tar --strip-components=1 -xz
     ./configure
