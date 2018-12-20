@@ -63,8 +63,8 @@ public:
 
   double length() const;
 
-  ranges::any_view<std::string> joint_names() const;
-  ranges::any_view<std::string> effector_names() const;
+  KeyRange<std::string> joint_names() const;
+  KeyRange<std::string> effector_names() const;
 
 private:
   class Impl;

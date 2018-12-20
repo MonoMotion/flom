@@ -1,6 +1,8 @@
 #include "flom/frame.hpp"
 #include "flom/interpolation.hpp"
 
+#include <boost/range/adaptors.hpp>
+
 #include <algorithm>
 
 namespace flom {
@@ -62,12 +64,12 @@ bool almost_equal(const Frame &f1, const Frame &f2) {
   return p && e;
 }
 
-ranges::any_view<std::string> Frame::joint_names() const {
-  return this->positions | ranges::view::keys;
+KeyRange<std::string> Frame::joint_names() const {
+  return this->positions | boost::adaptors::map_keys;
 }
 
-ranges::any_view<std::string> Frame::effector_names() const {
-  return this->effectors | ranges::view::keys;
+KeyRange<std::string> Frame::effector_names() const {
+  return this->effectors | boost::adaptors::map_keys;
 }
 
 } // namespace flom

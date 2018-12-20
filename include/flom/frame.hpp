@@ -7,16 +7,21 @@
 #include <unordered_map>
 
 #include <boost/operators.hpp>
-#include <range/v3/view.hpp>
+#include <boost/range/any_range.hpp>
 
 namespace flom {
+
+template <typename K>
+using KeyRange =
+    boost::any_range<K, boost::forward_traversal_tag,
+                     std::add_lvalue_reference_t<K>, std::ptrdiff_t>;
 
 struct Frame : boost::operators<Frame> {
   std::unordered_map<std::string, double> positions;
   std::unordered_map<std::string, Effector> effectors;
 
-  ranges::any_view<std::string> joint_names() const;
-  ranges::any_view<std::string> effector_names() const;
+  KeyRange<std::string> joint_names() const;
+  KeyRange<std::string> effector_names() const;
 
   Frame &operator+=(const Frame &x);
   Frame &operator-=(const Frame &x);

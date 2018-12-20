@@ -102,11 +102,11 @@ bool Motion::Impl::is_valid() const {
   return this->raw_frames.size() > 0 && this->raw_frames.begin()->first == 0;
 }
 
-ranges::any_view<std::string> Motion::joint_names() const {
+KeyRange<std::string> Motion::joint_names() const {
   return this->impl->raw_frames.begin()->second.joint_names();
 }
 
-ranges::any_view<std::string> Motion::effector_names() const {
+KeyRange<std::string> Motion::effector_names() const {
   return this->impl->raw_frames.begin()->second.effector_names();
 }
 
