@@ -1,4 +1,4 @@
-# flom
+![flom](docs/logo.svg)
 
 [![Travis CI](https://img.shields.io/travis/DeepL2/flom.svg?style=flat-square)](https://travis-ci.org/DeepL2/flom)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FDeepL2%2Fflom.svg?type=small)](https://app.fossa.io/projects/git%2Bgithub.com%2FDeepL2%2Fflom?ref=badge_small)
