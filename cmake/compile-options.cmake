@@ -40,6 +40,7 @@ function(flom_set_compile_options target)
 
   if(USE_LIBCXX)
     target_compile_options(${target} PUBLIC -stdlib=libc++)
+    target_link_libraries(${target} PUBLIC stdc++)
   elseif(USE_LIBSTDCXX)
     target_compile_options(${target} PUBLIC -stdlib=libstdc++)
   endif()
