@@ -30,6 +30,7 @@ add_subdirectory(third_party/rapidcheck)
 include_directories(SYSTEM third_party/nlohmann_json/single_include)
 include_directories(SYSTEM third_party/rapidcheck/include)
 include_directories(SYSTEM third_party/rapidcheck/extras/boost_test/include)
+include_directories(SYSTEM third_party/range-v3/include)
 
 include(cmake/clang-format.cmake)
 include(cmake/clang-tidy.cmake)
