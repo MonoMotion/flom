@@ -40,14 +40,14 @@ install:
   if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
     mkdir boost && cd $_
     BOOST_URL="https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz"
-    travis_retry wget --no-check-certificate --quiet -O - "${BOOST_URL}" | tar --strip-components=1 xz
+    travis_retry wget --no-check-certificate --quiet -O - "${BOOST_URL}" | tar --strip-components=1 -xz
     ./bootstrap.sh
     sudo ./b2 headers
     cd ..
 
     mkdir cmake && cd $_
     CMAKE_URL="https://cmake.org/files/v3.6/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz"
-    travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 xz
+    travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz
     export PATH="$(pwd)/bin:${PATH}"
     cd ..
   elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
