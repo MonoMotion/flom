@@ -5,7 +5,6 @@ extraction:
         - libboost-all-dev
         - libprotobuf-dev
         - protobuf-compiler
-        - libc++-7-dev
     configure:
       command:
         - mkdir build
