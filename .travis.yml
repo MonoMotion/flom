@@ -8,6 +8,7 @@ git:
 env:
   global:
     - BOOST_VERSION="1.69.0"
+    - PROTOBUF_VERSION="3.6.1"
     - CMAKE_VERSION="3.13.2"
     - RC_PARAMS="verbose_progress=1 verbose_shrinking=1"
 
@@ -50,9 +51,20 @@ install:
     travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz
     export PATH="$(pwd)/bin:${PATH}"
     cd ..
+
+    mkdir protobuf && cd $_
+    PROTOBUF_URL="https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-cpp-${PROTOBUF_VERSION}.tar.gz"
+    travis_retry wget --no-check-certificate --quiet -O - "${PROTOBUF_URL}" | tar --strip-components=1 -xz
+    ./configure
+    make -j"$(nproc)"
+    make check
+    sudo make install
+    sudo ldconfig
+    cd ..
   elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
     brew list cmake &> /dev/null || brew install cmake
     brew list boost &> /dev/null || brew install boost
+    brew list protobuf &> /dev/null || brew install protobuf
   fi
 
 before_script:
