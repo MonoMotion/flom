@@ -9,9 +9,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="80.971519mm"
+   width="73.941521mm"
    height="23.443607mm"
-   viewBox="0 0 80.971519 23.443607"
+   viewBox="0 0 73.94152 23.443607"
    version="1.1"
    id="svg2943"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
@@ -26,17 +26,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.1381501"
-     inkscape:cx="156.09139"
-     inkscape:cy="53.353503"
+     inkscape:cx="129.52131"
+     inkscape:cy="53.353484"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      fit-margin-top="0"
-     fit-margin-left="7.03"
+     fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:window-width="1440"
-     inkscape:window-height="805"
+     inkscape:window-height="804"
      inkscape:window-x="0"
      inkscape:window-y="23"
      inkscape:window-maximized="0"
@@ -58,7 +58,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-37.486267,-109.56413)">
+     transform="translate(-44.516267,-109.56413)">
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:19.7555542px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
@@ -90,13 +90,12 @@
          style="opacity:1">
         <g
            id="g4160">
-	<polygon
-   class="st0"
-   points="0,348.081 71.821,419.911 255.992,235.74 440.18,419.911 512,348.081 255.992,92.089 "
-   style="fill:#000000"
-   id="polygon4158" />
-
-</g>
+          <polygon
+             class="st0"
+             points="255.992,235.74 440.18,419.911 512,348.081 255.992,92.089 0,348.081 71.821,419.911 "
+             style="fill:#000000"
+             id="polygon4158" />
+        </g>
       </g>
       <g
          transform="matrix(0.02830064,0,0,0.02830064,41.228104,116.41897)"
@@ -106,7 +105,7 @@
            id="g4160-2">
           <polygon
              class="st0"
-             points="0,348.081 71.821,419.911 255.992,235.74 440.18,419.911 512,348.081 255.992,92.089 "
+             points="255.992,235.74 440.18,419.911 512,348.081 255.992,92.089 0,348.081 71.821,419.911 "
              style="fill:#000000"
              id="polygon4158-6" />
         </g>
