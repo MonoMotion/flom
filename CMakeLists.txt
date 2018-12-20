@@ -44,7 +44,7 @@ target_link_libraries(flom_proto ${PROTOBUF_LIBRARIES})
 include_directories(SYSTEM ${PROTO_INCLUDE_DIR})
 
 find_package(Boost REQUIRED 1.65)
-include_directories(${Boost_INCLUDE_DIRS})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(third_party/nlohmann_json)
