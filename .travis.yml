@@ -65,6 +65,8 @@ install:
     brew list boost &> /dev/null || brew install boost
     brew list protobuf &> /dev/null || brew install protobuf
     brew list llvm &> /dev/null || brew install llvm --with-clang
+    export PATH="/usr/local/opt/llvm/bin:$PATH"
+    export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib"
   fi
 
 before_script:
