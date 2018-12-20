@@ -17,6 +17,14 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+option(USE_LIBCXX
+  "Use libc++ explicitly"
+  OFF)
+
+option(USE_LIBSTDCXX
+  "Use libstdc++ explicitly"
+  OFF)
+
 function(flom_set_compile_options target)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_compile_options(${target} PUBLIC -pedantic -Wall -Weverything -Wno-float-equal -Wno-padded -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-missing-prototypes -Wno-range-loop-analysis)
@@ -28,5 +36,11 @@ function(flom_set_compile_options target)
     target_compile_options(${target} PUBLIC -O0 -g3)
   elseif(CONFIG STREQUAL "Release")
     target_compile_options(${target} PUBLIC -O3)
+  endif()
+
+  if(USE_LIBCXX)
+    target_compile_options(${target} -stdlib=libc++)
+  elseif(USE_LIBSTDCXX)
+    target_compile_options(${target} -stdlib=libstdc++)
   endif()
 endfunction()
