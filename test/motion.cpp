@@ -4,10 +4,13 @@
 #include <rapidcheck.h>
 #include <rapidcheck/boost_test.h>
 
+#include <boost/range/algorithm.hpp>
+
 #include <cmath>
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
+#include <unordered_set>
 
 #include <flom/errors.hpp>
 #include <flom/motion.hpp>
@@ -126,6 +129,30 @@ RC_BOOST_PROP(in_range_t_wrap, (const flom::Motion &m, double t)) {
   RC_PRE(m.is_valid());
 
   RC_ASSERT(m.is_in_range_at(t));
+}
+
+RC_BOOST_PROP(joint_list, (const flom::Motion &m, double t)) {
+  RC_PRE(t >= 0);
+  RC_PRE(m.is_in_range_at(t));
+  RC_PRE(m.is_valid());
+
+  std::unordered_set<std::string> o1, o2;
+  boost::copy(m.frame_at(t).joint_names(), std::inserter(o1, std::end(o1)));
+  boost::copy(m.joint_names(), std::inserter(o2, std::end(o2)));
+
+  RC_ASSERT(o1 == o2);
+}
+
+RC_BOOST_PROP(effector_list, (const flom::Motion &m, double t)) {
+  RC_PRE(t >= 0);
+  RC_PRE(m.is_in_range_at(t));
+  RC_PRE(m.is_valid());
+
+  std::unordered_set<std::string> o1, o2;
+  boost::copy(m.frame_at(t).effector_names(), std::inserter(o1, std::end(o1)));
+  boost::copy(m.effector_names(), std::inserter(o2, std::end(o2)));
+
+  RC_ASSERT(o1 == o2);
 }
 
 RC_BOOST_PROP(dump_load, (const flom::Motion &m)) {

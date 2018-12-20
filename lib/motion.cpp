@@ -102,6 +102,14 @@ bool Motion::Impl::is_valid() const {
   return this->raw_frames.size() > 0 && this->raw_frames.begin()->first == 0;
 }
 
+KeyRange<std::string> Motion::joint_names() const {
+  return this->impl->raw_frames.begin()->second.joint_names();
+}
+
+KeyRange<std::string> Motion::effector_names() const {
+  return this->impl->raw_frames.begin()->second.effector_names();
+}
+
 bool operator==(const Motion &m1, const Motion &m2) {
   return m1.impl->model_id == m2.impl->model_id &&
          m1.impl->loop == m2.impl->loop &&
