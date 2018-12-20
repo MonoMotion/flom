@@ -3,6 +3,7 @@ sudo: true
 script: cmake
 cache:
   apt: true
+  ccache: true
   directories:
   - ${TRAVIS_BUILD_DIR}/deps/protobuf
 
@@ -12,6 +13,8 @@ env:
     - PROTOBUF_VERSION="3.6.1"
     - CMAKE_VERSION="3.13.2"
     - RC_PARAMS="verbose_progress=1 verbose_shrinking=1"
+    - USE_CCACHE=1
+    - CCACHE_DIR="${HOME}/.ccache"
 
 addons:
   apt:
@@ -65,12 +68,14 @@ install:
     brew list boost &> /dev/null || brew install boost
     brew list protobuf &> /dev/null || brew install protobuf
     brew list llvm &> /dev/null || brew install llvm --with-clang
+    brew list ccache &> /dev/null || brew install ccache
+    export PATH="/usr/local/opt/ccache/libexec:$PATH"
   fi
 
 before_script:
   - cd ${TRAVIS_BUILD_DIR}
   - ${COMPILER} --version
-  - cmake . -DFORMAT_BEFORE_BUILD=OFF -DCMAKE_CXX_COMPILER=${COMPILER} -DCONFIG=${BUILD_TYPE} -DUSE_LIBCXX=ON
+  - cmake . -DFORMAT_BEFORE_BUILD=OFF -DCMAKE_CXX_COMPILER="ccache ${COMPILER}" -DCONFIG=${BUILD_TYPE} -DUSE_LIBCXX=ON
 
 script:
 - make -j"$(nproc)"
