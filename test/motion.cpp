@@ -133,10 +133,8 @@ RC_BOOST_PROP(in_range_t_wrap, (const flom::Motion &m, double t)) {
 
 RC_BOOST_PROP(joint_list, (const flom::Motion &m, double t)) {
   RC_PRE(t >= 0);
+  RC_PRE(m.is_in_range_at(t));
   RC_PRE(m.is_valid());
-  if (m.loop() == flom::LoopType::None) {
-    RC_PRE(m.is_in_range_at(t));
-  }
 
   std::unordered_set<std::string> o1, o2;
   boost::copy(m.frame_at(t).joint_names(), std::inserter(o1, std::end(o1)));
@@ -147,10 +145,8 @@ RC_BOOST_PROP(joint_list, (const flom::Motion &m, double t)) {
 
 RC_BOOST_PROP(effector_list, (const flom::Motion &m, double t)) {
   RC_PRE(t >= 0);
+  RC_PRE(m.is_in_range_at(t));
   RC_PRE(m.is_valid());
-  if (m.loop() == flom::LoopType::None) {
-    RC_PRE(m.is_in_range_at(t));
-  }
 
   std::unordered_set<std::string> o1, o2;
   boost::copy(m.frame_at(t).effector_names(), std::inserter(o1, std::end(o1)));
