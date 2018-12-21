@@ -53,7 +53,7 @@ install:
     mkdir -p "protobuf/${PROTOBUF_VERSION}" && cd $_
     PROTOBUF_URL="https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-cpp-${PROTOBUF_VERSION}.tar.gz"
     travis_retry wget --no-check-certificate --quiet -O - "${PROTOBUF_URL}" | tar --strip-components=1 -xz
-    cmake ./cmake -Dprotobuf_BUILD_SHARED_LIBS=OFF
+    cmake ./cmake -Dprotobuf_BUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
     make -j"$(nproc)"
     make check
     sudo make install
