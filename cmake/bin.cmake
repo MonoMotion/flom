@@ -24,7 +24,7 @@ function(flom_add_bin target)
   set_target_properties(${target}_bin PROPERTIES OUTPUT_NAME ${target})
   flom_set_compile_options(${target}_bin)
   # TODO: Don't link protobuf libraries here!
-  target_link_libraries(${target}_bin PRIVATE flom_lib ${PROTOBUF_LIBRARIES})
+  target_link_libraries(${target}_bin PRIVATE ${PROTOBUF_LIBRARIES} flom_lib)
   enable_clang_format(${target}_bin)
   enable_clang_tidy(${target}_bin)
 endfunction()
