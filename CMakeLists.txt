@@ -35,7 +35,7 @@ set(Protobuf_USE_STATIC_LIBS ON)
 
 include(FindProtobuf)
 set(Protobuf_IMPORT_DIRS ${PROTO_DIR})
-find_package(Protobuf REQUIRED)
+find_package(Protobuf 3.0.0 REQUIRED)
 include_directories(${PROTOBUF_INCLUDE_DIR})
 file(GLOB PROTO_FILES ${PROTO_DIR}/*.proto)
 protobuf_generate_cpp(PROTO_SRC PROTO_HEADER ${PROTO_FILES})
