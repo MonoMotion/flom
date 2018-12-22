@@ -50,7 +50,7 @@ install:
     export PATH="$(pwd)/bin:${PATH}"
     cd ..
 
-    sudo apt-get purge -y protobuf
+    sudo apt-get purge -y libprotobuf-dev
     mkdir -p "protobuf/${PROTOBUF_VERSION}" && cd $_
     PROTOBUF_URL="https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-all-${PROTOBUF_VERSION}.tar.gz"
     travis_retry wget --no-check-certificate --quiet -O - "${PROTOBUF_URL}" | tar --strip-components=1 -xz
