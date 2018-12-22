@@ -31,7 +31,6 @@ endif()
 
 set(PROTO_DIR ./proto)
 set(PROTO_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR})
-set(Protobuf_USE_STATIC_LIBS ON)
 
 include(FindProtobuf)
 set(Protobuf_IMPORT_DIRS ${PROTO_DIR})
