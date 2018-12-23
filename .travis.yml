@@ -55,7 +55,7 @@ install:
     travis_retry wget --no-check-certificate --quiet -O - "${PROTOBUF_URL}" | tar --strip-components=1 -xz
     cmake ./cmake -DCMAKE_CXX_FLAGS="-stdlib=libc++" -Dprotobuf_BUILD_SHARED_LIBS=OFF -DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++ -lc++abi -fPIC" -DCMAKE_CXX_COMPILER=${COMPILER}
     make -j"$(nproc)"
-    make check
+    make check > /dev/null
     sudo make install
     sudo ldconfig
     cd ../..
