@@ -1,6 +1,7 @@
 language: cpp
 sudo: true
 script: cmake
+dist: xenial
 cache:
   apt: true
   directories:
@@ -17,7 +18,7 @@ addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
-    - llvm-toolchain-trusty-7
+    - llvm-toolchain-xenial-7
     packages:
     - build-essential
     - clang-7
