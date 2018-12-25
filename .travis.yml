@@ -4,8 +4,6 @@ script: cmake
 dist: xenial
 cache:
   apt: true
-  directories:
-  - ${TRAVIS_BUILD_DIR}/deps/protobuf
 
 env:
   global:
