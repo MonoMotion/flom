@@ -37,10 +37,12 @@ script:
 # Docker caching and restoring in Travis CI
 # before_cache and before_install are taken from .travis.yml in https://github.com/s12v/sns
 # copyright 2016 Sergey Novikov
+# Changes:
+#   - Use `find` instead of `ls` to list files
 before_cache:
 - >
   mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
   | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'
 
 before_install:
-- if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+- if [[ -d $HOME/docker ]]; then find $HOME/docker/ -name '*.tar.gz' | xargs -I {file} sh -c "zcat {file} | docker load"; fi
