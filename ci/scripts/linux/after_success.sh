@@ -7,4 +7,11 @@ VERSION=$(${TRAVIS_BUILD_DIR}/version.sh)
 INPUT=$(find dist -name '*.tar.gz')
 OUTPUT=${INPUT%.tar.gz}
 
-fpm -s tar -t deb -n flom -v $VERSION --prefix $PREFIX -p ${OUTPUT}.deb $INPUT
+function build_package() {
+  local type=$1
+  local ext=${2:-$type}
+  fpm -s tar -t $type -n flom -v $VERSION --prefix $PREFIX -p ${OUTPUT}.$ext $INPUT
+}
+
+build_package deb
+build_package rpm
