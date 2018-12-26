@@ -43,4 +43,4 @@ COPY package.sh /
 VOLUME ["/source", "/build"]
 WORKDIR /source
 
-CMD ["/build.sh", "/source", "/build"]
+CMD ["/build.sh"]
