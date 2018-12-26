@@ -15,3 +15,4 @@ function build_package() {
 
 build_package deb
 build_package rpm
+build_package pacman pkg.tar.xz
