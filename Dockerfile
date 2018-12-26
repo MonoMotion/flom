@@ -1,6 +1,4 @@
-ARG BASE_IMAGE=debian:stretch-slim
-
-FROM ${BASE_IMAGE}
+FROM debian:buster-slim
 
 ARG BOOST_VERSION=1.69.0
 ARG PROTOBUF_VERSION=3.6.1
