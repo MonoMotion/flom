@@ -14,7 +14,8 @@ RUN DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends build-essential clang libc++-dev libc++abi-dev wget
 
 RUN mkdir boost && cd $_ \
-    && BOOST_URL="https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz" \
+    && BOOST_VERSION_U=$(echo $BOOST_VERSION | sed 's/\./_/g') \
+    && BOOST_URL="https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_U}.tar.gz" \
     && wget --no-check-certificate --quiet -O - "${BOOST_URL}" | tar --strip-components=1 -xz \
     && cp -r boost /usr/include \
     && cd ..
