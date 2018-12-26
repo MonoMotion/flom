@@ -17,6 +17,9 @@ function get_meta() {
 
   if [ "${TRAVIS_PULL_REQUEST:-false}" != false ]; then
     echo "pr_$TRAVIS_PULL_REQUEST"
+  elif [ "$branch" == "HEAD" ]; then
+    # short hash
+    git rev-parse --short HEAD
   else
     echo "${branch//[^[:alnum:]-]/-}"
   fi
