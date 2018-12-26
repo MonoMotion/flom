@@ -10,7 +10,7 @@ cd $BUILD_DIR
 cpack -D CPACK_OUTPUT_FILE_PREFIX=$DIST_DIR
 
 PREFIX=/usr
-VERSION=$(./${SOURCE_DIR}/version.sh)
+VERSION=$(${SOURCE_DIR}/version.sh)
 INPUT=$(find $DIST_DIR -name '*.tar.gz')
 OUTPUT=${INPUT%.tar.gz}
 
