@@ -10,8 +10,8 @@ ENV CC="clang"
 ENV BUILD_TYPE="Release"
 
 RUN DEBIAN_FRONTEND=noninteractive \
-    && apt-get update \
-    && apt-get install --no-install-recommends build-essential clang libc++-dev libc++abi-dev wget
+    && apt-get update -y \
+    && apt-get install -y --no-install-recommends build-essential clang libc++-dev libc++abi-dev wget
 
 RUN mkdir boost && cd $_ \
     && BOOST_URL="https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz" \
