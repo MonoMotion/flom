@@ -4,7 +4,7 @@ set -euo pipefail
 
 VERSION_TXT="VERSION.txt"
 
-cd "$(git rev-parse --show-toplevel)"
+cd "$(dirname "$0")"
 
 function get_meta() {
   local branch=$(git rev-parse --abbrev-ref HEAD)
