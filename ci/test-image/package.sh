@@ -17,7 +17,7 @@ OUTPUT=${INPUT%.tar.gz}
 function build_package() {
   local type=$1
   local ext=${2:-$type}
-  fpm -s tar -t $type -n flom -v $VERSION --description "Motion data exchange format" --prefix $PREFIX -p ${OUTPUT}.$ext $INPUT
+  fpm -s tar -t $type -n flom -v $VERSION -m "coord.e <me@coord-e.com>" --url "https://github.com/DeepL2/flom" --description "Motion data exchange format" --prefix $PREFIX -p ${OUTPUT}.$ext $INPUT
 }
 
 build_package deb
