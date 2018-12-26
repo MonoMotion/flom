@@ -39,7 +39,7 @@ RUN mkdir protobuf && cd $_ \
 
 COPY build.sh /
 
-VOLUME ["/source"]
+VOLUME ["/source", "/build"]
 WORKDIR /source
 
-CMD ["/build.sh"]
+CMD ["/build.sh", "/build"]
