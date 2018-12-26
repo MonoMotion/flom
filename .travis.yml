@@ -10,6 +10,10 @@ cache:
 services:
   - docker
 
+env:
+  global:
+    - RC_PARAMS="verbose_progress=1 verbose_shrinking=1 max_discord_ratio=100"
+
 matrix:
   include:
   - os: linux

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-RC_PARAMS="verbose_progress=1 verbose_shrinking=1"
 cmake . -DCMAKE_CXX_COMPILER=${COMPILER} -DCONFIG=${BUILD_TYPE} -DUSE_LIBCXX=ON -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF
 make -j"$(nproc)"
 
