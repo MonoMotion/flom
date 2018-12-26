@@ -11,7 +11,7 @@ ENV BUILD_TYPE="Release"
 
 RUN DEBIAN_FRONTEND=noninteractive \
     && apt-get update -y \
-    && apt-get install -y --no-install-recommends build-essential clang libc++-dev libc++abi-dev wget
+    && apt-get install -y --no-install-recommends build-essential clang libc++-dev libc++abi-dev wget bash
 
 RUN mkdir boost && cd $_ \
     && BOOST_VERSION_U=$(echo $BOOST_VERSION | sed 's/\./_/g') \
