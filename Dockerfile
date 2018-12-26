@@ -29,7 +29,7 @@ RUN mkdir cmake && cd $_ \
 RUN mkdir protobuf && cd $_ \
     && PROTOBUF_URL="https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-all-${PROTOBUF_VERSION}.tar.gz" \
     && wget --no-check-certificate --quiet -O - "${PROTOBUF_URL}" | tar --strip-components=1 -xz \
-    && CXXFLAGS='-stdlib=libc++' CFLAGS='-fPIC' LDFLAGS='-stdlib=libc++ -lc++ -lc++abi -fPIC' ./configure \
+    && ./configure CXXFLAGS=-fPIC \
     && make -j"$(nproc)" \
     && make check > /dev/null \
     && make install \
@@ -40,4 +40,4 @@ VOLUME ["/source"]
 WORKDIR /source
 
 
-CMD ["bash", "-c", "cmake . -DCMAKE_CXX_COMPILER=${CXX} -DCONFIG=${BUILD_TYPE} -DUSE_LIBCXX=ON -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF && make -j$(nproc)"]
+CMD ["bash", "-c", "cmake . -DCMAKE_CXX_COMPILER=${CXX} -DCONFIG=${BUILD_TYPE} -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF && make -j$(nproc)"]
