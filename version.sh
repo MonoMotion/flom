@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 VERSION_TXT="VERSION.txt"
 
 cd "$(git rev-parse --show-toplevel)"
