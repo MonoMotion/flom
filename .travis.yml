@@ -33,14 +33,22 @@ after_success:
 - source ci/scripts/${TRAVIS_OS_NAME}/after_success.sh
 
 before_deploy:
-- cd build/dist
+- sed -e "s/@VERSION@/$(./version.sh)/g" ci/bintray.in > build/bintray.json
 
 deploy:
+- provider: bintray
+  file: "build/bintray.json"
+  user: "coord-e"
+  key: $BINTRAY_API_KEY
+  skip_cleanup: true
+  on:
+    condition: "$BUILD_TYPE = Release"
+    all_branches: true
 - provider: releases
   api_key: $GITHUB_OAUTH_TOKEN
   skip_cleanup: true
   file_glob: true
-  file: '*'
+  file: 'build/dist/*'
   on:
     condition: "$BUILD_TYPE = Release"
     tags: true
