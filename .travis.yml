@@ -35,7 +35,8 @@ script:
 - source ci/scripts/${TRAVIS_OS_NAME}/script.sh
 
 # Docker caching and restoring in Travis CI
-# before_cache and before_install are taken from .travis.yml in https://github.com/s12v/sns
+# before_cache and before_install are taken from .travis.yml in https://github.com/s12v/sns,
+# which is licensed under Apache License Version 2.0
 # copyright 2016 Sergey Novikov
 # Changes:
 #   - Use `find` instead of `ls` to list files
