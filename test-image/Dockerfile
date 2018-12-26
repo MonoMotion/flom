@@ -37,7 +37,9 @@ RUN mkdir protobuf && cd $_ \
     && ldconfig \
     && cd ..
 
+COPY build.sh /
+
 VOLUME ["/source"]
 WORKDIR /source
 
-CMD ["bash", "-c", "cmake . -DCMAKE_CXX_COMPILER=${CXX} -DCONFIG=${BUILD_TYPE} -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF && make -j$(nproc)"]
+CMD ["/build.sh"]
