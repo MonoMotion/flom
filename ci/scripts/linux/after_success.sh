@@ -4,7 +4,7 @@ docker run --rm -v $(pwd):/source -v $(pwd)/build:/build test /package.sh
 
 PREFIX=/usr
 VERSION=$(${TRAVIS_BUILD_DIR}/version.sh)
-INPUT=$(find /build/dist -name '*.tar.gz')
+INPUT=$(find ${TRAVIS_BUILD_DIR}/build/dist -name '*.tar.gz')
 OUTPUT=${INPUT%.tar.gz}
 
 function build_package() {
