@@ -27,3 +27,5 @@ set_target_properties(flom_lib PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 target_link_libraries(flom_lib PRIVATE flom_proto nlohmann_json::nlohmann_json ${PROTOBUF_LIBRARIES})
 enable_clang_format(flom_lib)
 enable_clang_tidy(flom_lib)
+
+install(TARGETS flom_lib LIBRARY DESTINATION lib)
