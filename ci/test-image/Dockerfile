@@ -11,7 +11,7 @@ ENV BUILD_TYPE="Release"
 
 RUN DEBIAN_FRONTEND=noninteractive \
     && apt-get update -y \
-    && apt-get install -y --no-install-recommends build-essential clang libc++-dev libc++abi-dev wget bash git ruby rpm \
+    && apt-get install -y --no-install-recommends build-essential clang libc++-dev libc++abi-dev wget bash git ruby ruby-dev rpm bsdtar \
     && gem install --no-document fpm
 
 RUN mkdir boost && cd $_ \
