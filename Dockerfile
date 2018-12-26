@@ -5,9 +5,13 @@ ARG PROTOBUF_VERSION=3.6.1
 ARG CMAKE_VERSION=3.13.2
 
 ENV RC_PARAMS="verbose_progress=1 verbose_shrinking=1"
-ENV CXX="clang++-7"
-ENV CC="clang-7"
+ENV CXX="clang++"
+ENV CC="clang"
 ENV BUILD_TYPE="Release"
+
+RUN DEBIAN_FRONTEND=noninteractive \
+    && apt update \
+    && apt install --no-install-recommends build-essentials clang libc++-dev libc++abi-dev
 
 RUN mkdir boost && cd $_ \
     && BOOST_URL="https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz" \
