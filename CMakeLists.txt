@@ -29,6 +29,8 @@ if(NOT CONFIG)
   set(CONFIG Release)
 endif()
 
+message(STATUS "Build in ${CONFIG} mode")
+
 set(PROTO_DIR ./proto)
 set(PROTO_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(Protobuf_USE_STATIC_LIBS ON)
