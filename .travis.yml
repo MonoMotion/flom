@@ -1,0 +1,31 @@
+language: cpp
+sudo: true
+script: cmake
+dist: xenial
+
+services:
+  - docker
+
+env:
+  global:
+    - RC_PARAMS="verbose_progress=1 verbose_shrinking=1 max_discard_ratio=100"
+
+matrix:
+  include:
+  - os: linux
+    env: COMPILER='clang++' BUILD_TYPE='Release'
+  - os: linux
+    env: COMPILER='clang++' BUILD_TYPE='Debug'
+  - os: osx
+    env: COMPILER='clang++' BUILD_TYPE='Release'
+  - os: osx
+    env: COMPILER='clang++' BUILD_TYPE='Debug'
+
+install:
+- cd ${TRAVIS_BUILD_DIR}
+- source ci/scripts/${TRAVIS_OS_NAME}/install.sh
+
+script:
+- cd ${TRAVIS_BUILD_DIR}
+- ${COMPILER} --version
+- source ci/scripts/${TRAVIS_OS_NAME}/script.sh
