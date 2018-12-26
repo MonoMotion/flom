@@ -18,7 +18,7 @@ function get_meta() {
   if [ "${TRAVIS_PULL_REQUEST:-false}" != false ]; then
     echo "pr_$TRAVIS_PULL_REQUEST"
   else
-    echo "$branch" | sed 's/[^[:alnum:]-]/-/g'
+    echo "${branch//[^[:alnum:]-]/-}"
   fi
 }
 
