@@ -9,21 +9,8 @@ services:
 
 env:
   global:
-    - BOOST_VERSION="1.69.0"
-    - PROTOBUF_VERSION="3.6.1"
-    - CMAKE_VERSION="3.13.2"
     - RC_PARAMS="verbose_progress=1 verbose_shrinking=1"
 
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    - llvm-toolchain-xenial-7
-    packages:
-    - build-essential
-    - clang-7
-    - libc++-7-dev
-    - libc++abi-7-dev
 matrix:
   include:
   - os: linux
