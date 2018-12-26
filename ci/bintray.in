@@ -7,6 +7,6 @@
   "version": {
     "name": "@VERSION@"
   },
-  "files": [ {"includePattern": "build/dist/(.*)", "uploadPattern": "$1"} ],
+  "files": [ {"includePattern": "build/dist/(.*)", "uploadPattern": "@VERSION@/$1"} ],
   "publish": true
 }
