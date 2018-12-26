@@ -15,12 +15,16 @@ RUN mkdir boost && cd $_ \
     && BOOST_URL="https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION//./_}.tar.gz" \
     && wget --no-check-certificate --quiet -O - "${BOOST_URL}" | tar --strip-components=1 -xz \
     && cp -r boost /usr/include \
-    && cd .. && mkdir boost && cd $_ \
+    && cd ..
+
+RUN mkdir cmake && cd $_ \
     && CMAKE_URL="https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz" \
     && wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz \
     && cp bin/* /usr/bin/ \
     && cp -r share/* /usr/share/ \
-    && cd .. && mkdir protobuf && cd $_ \
+    && cd ..
+
+RUN mkdir protobuf && cd $_ \
     && PROTOBUF_URL="https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-all-${PROTOBUF_VERSION}.tar.gz" \
     && wget --no-check-certificate --quiet -O - "${PROTOBUF_URL}" | tar --strip-components=1 -xz \
     && CXXFLAGS='-stdlib=libc++' CFLAGS='-fPIC' LDFLAGS='-stdlib=libc++ -lc++ -lc++abi -fPIC' ./configure \
