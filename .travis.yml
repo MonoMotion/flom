@@ -27,9 +27,9 @@ addons:
 matrix:
   include:
   - os: linux
-    env: COMPILER='clang++-7' BUILD_TYPE='Release'
+    env: COMPILER='clang++' BUILD_TYPE='Release'
   - os: linux
-    env: COMPILER='clang++-7' BUILD_TYPE='Debug'
+    env: COMPILER='clang++' BUILD_TYPE='Debug'
   - os: osx
     env: COMPILER='clang++' BUILD_TYPE='Release'
   - os: osx
@@ -53,7 +53,7 @@ script:
   cd ${TRAVIS_BUILD_DIR}
   ${COMPILER} --version
   if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-    docker run --rm -v $(pwd):/source test
+    docker run --rm -v $(pwd):/source -e BUILD_TYPE=${BUILD_TYPE} -e CXX=${COMPILER} test
   elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
     cmake . -DCMAKE_CXX_COMPILER=${COMPILER} -DCONFIG=${BUILD_TYPE} -DUSE_LIBCXX=ON -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF
     make -j"$(nproc)"
