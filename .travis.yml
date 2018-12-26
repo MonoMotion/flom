@@ -33,11 +33,11 @@ after_success:
 - source ci/scripts/${TRAVIS_OS_NAME}/after_success.sh
 
 before_deploy:
-- sed -e "s/@VERSION@/$(./version.sh)/g" ci/bintray.in > build/bintray.json
+- sed -e "s/@VERSION@/$(./version.sh)/g" ci/bintray.in > bintray.json
 
 deploy:
 - provider: bintray
-  file: "build/bintray.json"
+  file: "bintray.json"
   user: "coord-e"
   key: $BINTRAY_API_KEY
   skip_cleanup: true
