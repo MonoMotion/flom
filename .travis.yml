@@ -31,3 +31,16 @@ script:
 
 after_success:
 - source ci/scripts/${TRAVIS_OS_NAME}/after_success.sh
+
+before_deploy:
+- cd build/dist
+
+deploy:
+- provider: releases
+  api_key: $GITHUB_OAUTH_TOKEN
+  skip_cleanup: true
+  file_glob: true
+  file: '*'
+  on:
+    condition: "$BUILD_TYPE = Release"
+    tags: true
