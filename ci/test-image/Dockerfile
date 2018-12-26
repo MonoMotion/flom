@@ -38,6 +38,7 @@ RUN mkdir protobuf && cd $_ \
     && cd ..
 
 COPY build.sh /
+COPY package.sh /
 
 VOLUME ["/source", "/build"]
 WORKDIR /source
