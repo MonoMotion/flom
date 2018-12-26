@@ -22,27 +22,14 @@ matrix:
   - os: osx
     env: COMPILER='clang++' BUILD_TYPE='Debug'
 
+before_install:
+- test -d ci/scripts/${TRAVIS_OS_NAME}
+
 install:
-- |
-  if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-    docker build test-image/ -t test
-  elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-    brew upgrade cmake || brew install cmake
-    brew upgrade boost || brew install boost
-    brew upgrade protobuf || brew install protobuf
-    brew upgrade llvm || brew install llvm --with-clang
-    export PATH="/usr/local/opt/llvm/bin:$PATH"
-    export LDFLAGS="-L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib"
-  fi
+- cd ${TRAVIS_BUILD_DIR}
+- source ci/scripts/${TRAVIS_OS_NAME}/install.sh
 
 script:
-- |
-  cd ${TRAVIS_BUILD_DIR}
-  ${COMPILER} --version
-  if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-    docker run --rm -v $(pwd):/source -e BUILD_TYPE=${BUILD_TYPE} -e CXX=${COMPILER} test
-  elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-    cmake . -DCMAKE_CXX_COMPILER=${COMPILER} -DCONFIG=${BUILD_TYPE} -DUSE_LIBCXX=ON -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF
-    make -j"$(nproc)"
-    ctest -VV
-  fi
+- cd ${TRAVIS_BUILD_DIR}
+- ${COMPILER} --version
+- source ci/scripts/${TRAVIS_OS_NAME}/script.sh
