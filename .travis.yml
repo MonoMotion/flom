@@ -33,6 +33,7 @@ after_success:
 - source ci/scripts/${TRAVIS_OS_NAME}/after_success.sh
 
 before_deploy:
+- cd $TRAVIS_BUILD_DIR
 - sed -e "s/@VERSION@/$(./version.sh)/g" ci/bintray.in > bintray.json
 
 deploy:
