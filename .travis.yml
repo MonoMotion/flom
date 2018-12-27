@@ -47,6 +47,7 @@ deploy:
   on:
     condition: "$BUILD_TYPE = Release"
     all_branches: true
+    condition: "$TRAVIS_BRANCH =~ ^develop|master$"
 - provider: releases
   api_key: $GITHUB_OAUTH_TOKEN
   skip_cleanup: true
