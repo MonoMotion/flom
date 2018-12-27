@@ -7,7 +7,7 @@ VERSION_TXT="VERSION.txt"
 cd "$(dirname "$0")"
 
 function get_meta() {
-  local branch=$(git rev-parse --abbrev-ref HEAD)
+  local branch=$(git name-rev HEAD | sed 's/.*\s\([^~]*\).*/\1/')
 
   if [ "$branch" == "master" ]; then
     exit
@@ -17,9 +17,6 @@ function get_meta() {
 
   if [ "${TRAVIS_PULL_REQUEST:-false}" != false ]; then
     echo "pr_$TRAVIS_PULL_REQUEST"
-  elif [ "$branch" == "HEAD" ]; then
-    # short hash
-    git rev-parse --short HEAD
   else
     echo "${branch//[^[:alnum:]-]/-}"
   fi
