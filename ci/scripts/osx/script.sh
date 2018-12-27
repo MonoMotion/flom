@@ -2,6 +2,6 @@
 
 mkdir build && cd $_
 cmake .. -DCMAKE_CXX_COMPILER=${COMPILER} -DCONFIG=${BUILD_TYPE} -DUSE_LIBCXX=ON -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF
-make -j"$(nproc)"
+make -j"$(sysctl -n ncpu)"
 
 ctest -VV
