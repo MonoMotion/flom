@@ -7,7 +7,7 @@ VERSION_TXT="VERSION.txt"
 cd "$(dirname "$0")"
 
 function get_meta() {
-  local branch=$(git name-rev HEAD | sed 's/.*\s\([^~]*\).*/\1/')
+  local branch=$(git name-rev HEAD | sed 's/.* \([^~]*\).*/\1/')
 
   if [ "$branch" == "master" ]; then
     exit
