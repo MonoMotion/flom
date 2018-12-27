@@ -17,14 +17,9 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 2.6)
 
-function(flom_add_bin target)
-  add_executable(${target}_bin ${target}.cpp)
-  set_target_properties(${target}_bin PROPERTIES OUTPUT_NAME ${target})
-  flom_set_compile_options(${target}_bin)
-  target_link_libraries(${target}_bin PRIVATE flom_lib)
-  enable_clang_format(${target}_bin)
-  enable_clang_tidy(${target}_bin)
-  install(TARGETS ${target}_bin RUNTIME DESTINATION bin)
-endfunction()
+set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${FLOM_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+set(CPACK_GENERATOR "TGZ;ZIP")
+
+include(CPack)

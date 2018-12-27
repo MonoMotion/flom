@@ -1,0 +1,12 @@
+{
+  "package": {
+    "name": "latest",
+    "repo": "flom",
+    "subject": "deepl2"
+  },
+  "version": {
+    "name": "@VERSION@"
+  },
+  "files": [ {"includePattern": "build/dist/(.*)", "uploadPattern": "@VERSION@/$1"} ],
+  "publish": true
+}

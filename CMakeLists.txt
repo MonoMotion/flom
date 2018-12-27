@@ -20,7 +20,10 @@
 cmake_minimum_required(VERSION 3.9.6)
 cmake_policy(SET CMP0048 NEW)
 
-project(flom VERSION 0.1 LANGUAGES CXX)
+project(flom LANGUAGES CXX)
+
+execute_process(COMMAND ${PROJECT_SOURCE_DIR}/version.sh OUTPUT_VARIABLE FLOM_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+message(STATUS "Version: v${FLOM_VERSION}")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -31,6 +34,11 @@ if(NOT CONFIG)
 endif()
 
 message(STATUS "Build in ${CONFIG} mode")
+
+if(APPLE)
+  set(CMAKE_MACOSX_RPATH 1)
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+endif()
 
 set(PROTO_DIR ./proto)
 set(PROTO_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR})
@@ -51,8 +59,8 @@ find_package(Boost 1.65 REQUIRED)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory(third_party/nlohmann_json)
-add_subdirectory(third_party/rapidcheck)
+add_subdirectory(third_party/nlohmann_json EXCLUDE_FROM_ALL)
+add_subdirectory(third_party/rapidcheck EXCLUDE_FROM_ALL)
 include_directories(SYSTEM third_party/nlohmann_json/single_include)
 include_directories(SYSTEM third_party/rapidcheck/include)
 include_directories(SYSTEM third_party/rapidcheck/extras/boost_test/include)
@@ -62,6 +70,7 @@ include(cmake/clang-tidy.cmake)
 include(cmake/compile-options.cmake)
 include(cmake/bin.cmake)
 include(cmake/test.cmake)
+include(cmake/cpack.cmake)
 
 add_subdirectory(include/)
 include_directories(include/)
