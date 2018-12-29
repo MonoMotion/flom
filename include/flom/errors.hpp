@@ -46,7 +46,7 @@ public:
   explicit JSONLoadError(const std::string &);
   virtual const char *what() const noexcept;
 
-  std::string status() const noexcept;
+  std::string status_message() const noexcept;
 
 public:
   std::string status;
@@ -57,7 +57,7 @@ public:
   explicit JSONDumpError(const std::string &);
   virtual const char *what() const noexcept;
 
-  std::string status() const noexcept;
+  std::string status_message() const noexcept;
 
 public:
   std::string status;
