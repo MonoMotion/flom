@@ -51,6 +51,12 @@ public:
     return *this;
   }
 
+  double current_time() const noexcept { return this->fps * this->t_index; }
+
+  difference_type operator-(const frame_iterator &r) const noexcept {
+    return this->current_time() - r.current_time();
+  }
+
   constexpr bool operator==(const frame_iterator &r) const noexcept {
     return this->is_end == r.is_end;
   }
