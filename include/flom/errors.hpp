@@ -5,48 +5,39 @@
 
 namespace flom::errors {
 
-class BaseError : public std::exception {
-public:
-  explicit BaseError(const std::string &) noexcept;
-  virtual const char *what() const noexcept;
-
-protected:
-  std::string message;
-};
-
-class InvalidTimeError : public BaseError {
+class InvalidTimeError : public std::runtime_error {
 public:
   explicit InvalidTimeError(double);
   virtual const char *what() const noexcept;
 };
 
-class OutOfFramesError : public BaseError {
+class OutOfFramesError : public std::out_of_range {
 public:
   explicit OutOfFramesError(double);
   virtual const char *what() const noexcept;
 };
 
-class ParseError : public BaseError {
+class ParseError : public std::runtime_error {
 public:
   // TODO: include additional information
   ParseError();
   virtual const char *what() const noexcept;
 };
 
-class SerializationError : public BaseError {
+class SerializationError : public std::runtime_error {
 public:
   // TODO: include additional information
   SerializationError();
   virtual const char *what() const noexcept;
 };
 
-class JSONLoadError : public BaseError {
+class JSONLoadError : public std::runtime_error {
 public:
   explicit JSONLoadError(const std::string &);
   virtual const char *what() const noexcept;
 };
 
-class JSONDumpError : public BaseError {
+class JSONDumpError : public std::runtime_error {
 public:
   explicit JSONDumpError(const std::string &);
   virtual const char *what() const noexcept;

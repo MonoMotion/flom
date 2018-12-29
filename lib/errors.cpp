@@ -25,48 +25,45 @@ namespace flom::errors {
 
 using namespace std::string_literals;
 
-BaseError::BaseError(const std::string &message_) noexcept
-    : message(message_) {}
-
-const char *BaseError::what() const noexcept { return this->message.c_str(); }
-
 InvalidTimeError::InvalidTimeError(double t)
-    : BaseError("Time '" + std::to_string(t) + "' is invalid") {}
+    : std::runtime_error("Time '" + std::to_string(t) + "' is invalid") {}
 
 const char *InvalidTimeError::what() const noexcept {
-  return this->message.c_str();
+  return ("InvalidTimeError: "s + std::runtime_error::what()).c_str();
 }
 
 OutOfFramesError::OutOfFramesError(double t)
-    : BaseError("No frame is avaliable at time " + std::to_string(t)) {}
+    : std::out_of_range("No frame is avaliable at time " + std::to_string(t)) {}
 
 const char *OutOfFramesError::what() const noexcept {
-  return this->message.c_str();
+  return ("OutOfFramesError: "s + std::out_of_range::what()).c_str();
 }
 
-ParseError::ParseError() : BaseError("Could not parse input") {}
+ParseError::ParseError() : std::runtime_error("Could not parse input") {}
 
-const char *ParseError::what() const noexcept { return this->message.c_str(); }
+const char *ParseError::what() const noexcept {
+  return ("ParseError: "s + std::runtime_error::what()).c_str();
+}
 
 SerializationError::SerializationError()
-    : BaseError("Could not serialize data") {}
+    : std::runtime_error("Could not serialize data") {}
 
 const char *SerializationError::what() const noexcept {
-  return this->message.c_str();
+  return ("SerializationError: "s + std::runtime_error::what()).c_str();
 }
 
 JSONLoadError::JSONLoadError(const std::string &message)
-    : BaseError("Failed to load from JSON string: " + message) {}
+    : std::runtime_error("Failed to load from JSON string: " + message) {}
 
 const char *JSONLoadError::what() const noexcept {
-  return this->message.c_str();
+  return ("JSONLoadError: "s + std::runtime_error::what()).c_str();
 }
 
 JSONDumpError::JSONDumpError(const std::string &message)
-    : BaseError("Failed to dump to JSON string: " + message) {}
+    : std::runtime_error("Failed to dump to JSON string: " + message) {}
 
 const char *JSONDumpError::what() const noexcept {
-  return this->message.c_str();
+  return ("JSONDumpError: "s + std::runtime_error::what()).c_str();
 }
 
 } // namespace flom::errors
