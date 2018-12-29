@@ -24,6 +24,8 @@ frame_iterator &frame_iterator::operator=(const frame_iterator &other) {
   return *this;
 }
 
+frame_iterator::~frame_iterator() noexcept {}
+
 frame_iterator::value_type frame_iterator::operator*() const {
   return this->impl->motion->frame_at(this->current_time());
 }

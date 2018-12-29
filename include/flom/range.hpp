@@ -36,6 +36,8 @@ public:
   frame_iterator &operator=(const frame_iterator &);
   frame_iterator &operator=(frame_iterator &&) = default;
 
+  ~frame_iterator() noexcept;
+
   // This is InputIterator because operator* doesn't return reference
   value_type operator*() const;
 
