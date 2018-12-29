@@ -22,11 +22,10 @@ public:
   using reference = Frame &;
 
 private:
-  // DefaultConstructible is required
-  const Motion *motion;
+  class Impl;
+  std::unique_ptr<Impl> impl;
+
   bool is_end = false;
-  double fps = 1;
-  long t_index = 0;
 
 public:
   frame_iterator() noexcept;
@@ -47,9 +46,6 @@ public:
   frame_iterator operator--(int) noexcept;
 
   double current_time() const noexcept;
-
-private:
-  bool check_is_end() const noexcept;
 };
 
 frame_iterator::difference_type operator-(const frame_iterator &,

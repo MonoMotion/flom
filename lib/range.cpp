@@ -1,18 +1,19 @@
 #include "flom/range.hpp"
+#include "flom/range.impl.hpp"
 
 namespace flom {
 
-frame_iterator::frame_iterator() noexcept : motion(), is_end(true) {}
-frame_iterator::frame_iterator(Motion const &motion_, double fps_) noexcept
-    : motion(&motion_), fps(fps_) {}
+frame_iterator::frame_iterator() noexcept : impl(), is_end(true) {}
+frame_iterator::frame_iterator(Motion const &motion, double fps) noexcept
+    : impl(std::make_unique<Impl>(motion, fps)) {}
 
 frame_iterator::value_type frame_iterator::operator*() const {
-  return this->motion->frame_at(this->current_time());
+  return this->impl->motion->frame_at(this->current_time());
 }
 
 frame_iterator &frame_iterator::operator++() noexcept {
-  this->t_index++;
-  this->is_end = this->check_is_end();
+  this->impl->t_index++;
+  this->is_end = this->impl->check_is_end();
   return *this;
 }
 
@@ -23,8 +24,8 @@ frame_iterator frame_iterator::operator++(int) noexcept {
 }
 
 frame_iterator &frame_iterator::operator--() noexcept {
-  this->t_index--;
-  this->is_end = this->check_is_end();
+  this->impl->t_index--;
+  this->is_end = this->impl->check_is_end();
   return *this;
 }
 
@@ -34,11 +35,15 @@ frame_iterator frame_iterator::operator--(int) noexcept {
   return copy;
 }
 
-double frame_iterator::current_time() const noexcept {
+double frame_iterator::Impl::current_time() const noexcept {
   return this->fps * this->t_index;
 }
 
-bool frame_iterator::check_is_end() const noexcept {
+double frame_iterator::current_time() const noexcept {
+  return this->impl->current_time();
+}
+
+bool frame_iterator::Impl::check_is_end() const noexcept {
   return !this->motion->is_in_range_at(this->current_time());
 }
 
