@@ -9,5 +9,16 @@
 
 Motion data exchange format
 
+## Build Requirements
+
+- Boost (headers)
+- protobuf 3.0.0 or later
+- C++17 compiler
+  - clang 5.0 or later
+  - gcc 6.1 or later
+- C++17 standard library
+  - libc++ 7 or later
+  - libstdc++ 6 or later
+
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FDeepL2%2Fflom.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FDeepL2%2Fflom?ref=badge_large)
