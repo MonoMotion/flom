@@ -11,6 +11,9 @@ namespace flom {
 
 // using snake_case, following customs of iterator naming
 class frame_iterator {
+  friend bool operator==(const frame_iterator &,
+                         const frame_iterator &) noexcept;
+
 public:
   using iterator_category = std::input_iterator_tag;
   using value_type = Frame;
@@ -66,22 +69,24 @@ public:
 
   double current_time() const noexcept { return this->fps * this->t_index; }
 
-  difference_type operator-(const frame_iterator &r) const noexcept {
-    return this->current_time() - r.current_time();
-  }
-
-  constexpr bool operator==(const frame_iterator &r) const noexcept {
-    return this->is_end == r.is_end;
-  }
-  constexpr bool operator!=(const frame_iterator &r) const noexcept {
-    return !(*this == r);
-  }
-
 private:
   bool check_is_end() const noexcept {
     return !this->motion->is_in_range_at(this->current_time());
   }
 };
+
+frame_iterator::difference_type operator-(const frame_iterator &l,
+                                          const frame_iterator &r) noexcept {
+  return l.current_time() - r.current_time();
+}
+
+bool operator==(const frame_iterator &l, const frame_iterator &r) noexcept {
+  return l.is_end == r.is_end;
+}
+
+bool operator!=(const frame_iterator &l, const frame_iterator &r) noexcept {
+  return !(l == r);
+}
 
 class FrameRange {
 public:
