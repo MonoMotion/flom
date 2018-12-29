@@ -41,71 +41,38 @@ public:
   using reference = Frame &;
 
 private:
-  // DefaultConstructible is required
-  const Motion *motion;
+  class Impl;
+  std::unique_ptr<Impl> impl;
+
   bool is_end = false;
-  double fps = 1;
-  long t_index = 0;
 
 public:
-  constexpr frame_iterator() noexcept : motion(), is_end(true) {}
-  frame_iterator(Motion const &motion_, double fps_) noexcept
-      : motion(&motion_), fps(fps_) {}
+  frame_iterator() noexcept;
+  frame_iterator(Motion const &motion, double fps) noexcept;
 
-  frame_iterator(const frame_iterator &) = default;
-  frame_iterator(frame_iterator &&) = default;
-  frame_iterator &operator=(const frame_iterator &) = default;
-  frame_iterator &operator=(frame_iterator &&) = default;
+  frame_iterator(const frame_iterator &);
+  frame_iterator(frame_iterator &&);
+  frame_iterator &operator=(const frame_iterator &);
+  frame_iterator &operator=(frame_iterator &&);
+
+  ~frame_iterator();
 
   // This is InputIterator because operator* doesn't return reference
-  value_type operator*() const {
-    return this->motion->frame_at(this->current_time());
-  }
+  value_type operator*() const;
 
-  frame_iterator &operator++() noexcept {
-    this->t_index++;
-    this->is_end = this->check_is_end();
-    return *this;
-  }
+  frame_iterator &operator++() noexcept;
+  frame_iterator operator++(int) noexcept;
 
-  frame_iterator operator++(int) noexcept {
-    const auto copy = *this;
-    ++(*this);
-    return copy;
-  }
+  frame_iterator &operator--() noexcept;
+  frame_iterator operator--(int) noexcept;
 
-  frame_iterator &operator--() noexcept {
-    this->t_index--;
-    this->is_end = this->check_is_end();
-    return *this;
-  }
-
-  frame_iterator operator--(int) noexcept {
-    const auto copy = *this;
-    --(*this);
-    return copy;
-  }
-
-  double current_time() const noexcept { return this->fps * this->t_index; }
-
-private:
-  bool check_is_end() const noexcept {
-    return !this->motion->is_in_range_at(this->current_time());
-  }
+  double current_time() const noexcept;
 };
 
-frame_iterator::difference_type operator-(const frame_iterator &l,
-                                          const frame_iterator &r) noexcept {
-  return l.current_time() - r.current_time();
-}
-
-bool operator==(const frame_iterator &l, const frame_iterator &r) noexcept {
-  return l.is_end == r.is_end;
-}
-
-bool operator!=(const frame_iterator &l, const frame_iterator &r) noexcept {
-  return !(l == r);
-}
+frame_iterator::difference_type operator-(const frame_iterator &,
+                                          const frame_iterator &) noexcept;
+bool operator==(const frame_iterator &, const frame_iterator &) noexcept;
+bool operator!=(const frame_iterator &, const frame_iterator &) noexcept;
 
 class FrameRange {
 public:
