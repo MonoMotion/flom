@@ -19,7 +19,7 @@ frame_iterator::frame_iterator(Motion const &motion, double fps) noexcept
 
 frame_iterator::frame_iterator(const frame_iterator &other)
     : impl(std::make_unique<Impl>(*other.impl)), is_end(other.is_end) {}
-fqsqrame_iterator &frame_iterator::operator=(const frame_iterator &other) {
+frame_iterator &frame_iterator::operator=(const frame_iterator &other) {
   this->impl = std::make_unique<Impl>(*other.impl);
   return *this;
 }
