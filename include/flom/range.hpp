@@ -45,10 +45,22 @@ public:
     return *this;
   }
 
+  frame_iterator operator++(int) noexcept {
+    const auto copy = *this;
+    ++(*this);
+    return copy;
+  }
+
   frame_iterator &operator--() noexcept {
     this->t_index--;
     this->is_end = this->check_is_end();
     return *this;
+  }
+
+  frame_iterator operator--(int) noexcept {
+    const auto copy = *this;
+    --(*this);
+    return copy;
   }
 
   double current_time() const noexcept { return this->fps * this->t_index; }
