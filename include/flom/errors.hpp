@@ -1,7 +1,8 @@
 #ifndef FLOM_ERRORS_HPP
 #define FLOM_ERRORS_HPP
 
-#include <stdexcept>
+#include <exception>
+#include <string>
 
 namespace flom::errors {
 
