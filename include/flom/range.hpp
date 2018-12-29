@@ -12,7 +12,7 @@ namespace flom {
 // using snake_case, following customs of iterator naming
 class frame_iterator {
 public:
-  using iterator_category = std::forward_iterator_tag;
+  using iterator_category = std::bidirectional_iterator_tag;
   using value_type = Frame;
   using difference_type = double;
   using pointer = Frame *;
@@ -41,7 +41,13 @@ public:
 
   frame_iterator &operator++() noexcept {
     this->t_index++;
-    this->is_end = !this->motion->is_in_range_at(this->fps * this->t_index);
+    this->is_end = this->check_is_end();
+    return *this;
+  }
+
+  frame_iterator &operator--() noexcept {
+    this->t_index--;
+    this->is_end = this->check_is_end();
     return *this;
   }
 
@@ -50,6 +56,11 @@ public:
   }
   constexpr bool operator!=(const frame_iterator &r) const noexcept {
     return !(*this == r);
+  }
+
+private:
+  bool check_is_end() const noexcept {
+    return !this->motion->is_in_range_at(this->fps * this->t_index);
   }
 };
 
