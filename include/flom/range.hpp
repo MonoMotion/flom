@@ -12,7 +12,7 @@ namespace flom {
 // using snake_case, following customs of iterator naming
 class frame_iterator {
 public:
-  using iterator_category = std::bidirectional_iterator_tag;
+  using iterator_category = std::input_iterator_tag;
   using value_type = Frame;
   using difference_type = double;
   using pointer = Frame *;
@@ -35,6 +35,7 @@ public:
   frame_iterator &operator=(const frame_iterator &) = default;
   frame_iterator &operator=(frame_iterator &&) = default;
 
+  // This is InputIterator because operator* doesn't return reference
   value_type operator*() {
     return this->motion->frame_at(this->fps * this->t_index);
   }
