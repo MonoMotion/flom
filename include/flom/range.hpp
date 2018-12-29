@@ -36,7 +36,7 @@ public:
   frame_iterator &operator=(frame_iterator &&) = default;
 
   // This is InputIterator because operator* doesn't return reference
-  value_type operator*() {
+  value_type operator*() const {
     return this->motion->frame_at(this->fps * this->t_index);
   }
 
