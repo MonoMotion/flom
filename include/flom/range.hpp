@@ -75,18 +75,10 @@ private:
   }
 };
 
-frame_iterator::difference_type operator-(const frame_iterator &l,
-                                          const frame_iterator &r) noexcept {
-  return l.current_time() - r.current_time();
-}
-
-bool operator==(const frame_iterator &l, const frame_iterator &r) noexcept {
-  return l.is_end == r.is_end;
-}
-
-bool operator!=(const frame_iterator &l, const frame_iterator &r) noexcept {
-  return !(l == r);
-}
+frame_iterator::difference_type operator-(const frame_iterator &,
+                                          const frame_iterator &) noexcept;
+bool operator==(const frame_iterator &, const frame_iterator &) noexcept;
+bool operator!=(const frame_iterator &, const frame_iterator &) noexcept;
 
 class FrameRange {
 public:
