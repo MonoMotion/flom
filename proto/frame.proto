@@ -1,0 +1,49 @@
+//
+// Copyright 2018 coord.e
+//
+// This file is part of Flom.
+//
+// Flom is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Flom is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Flom.  If not, see <http://www.gnu.org/licenses/>.
+//
+
+syntax = "proto3";
+
+package flom.proto;
+
+import "location.proto";
+import "rotation.proto";
+
+message Frame {
+  /* time of frame in second */
+  double t = 1;
+  /* joint positions in rad */
+  map<string, double> positions = 2;
+  /* expected effectors rotation and location */
+  map<string, Effector> effectors = 3;
+}
+
+message Effector {
+  LocationValue location = 2;
+  RotationValue rotation = 3;
+}
+
+/* wrapper to express optional value */
+message LocationValue {
+  Location value = 1;
+}
+
+/* wrapper to express optional value */
+message RotationValue {
+  Rotation value = 1;
+}
