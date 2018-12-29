@@ -31,9 +31,9 @@ public:
   frame_iterator() noexcept;
   frame_iterator(Motion const &motion, double fps) noexcept;
 
-  frame_iterator(const frame_iterator &) = default;
+  frame_iterator(const frame_iterator &);
   frame_iterator(frame_iterator &&) = default;
-  frame_iterator &operator=(const frame_iterator &) = default;
+  frame_iterator &operator=(const frame_iterator &);
   frame_iterator &operator=(frame_iterator &&) = default;
 
   // This is InputIterator because operator* doesn't return reference

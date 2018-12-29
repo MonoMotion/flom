@@ -7,6 +7,13 @@ frame_iterator::frame_iterator() noexcept : impl(), is_end(true) {}
 frame_iterator::frame_iterator(Motion const &motion, double fps) noexcept
     : impl(std::make_unique<Impl>(motion, fps)) {}
 
+frame_iterator::frame_iterator(const frame_iterator &other)
+    : impl(std::make_unique<Impl>(*other.impl)), is_end(other.is_end) {}
+frame_iterator &frame_iterator::operator=(const frame_iterator &other) {
+  this->impl = std::make_unique<Impl>(*other.impl);
+  return *this;
+}
+
 frame_iterator::value_type frame_iterator::operator*() const {
   return this->impl->motion->frame_at(this->current_time());
 }
