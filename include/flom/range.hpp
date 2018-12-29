@@ -37,7 +37,7 @@ public:
 
   // This is InputIterator because operator* doesn't return reference
   value_type operator*() const {
-    return this->motion->frame_at(this->fps * this->t_index);
+    return this->motion->frame_at(this->current_time());
   }
 
   frame_iterator &operator++() noexcept {
@@ -79,7 +79,7 @@ public:
 
 private:
   bool check_is_end() const noexcept {
-    return !this->motion->is_in_range_at(this->fps * this->t_index);
+    return !this->motion->is_in_range_at(this->current_time());
   }
 };
 
