@@ -30,7 +30,7 @@ private:
 
 public:
   frame_iterator() noexcept;
-  frame_iterator(Motion const &motion_, double fps_) noexcept;
+  frame_iterator(Motion const &motion, double fps) noexcept;
 
   frame_iterator(const frame_iterator &) = default;
   frame_iterator(frame_iterator &&) = default;
