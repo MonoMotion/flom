@@ -29,9 +29,8 @@ private:
   long t_index = 0;
 
 public:
-  constexpr frame_iterator() noexcept : motion(), is_end(true) {}
-  frame_iterator(Motion const &motion_, double fps_) noexcept
-      : motion(&motion_), fps(fps_) {}
+  frame_iterator() noexcept;
+  frame_iterator(Motion const &motion_, double fps_) noexcept;
 
   frame_iterator(const frame_iterator &) = default;
   frame_iterator(frame_iterator &&) = default;
@@ -39,40 +38,18 @@ public:
   frame_iterator &operator=(frame_iterator &&) = default;
 
   // This is InputIterator because operator* doesn't return reference
-  value_type operator*() const {
-    return this->motion->frame_at(this->current_time());
-  }
+  value_type operator*() const;
 
-  frame_iterator &operator++() noexcept {
-    this->t_index++;
-    this->is_end = this->check_is_end();
-    return *this;
-  }
+  frame_iterator &operator++() noexcept;
+  frame_iterator operator++(int) noexcept;
 
-  frame_iterator operator++(int) noexcept {
-    const auto copy = *this;
-    ++(*this);
-    return copy;
-  }
+  frame_iterator &operator--() noexcept;
+  frame_iterator operator--(int) noexcept;
 
-  frame_iterator &operator--() noexcept {
-    this->t_index--;
-    this->is_end = this->check_is_end();
-    return *this;
-  }
-
-  frame_iterator operator--(int) noexcept {
-    const auto copy = *this;
-    --(*this);
-    return copy;
-  }
-
-  double current_time() const noexcept { return this->fps * this->t_index; }
+  double current_time() const noexcept;
 
 private:
-  bool check_is_end() const noexcept {
-    return !this->motion->is_in_range_at(this->current_time());
-  }
+  bool check_is_end() const noexcept;
 };
 
 frame_iterator::difference_type operator-(const frame_iterator &,
