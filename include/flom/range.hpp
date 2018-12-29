@@ -21,14 +21,14 @@ public:
 private:
   // DefaultConstructible is required
   const Motion *motion;
-  bool is_end_iterator;
+  bool is_end = false;
   double fps = 1;
   long t_index = 0;
 
 public:
-  constexpr frame_iterator() noexcept : motion(), is_end_iterator(true) {}
-  frame_iterator(Motion const &motion, double fps) noexcept
-      : motion(&motion), fps(fps), is_end_iterator(false) {}
+  constexpr frame_iterator() noexcept : motion(), is_end(true) {}
+  frame_iterator(Motion const &motion_, double fps_) noexcept
+      : motion(&motion_), fps(fps_) {}
 
   value_type operator*() {
     return this->motion->frame_at(this->fps * this->t_index);
@@ -36,13 +36,12 @@ public:
 
   frame_iterator &operator++() noexcept {
     this->t_index++;
-    this->is_end_iterator =
-        !this->motion->is_in_range_at(this->fps * this->t_index);
+    this->is_end = !this->motion->is_in_range_at(this->fps * this->t_index);
     return *this;
   }
 
   constexpr bool operator==(const frame_iterator &r) const noexcept {
-    return this->is_end_iterator == r.is_end_iterator;
+    return this->is_end == r.is_end;
   }
   constexpr bool operator!=(const frame_iterator &r) const noexcept {
     return !(*this == r);
