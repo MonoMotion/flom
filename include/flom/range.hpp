@@ -9,75 +9,84 @@
 
 namespace flom {
 
-// frame_iterator is based on random_generator_iterator.hpp
-// in https://github.com/yumetodo/random_generator_iterator,
-// which is distributed under the Boost Software License, Version 1.0.
-//
-// Copyright (C) 2016 yumetodo <yume-wikijp@live.jp>
-// (See http://www.boost.org/LICENSE_1_0.txt)
-//
 // using snake_case, following customs of iterator naming
 class frame_iterator {
+  friend bool operator==(const frame_iterator &,
+                         const frame_iterator &) noexcept;
+
 public:
-  using iterator_category = std::forward_iterator_tag;
+  using iterator_category = std::input_iterator_tag;
   using value_type = Frame;
   using difference_type = double;
   using pointer = Frame *;
   using reference = Frame &;
 
 private:
-  struct Impl {
-    std::reference_wrapper<const Motion> motion;
-    double fps;
-    long t_index;
-    bool next_is_end;
-    Impl() = default;
-    Impl(const Impl &) = delete;
-    Impl(Impl &&) = default;
-    Impl &operator=(const Impl &) = delete;
-    Impl &operator=(Impl &&) = default;
-    Impl(Motion const &motion_, double fps_)
-        : motion(motion_), fps(fps_), t_index(0), next_is_end(false) {}
-    value_type get() {
-      return this->motion.get().frame_at(this->fps * this->t_index);
-    }
-    bool check_bound() const {
-      return this->motion.get().is_in_range_at(this->fps * this->t_index);
-    }
-  };
-
-  std::unique_ptr<Impl> pimpl;
-  bool is_end_iterator;
+  // DefaultConstructible is required
+  const Motion *motion;
+  bool is_end = false;
+  double fps = 1;
+  long t_index = 0;
 
 public:
-  constexpr frame_iterator() noexcept : pimpl(), is_end_iterator(true) {}
-  frame_iterator(const frame_iterator &) = delete;
+  constexpr frame_iterator() noexcept : motion(), is_end(true) {}
+  frame_iterator(Motion const &motion_, double fps_) noexcept
+      : motion(&motion_), fps(fps_) {}
+
+  frame_iterator(const frame_iterator &) = default;
   frame_iterator(frame_iterator &&) = default;
-  frame_iterator &operator=(const frame_iterator &) = delete;
+  frame_iterator &operator=(const frame_iterator &) = default;
   frame_iterator &operator=(frame_iterator &&) = default;
 
-  frame_iterator(Motion const &motion, double fps)
-      : pimpl(std::make_unique<Impl>(motion, fps)), is_end_iterator(false) {}
-
-  void stop() noexcept { this->pimpl->next_is_end = true; }
-
-  value_type operator*() { return this->pimpl->get(); }
+  // This is InputIterator because operator* doesn't return reference
+  value_type operator*() const {
+    return this->motion->frame_at(this->current_time());
+  }
 
   frame_iterator &operator++() noexcept {
-    this->pimpl->t_index++;
-    this->pimpl->next_is_end = !this->pimpl->check_bound();
-    if (this->pimpl->next_is_end)
-      this->is_end_iterator = true;
+    this->t_index++;
+    this->is_end = this->check_is_end();
     return *this;
   }
 
-  constexpr bool operator==(const frame_iterator &r) const noexcept {
-    return this->is_end_iterator == r.is_end_iterator;
+  frame_iterator operator++(int) noexcept {
+    const auto copy = *this;
+    ++(*this);
+    return copy;
   }
-  constexpr bool operator!=(const frame_iterator &r) const noexcept {
-    return !(*this == r);
+
+  frame_iterator &operator--() noexcept {
+    this->t_index--;
+    this->is_end = this->check_is_end();
+    return *this;
+  }
+
+  frame_iterator operator--(int) noexcept {
+    const auto copy = *this;
+    --(*this);
+    return copy;
+  }
+
+  double current_time() const noexcept { return this->fps * this->t_index; }
+
+private:
+  bool check_is_end() const noexcept {
+    return !this->motion->is_in_range_at(this->current_time());
   }
 };
+
+frame_iterator::difference_type operator-(const frame_iterator &l,
+                                          const frame_iterator &r) noexcept {
+  return l.current_time() - r.current_time();
+}
+
+bool operator==(const frame_iterator &l, const frame_iterator &r) noexcept {
+  return l.is_end == r.is_end;
+}
+
+bool operator!=(const frame_iterator &l, const frame_iterator &r) noexcept {
+  return !(l == r);
+}
 
 class FrameRange {
 public:
