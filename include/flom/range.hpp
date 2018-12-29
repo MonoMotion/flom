@@ -30,6 +30,11 @@ public:
   frame_iterator(Motion const &motion_, double fps_) noexcept
       : motion(&motion_), fps(fps_) {}
 
+  frame_iterator(const frame_iterator &) = default;
+  frame_iterator(frame_iterator &&) = default;
+  frame_iterator &operator=(const frame_iterator &) = default;
+  frame_iterator &operator=(frame_iterator &&) = default;
+
   value_type operator*() {
     return this->motion->frame_at(this->fps * this->t_index);
   }
