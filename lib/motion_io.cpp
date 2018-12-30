@@ -259,6 +259,11 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
       m.impl->raw_frames[time] = std::move(f);
     }
   }
+
+  if (!m.is_valid()) {
+    throw errors::InvalidMotionError{"while loading legacy motion data"};
+  }
+
   // copy occurs...
   return m;
 }
