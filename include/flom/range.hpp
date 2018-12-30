@@ -22,6 +22,7 @@
 
 #include "flom/frame.hpp"
 #include "flom/motion.hpp"
+#include "flom/errors.hpp"
 
 #include <iterator>
 #include <map>
@@ -96,6 +97,27 @@ public:
   iterator end() noexcept { return {}; }
 };
 
+class CheckedFrameWrapper {
+public:
+  using value_type = Frame &;
+
+  CheckedFrameWrapper(value_type value_, Motion *motion_)
+      : value(value_), motion(motion_) {}
+
+  CheckedFrameWrapper &operator=(const Frame &frame) & {
+    if (!this->motion->is_valid_frame(frame)) {
+      throw errors::InvalidFrameError{"in CheckedFrameWrapper"};
+    }
+    this->value = frame;
+  }
+
+  operator value_type() const noexcept { return this->value; }
+
+private:
+  value_type value;
+  const Motion *motion;
+};
+
 class keyframe_iterator {
 public:
   using iterator_category = std::bidirectional_iterator_tag;
@@ -111,10 +133,12 @@ private:
                          const keyframe_iterator &) noexcept;
 
   base_iterator it;
+  const Motion *motion;
 
 public:
-  keyframe_iterator() noexcept : it() {}
-  explicit keyframe_iterator(base_iterator it_) noexcept : it(it_) {}
+  keyframe_iterator() noexcept : it(), motion() {}
+  explicit keyframe_iterator(base_iterator it_, const Motion &motion_) noexcept
+      : it(it_), motion(&motion_) {}
 
   keyframe_iterator(const keyframe_iterator &) = default;
   keyframe_iterator(keyframe_iterator &&) = default;
@@ -146,18 +170,19 @@ public:
 private:
   base_iterator begin_it;
   base_iterator end_it;
+  const Motion &motion;
 
 public:
   KeyframeRange() = delete;
-  KeyframeRange(base_iterator begin_, base_iterator end_)
-      : begin_it(begin_), end_it(end_) {}
+  KeyframeRange(base_iterator begin_, base_iterator end_, const Motion &motion_)
+      : begin_it(begin_), end_it(end_), motion(motion_) {}
   KeyframeRange(const KeyframeRange &) = default;
   KeyframeRange(KeyframeRange &&) = default;
   KeyframeRange &operator=(const KeyframeRange &) = default;
   KeyframeRange &operator=(KeyframeRange &&) = default;
 
-  iterator begin() noexcept { return iterator{this->begin_it}; }
-  iterator end() noexcept { return iterator{this->end_it}; }
+  iterator begin() noexcept { return iterator{this->begin_it, this->motion}; }
+  iterator end() noexcept { return iterator{this->end_it, this->motion}; }
 };
 
 } // namespace flom
