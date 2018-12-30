@@ -110,6 +110,12 @@ double Motion::length() const {
   return std::next(this->impl->raw_frames.end(), -1)->first;
 }
 
+void Motion::Impl::add_initial_frame() {
+  assert(this->raw_frames.size() == 0 && "raw_frames already initialized");
+
+  this->raw_frames.emplace(0.0, Frame{});
+}
+
 bool Motion::Impl::is_valid() const {
   // for internal use
   //
