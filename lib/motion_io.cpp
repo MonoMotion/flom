@@ -75,6 +75,11 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
         return std::make_pair(link,
                               proto_util::unpack_effector_type(type_proto));
       });
+  auto const &init_pos = motion_proto.frames(0).positions();
+  std::transform(
+      std::cbegin(init_pos), std::cend(init_pos),
+      std::inserter(m.impl->joint_names, std::end(m.impl->joint_names)),
+      [](auto const &p) { return p.first; });
   for (auto const &frame_proto : motion_proto.frames()) {
     auto &frame = m.impl->raw_frames[frame_proto.t()];
     auto const &positions_proto = frame_proto.positions();
@@ -187,6 +192,7 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
       // TODO: Use <algorithm> (e.g. std::copy)
       for (auto it = std::cbegin(positions); it != std::cend(positions); ++it) {
         f.positions[it.key()] = it.value();
+        m.impl->joint_names.insert(it.key());
       }
       auto const effectors = frame["effector"];
       for (auto it = std::cbegin(effectors); it != std::cend(effectors); ++it) {
