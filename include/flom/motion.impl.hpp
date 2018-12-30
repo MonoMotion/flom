@@ -70,6 +70,7 @@ public:
   proto::Motion to_protobuf() const;
 
   bool is_valid() const;
+  bool is_valid_frame(const Frame &) const;
 };
 
 template <typename K> std::size_t names_hash(const std::unordered_set<K> &s) {

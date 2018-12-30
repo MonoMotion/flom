@@ -139,13 +139,21 @@ bool Motion::Impl::is_valid() const {
     return false;
   }
 
-  auto const joints_hash = names_hash(this->joint_names);
-  auto const effectors_hash = names_hash(this->effector_types);
   for (auto const &[t, frame] : this->raw_frames) {
-    auto const &[p, e] = frame;
-    if (names_hash(p) != joints_hash || names_hash(e) != effectors_hash) {
+    if (!this->is_valid_frame(frame)) {
       return false;
     }
+  }
+  return true;
+}
+
+bool Motion::Impl::is_valid_frame(const Frame &frame) const {
+  auto const joints_hash = names_hash(this->joint_names);
+  auto const effectors_hash = names_hash(this->effector_types);
+
+  auto const &[p, e] = frame;
+  if (names_hash(p) != joints_hash || names_hash(e) != effectors_hash) {
+    return false;
   }
   return true;
 }
