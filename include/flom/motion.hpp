@@ -64,6 +64,7 @@ public:
   ~Motion();
 
   bool is_valid() const;
+  bool is_valid_frame(const Frame &) const;
 
   Frame frame_at(double t) const;
 

@@ -49,6 +49,9 @@ Motion::Motion(Motion const &m)
 Motion::~Motion() {}
 
 bool Motion::is_valid() const { return this->impl && this->impl->is_valid(); }
+bool Motion::is_valid_frame(const Frame &f) const {
+  return this->impl->is_valid_frame(f);
+}
 
 Frame Motion::frame_at(double t) const {
   if (std::isnan(t) || t < 0) {
