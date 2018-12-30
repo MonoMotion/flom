@@ -189,6 +189,8 @@ RC_BOOST_PROP(effector_list, (const flom::Motion &m, double t)) {
 }
 
 RC_BOOST_PROP(dump_load, (const flom::Motion &m)) {
+  RC_PRE(m.is_valid());
+
   auto const path = std::filesystem::temp_directory_path() / "out.fom";
 
   {
@@ -210,6 +212,8 @@ RC_BOOST_PROP(dump_load, (const flom::Motion &m)) {
 }
 
 RC_BOOST_PROP(dump_load_json, (const flom::Motion &m)) {
+  RC_PRE(m.is_valid());
+
   auto const path = std::filesystem::temp_directory_path() / "out.json";
 
   {
