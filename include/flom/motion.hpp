@@ -91,6 +91,8 @@ public:
   KeyRange<std::string> effector_names() const;
 
 private:
+  Motion();
+
   class Impl;
   std::unique_ptr<Impl> impl;
 };

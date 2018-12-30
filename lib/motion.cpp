@@ -43,7 +43,11 @@ Motion::Motion(
 }
 Motion::Motion(Motion const &m)
     : impl(std::make_unique<Motion::Impl>(*m.impl)) {}
+
 Motion::~Motion() {}
+
+// private default constructor
+Motion::Motion() : impl(std::make_unique<Motion::Impl>()) {}
 
 bool Motion::is_valid() const { return this->impl && this->impl->is_valid(); }
 
