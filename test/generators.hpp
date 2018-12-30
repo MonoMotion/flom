@@ -159,7 +159,11 @@ template <> struct Arbitrary<flom::Motion> {
             using StringSet = std::unordered_set<std::string>;
             auto joint_names_gen = gen::container<StringSet>(num_joints, str_gen);
             auto effector_names_gen = gen::container<StringSet>(num_effectors, str_gen);
-            auto positions_gen = gen::container<std::vector<double>>(num_joints, gen::arbitrary<double>());
+            auto positions_gen = gen::container<std::vector<double>>(num_joints,
+                gen::map(gen::inRange(-half_pi_100, half_pi_100),
+                  [](auto i){ return static_cast<double>(i) / 100; }
+                )
+              );
             auto effectors_gen = gen::container<std::vector<flom::Effector>>(num_effectors, gen::arbitrary<flom::Effector>());
             auto frames_gen = gen::nonEmpty(gen::container<std::vector<std::pair<std::vector<double>, std::vector<flom::Effector>>>>(gen::pair(positions_gen, effectors_gen)));
             return gen::tuple(joint_names_gen, effector_names_gen, frames_gen);
