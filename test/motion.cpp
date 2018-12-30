@@ -41,12 +41,16 @@
 BOOST_AUTO_TEST_SUITE(motion)
 
 BOOST_AUTO_TEST_CASE(empty_motion_valid) {
-  auto const empty = flom::Motion();
+  std::unordered_set<std::string> j, e;
+  auto const empty = flom::Motion(j, e);
   BOOST_TEST(empty.is_valid());
 }
 
-RC_BOOST_PROP(empty_named_motion_valid, (const std::string &name)) {
-  auto const empty = flom::Motion(name);
+RC_BOOST_PROP(empty_named_motion_valid,
+              (const std::string &name,
+               const std::unordered_set<std::string> &j,
+               const std::unordered_set<std::string> &e)) {
+  auto const empty = flom::Motion(j, e, name);
   RC_ASSERT(empty.is_valid());
 }
 
