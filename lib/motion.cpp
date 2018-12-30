@@ -30,9 +30,11 @@
 
 namespace flom {
 
-Motion::Motion() : impl(std::make_unique<Motion::Impl>()) {}
-Motion::Motion(std::string const &model)
-    : impl(std::make_unique<Motion::Impl>(model)) {}
+Motion::Motion(const std::unordered_set<std::string> &joint_names,
+               const std::unordered_set<std::string> &effector_names,
+               const std::string &model)
+    : impl(std::make_unique<Motion::Impl>(joint_names, effector_names, model)) {
+}
 Motion::Motion(Motion const &m)
     : impl(std::make_unique<Motion::Impl>(*m.impl)) {}
 Motion::~Motion() {}

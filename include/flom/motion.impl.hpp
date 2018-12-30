@@ -27,6 +27,8 @@
 
 #include <map>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace flom {
 
@@ -35,13 +37,19 @@ public:
   std::string model_id;
   LoopType loop;
   std::map<double, Frame> raw_frames;
+  std::unordered_set<std::string> joint_names;
   std::unordered_map<std::string, EffectorType> effector_types;
 
-  Impl() : model_id(), loop(LoopType::None), raw_frames(), effector_types() {
-    this->add_initial_frame();
-  }
-  Impl(std::string const &model)
-      : model_id(model), loop(LoopType::None), raw_frames(), effector_types() {
+  Impl(const std::unordered_set<std::string> &joints,
+       const std::unordered_set<std::string> &effectors,
+       const std::string &model = "")
+      : model_id(model), loop(LoopType::None), raw_frames(),
+        joint_names(joints), effector_types() {
+    this->effector_types.reserve(effectors.size());
+    for (const auto &name : effectors) {
+      auto const end = std::cend(this->effector_types);
+      this->effector_types.emplace_hint(end, name, EffectorType{});
+    }
     this->add_initial_frame();
   }
 
