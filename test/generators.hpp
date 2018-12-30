@@ -150,8 +150,8 @@ template <> struct Arbitrary<flom::Motion> {
         gen::positive<double>(),
         gen::mapcat(
            gen::pair(
-             gen::arbitrary<std::size_t>(),
-             gen::arbitrary<std::size_t>()
+             gen::inRange<std::size_t>(0, 1e3),
+             gen::inRange<std::size_t>(0, 1e3)
           ),
           [](auto const& t) {
             auto const [num_joints, num_effectors] = t;
