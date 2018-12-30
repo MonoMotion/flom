@@ -106,7 +106,7 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
   }
 
   if (!m.is_valid()) {
-    throw errors::InvalidMotionError{"while loading parsed motion data"};
+    throw errors::InvalidFrameError{"while loading parsed motion data"};
   }
 
   // copy occurs...
@@ -137,7 +137,7 @@ std::string Motion::dump_json_string() const {
 
 proto::Motion Motion::Impl::to_protobuf() const {
   if (!this->is_valid()) {
-    throw errors::InvalidMotionError{
+    throw errors::InvalidFrameError{
         "converting motion data before serializaion"};
   }
 
@@ -260,7 +260,7 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
   }
 
   if (!m.is_valid()) {
-    throw errors::InvalidMotionError{"while loading legacy motion data"};
+    throw errors::InvalidFrameError{"while loading legacy motion data"};
   }
 
   // copy occurs...

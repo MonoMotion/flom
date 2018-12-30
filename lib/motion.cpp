@@ -101,7 +101,7 @@ Frame &Motion::get_or_insert_frame(double t) {
 
 void Motion::insert_keyframe(double t, const Frame &frame) {
   if (!this->impl->is_valid_frame(frame)) {
-    throw errors::InvalidMotionError{"during keyframe insertion"};
+    throw errors::InvalidFrameError{"during keyframe insertion"};
   }
   this->impl->raw_frames[t] = frame;
 }

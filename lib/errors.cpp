@@ -73,14 +73,14 @@ std::string JSONDumpError::status_message() const noexcept {
   return this->status;
 }
 
-InvalidMotionError::InvalidMotionError(const std::string &message)
+InvalidFrameError::InvalidFrameError(const std::string &message)
     : status(message) {}
 
-const char *InvalidMotionError::what() const noexcept {
+const char *InvalidFrameError::what() const noexcept {
   return "Invalid motion data is detected";
 }
 
-std::string InvalidMotionError::status_message() const noexcept {
+std::string InvalidFrameError::status_message() const noexcept {
   return this->status;
 }
 

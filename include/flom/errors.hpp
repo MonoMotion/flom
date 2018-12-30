@@ -83,9 +83,9 @@ public:
   std::string status;
 };
 
-class InvalidMotionError : public std::exception {
+class InvalidFrameError : public std::exception {
 public:
-  InvalidMotionError(const std::string &);
+  InvalidFrameError(const std::string &);
   virtual const char *what() const noexcept;
 
   std::string status_message() const noexcept;
