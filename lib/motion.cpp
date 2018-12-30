@@ -162,12 +162,9 @@ bool Motion::Impl::is_valid() const {
 }
 
 bool Motion::Impl::is_valid_frame(const Frame &frame) const {
-  // TODO: cache *_hash on construction
-  auto const joints_hash = names_hash(this->joint_names);
-  auto const effectors_hash = names_hash(this->effector_types);
-
   auto const &[p, e] = frame;
-  if (names_hash(p) != joints_hash || names_hash(e) != effectors_hash) {
+  if (names_hash(p) != this->joints_hash ||
+      names_hash(e) != this->effectors_hash) {
     return false;
   }
   return true;

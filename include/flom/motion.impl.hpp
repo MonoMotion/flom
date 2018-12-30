@@ -34,13 +34,35 @@
 
 namespace flom {
 
+template <typename K> std::size_t names_hash(const std::unordered_set<K> &s) {
+  auto h{s.hash_function()};
+  return std::accumulate(std::cbegin(s), std::cend(s),
+                         static_cast<std::size_t>(0),
+                         [&h](auto r, const auto &p) { return r ^ h(p); });
+}
+
+template <typename K, typename V>
+std::size_t names_hash(const std::unordered_map<K, V> &m) {
+  auto h{m.hash_function()};
+  return std::accumulate(
+      std::cbegin(m), std::cend(m), static_cast<std::size_t>(0),
+      [&h](auto r, const auto &p) { return r ^ h(p.first); });
+}
+
 class Motion::Impl {
 public:
   std::string model_id;
   LoopType loop;
   std::map<double, Frame> raw_frames;
+
+  // These two member must not be changed after construction
   std::unordered_set<std::string> joint_names;
   std::unordered_map<std::string, EffectorType> effector_types;
+
+  // Hash of joint_names
+  std::size_t joints_hash;
+  // Hash of keys of effector_types
+  std::size_t effectors_hash;
 
   Impl() : loop(LoopType::None) { this->add_initial_frame(); }
 
@@ -48,7 +70,8 @@ public:
        const std::unordered_map<std::string, EffectorType> &effectors,
        const std::string &model = "")
       : model_id(model), loop(LoopType::None), raw_frames(),
-        joint_names(joints), effector_types(effectors) {
+        joint_names(joints), effector_types(effectors),
+        joints_hash(names_hash(joints)), effectors_hash(names_hash(effectors)) {
     this->add_initial_frame();
   }
 
@@ -56,7 +79,8 @@ public:
        const std::unordered_set<std::string> &effectors,
        const std::string &model = "")
       : model_id(model), loop(LoopType::None), raw_frames(),
-        joint_names(joints), effector_types() {
+        joint_names(joints), effector_types(), joints_hash(names_hash(joints)),
+        effectors_hash(names_hash(effectors)) {
     this->effector_types.reserve(effectors.size());
     for (const auto &name : effectors) {
       this->effector_types.emplace(name, EffectorType{});
@@ -72,21 +96,6 @@ public:
   bool is_valid() const;
   bool is_valid_frame(const Frame &) const;
 };
-
-template <typename K> std::size_t names_hash(const std::unordered_set<K> &s) {
-  auto h{s.hash_function()};
-  return std::accumulate(std::cbegin(s), std::cend(s),
-                         static_cast<std::size_t>(0),
-                         [&h](auto r, const auto &p) { return r ^ h(p); });
-}
-
-template <typename K, typename V>
-std::size_t names_hash(const std::unordered_map<K, V> &m) {
-  auto h{m.hash_function()};
-  return std::accumulate(
-      std::cbegin(m), std::cend(m), static_cast<std::size_t>(0),
-      [&h](auto r, const auto &p) { return r ^ h(p.first); });
-}
 
 } // namespace flom
 
