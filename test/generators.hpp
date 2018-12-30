@@ -24,7 +24,7 @@
 #include <boost/qvm/quat_operations.hpp>
 #include <boost/qvm/vec.hpp>
 
-#include <boost/range/adaptors.hpp>
+#include <boost/range/combine.hpp>
 #include <boost/range/algorithm.hpp>
 
 #include <rapidcheck.h>
@@ -35,6 +35,7 @@
 #include <flom/constants.hpp>
 
 #include <unordered_map>
+#include <unordered_set>
 
 namespace rc {
 
@@ -127,18 +128,19 @@ template <> struct Arbitrary<flom::Frame> {
 template <> struct Arbitrary<flom::Motion> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
-        [](std::string const &model_id, flom::LoopType loop, double fps, auto const& frames) {
-          std::unordered_set<std::string> joint_names, effector_names;
-          auto const& init_frame = frames[0];
-          boost::copy(init_frame.first | boost::adaptors::map_keys, std::inserter(joint_names, std::end(joint_names)));
-          boost::copy(init_frame.second | boost::adaptors::map_keys, std::inserter(effector_names, std::end(effector_names)));
+        [](std::string const &model_id, flom::LoopType loop, double fps, auto const& t) {
+          auto const& [joint_names, effector_names, frames] = t;
           flom::Motion m(joint_names, effector_names, model_id);
           m.set_loop(loop);
           unsigned i = 0;
           for (auto const& [p, e] : frames) {
             auto& f = m.get_or_insert_frame(fps * i++);
-            std::copy(std::cbegin(p), std::cend(p), std::inserter(f.positions, std::end(f.positions)));
-            std::copy(std::cbegin(e), std::cend(e), std::inserter(f.effectors, std::end(f.effectors)));
+            for(auto const& pair : boost::combine(joint_names, p)) {
+              f.positions.emplace(boost::get<0>(pair), boost::get<1>(pair));
+            }
+            for(auto const& pair : boost::combine(effector_names, e)) {
+              f.effectors.emplace(boost::get<0>(pair), boost::get<1>(pair));
+            }
           }
           return m;
         },
@@ -146,34 +148,22 @@ template <> struct Arbitrary<flom::Motion> {
         gen::nonEmpty(gen::container<std::string>(gen::inRange('a', 'z'))),
         gen::element(flom::LoopType::None, flom::LoopType::Wrap),
         gen::nonZero<double>(),
-        gen::nonEmpty(gen::mapcat(
+        gen::mapcat(
            gen::pair(
-             gen::container<std::vector<std::string>>(gen::container<std::string>(gen::inRange('a', 'z'))),
-             gen::container<std::vector<std::string>>(gen::container<std::string>(gen::inRange('a', 'z')))
+             gen::arbitrary<std::size_t>(),
+             gen::arbitrary<std::size_t>()
           ),
-          [] (auto const& t) {
-            auto const& [joints, effectors] = t;
-            auto j = gen::exec([&joints = joints]() {
-              std::unordered_map<std::string, double> nj;
-              std::transform(std::cbegin(joints), std::cend(joints), std::inserter(nj, std::end(nj)), [](auto&& name) {
-                  return std::make_pair(name, static_cast<double>(*gen::inRange(-half_pi_100, half_pi_100)) / 100);
-              });
-              return nj;
-            });
-            auto eg = gen::build(
-                gen::construct<flom::Effector>(),
-                gen::set(&flom::Effector::location, gen::arbitrary<flom::Location>()),
-                gen::set(&flom::Effector::rotation, gen::arbitrary<flom::Rotation>()));
-            auto e = gen::exec([&effectors = effectors, eg]() {
-              std::unordered_map<std::string, flom::Effector> nj;
-              std::transform(std::cbegin(effectors), std::cend(effectors), std::inserter(nj, std::end(nj)), [&eg](auto&& name) {
-                  return std::make_pair(name, *eg);
-              });
-              return nj;
-            });
-            return gen::container<std::vector<std::pair<std::unordered_map<std::string, double>, std::unordered_map<std::string, flom::Effector>>>>(gen::pair(j, e));
-          }
-        )));
+          [](auto const& t) {
+            auto const [num_joints, num_effectors] = t;
+            auto str_gen = gen::container<std::string>(gen::inRange('a', 'z'));
+            using StringSet = std::unordered_set<std::string>;
+            auto joint_names_gen = gen::container<StringSet>(num_joints, str_gen);
+            auto effector_names_gen = gen::container<StringSet>(num_effectors, str_gen);
+            auto positions_gen = gen::container<std::vector<double>>(num_joints, gen::arbitrary<double>());
+            auto effectors_gen = gen::container<std::vector<flom::Effector>>(num_effectors, gen::arbitrary<flom::Effector>());
+            auto frames_gen = gen::nonEmpty(gen::container<std::vector<std::pair<std::vector<double>, std::vector<flom::Effector>>>>(gen::pair(positions_gen, effectors_gen)));
+            return gen::tuple(joint_names_gen, effector_names_gen, frames_gen);
+        }));
   }
 };
 
