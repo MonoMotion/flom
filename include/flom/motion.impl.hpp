@@ -56,13 +56,13 @@ public:
   std::map<double, Frame> raw_frames;
 
   // keys of these two member must not be changed after construction
-  std::unordered_set<std::string> joint_names;
+  const std::unordered_set<std::string> joint_names;
   std::unordered_map<std::string, EffectorType> effector_types;
 
   // Hash of joint_names
-  std::size_t joints_hash;
+  const std::size_t joints_hash;
   // Hash of keys of effector_types
-  std::size_t effectors_hash;
+  const std::size_t effectors_hash;
 
   Impl(const std::unordered_set<std::string> &joints,
        const std::unordered_map<std::string, EffectorType> &effectors,
