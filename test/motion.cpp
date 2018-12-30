@@ -40,6 +40,16 @@
 
 BOOST_AUTO_TEST_SUITE(motion)
 
+BOOST_AUTO_TEST_CASE(empty_motion_valid) {
+  auto const empty = flom::Motion();
+  BOOST_TEST(empty.is_valid());
+}
+
+RC_BOOST_PROP(empty_named_motion_valid, (const std::string &name)) {
+  auto const empty = flom::Motion(name);
+  RC_ASSERT(empty.is_valid());
+}
+
 RC_BOOST_PROP(retrieve_frame_wrap, (const flom::Motion &m, double t)) {
   RC_PRE(t >= 0);
   RC_PRE(m.loop() == flom::LoopType::Wrap);
