@@ -109,8 +109,6 @@ public:
 private:
   friend bool operator==(const keyframe_iterator &,
                          const keyframe_iterator &) noexcept;
-  friend difference_type operator-(const keyframe_iterator &,
-                                   const keyframe_iterator &) noexcept;
 
   base_iterator it;
 
