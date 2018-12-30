@@ -55,6 +55,10 @@ public:
          const std::unordered_set<std::string> &effector_names,
          const std::string &model = "");
 
+  Motion(const std::unordered_set<std::string> &joint_names,
+         const std::unordered_map<std::string, EffectorType> &effector_types,
+         const std::string &model = "");
+
   Motion(Motion const &);
   ~Motion();
 

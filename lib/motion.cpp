@@ -35,6 +35,12 @@ Motion::Motion(const std::unordered_set<std::string> &joint_names,
                const std::string &model)
     : impl(std::make_unique<Motion::Impl>(joint_names, effector_names, model)) {
 }
+Motion::Motion(
+    const std::unordered_set<std::string> &joint_names,
+    const std::unordered_map<std::string, EffectorType> &effector_types,
+    const std::string &model)
+    : impl(std::make_unique<Motion::Impl>(joint_names, effector_types, model)) {
+}
 Motion::Motion(Motion const &m)
     : impl(std::make_unique<Motion::Impl>(*m.impl)) {}
 Motion::~Motion() {}

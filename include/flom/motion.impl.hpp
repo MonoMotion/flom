@@ -41,6 +41,14 @@ public:
   std::unordered_map<std::string, EffectorType> effector_types;
 
   Impl(const std::unordered_set<std::string> &joints,
+       const std::unordered_map<std::string, EffectorType> &effectors,
+       const std::string &model = "")
+      : model_id(model), loop(LoopType::None), raw_frames(),
+        joint_names(joints), effector_types(effectors) {
+    this->add_initial_frame();
+  }
+
+  Impl(const std::unordered_set<std::string> &joints,
        const std::unordered_set<std::string> &effectors,
        const std::string &model = "")
       : model_id(model), loop(LoopType::None), raw_frames(),
