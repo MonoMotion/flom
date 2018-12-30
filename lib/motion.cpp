@@ -25,16 +25,27 @@
 
 #include "motion.pb.h"
 
+#include <boost/range/adaptors.hpp>
+
 #include <cmath>
 #include <string>
 
 namespace flom {
 
-Motion::Motion() : impl(std::make_unique<Motion::Impl>()) {}
-Motion::Motion(std::string const &model)
-    : impl(std::make_unique<Motion::Impl>(model)) {}
+Motion::Motion(const std::unordered_set<std::string> &joint_names,
+               const std::unordered_set<std::string> &effector_names,
+               const std::string &model)
+    : impl(std::make_unique<Motion::Impl>(joint_names, effector_names, model)) {
+}
+Motion::Motion(
+    const std::unordered_set<std::string> &joint_names,
+    const std::unordered_map<std::string, EffectorType> &effector_types,
+    const std::string &model)
+    : impl(std::make_unique<Motion::Impl>(joint_names, effector_types, model)) {
+}
 Motion::Motion(Motion const &m)
     : impl(std::make_unique<Motion::Impl>(*m.impl)) {}
+
 Motion::~Motion() {}
 
 bool Motion::is_valid() const { return this->impl && this->impl->is_valid(); }
@@ -113,7 +124,19 @@ double Motion::length() const {
 void Motion::Impl::add_initial_frame() {
   assert(this->raw_frames.size() == 0 && "raw_frames already initialized");
 
-  this->raw_frames.emplace(0.0, Frame{});
+  Frame frame;
+
+  frame.positions.reserve(this->joint_names.size());
+  for (const auto &name : this->joint_names) {
+    frame.positions.emplace(name, 0.0);
+  }
+
+  frame.effectors.reserve(this->effector_types.size());
+  for (const auto &[name, type] : this->effector_types) {
+    frame.effectors.emplace(name, Effector{});
+  }
+
+  this->raw_frames.emplace(0.0, frame);
 }
 
 bool Motion::Impl::is_valid() const {
@@ -123,16 +146,33 @@ bool Motion::Impl::is_valid() const {
   // which is constructed only using public interface,
   // must not be marked as invalid by this method.
   //
-  // TODO: check whether all frames has same names
-  return this->raw_frames.size() > 0 && this->raw_frames.begin()->first == 0;
+  if (this->raw_frames.size() == 0 || this->raw_frames.begin()->first != 0) {
+    return false;
+  }
+
+  for (auto const &[t, frame] : this->raw_frames) {
+    if (!this->is_valid_frame(frame)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool Motion::Impl::is_valid_frame(const Frame &frame) const {
+  auto const &[p, e] = frame;
+  if (names_hash(p) != this->joints_hash ||
+      names_hash(e) != this->effectors_hash) {
+    return false;
+  }
+  return true;
 }
 
 KeyRange<std::string> Motion::joint_names() const {
-  return this->impl->raw_frames.begin()->second.joint_names();
+  return this->impl->joint_names;
 }
 
 KeyRange<std::string> Motion::effector_names() const {
-  return this->impl->raw_frames.begin()->second.effector_names();
+  return this->impl->effector_types | boost::adaptors::map_keys;
 }
 
 bool operator==(const Motion &m1, const Motion &m2) {

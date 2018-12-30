@@ -83,6 +83,17 @@ public:
   std::string status;
 };
 
+class InvalidMotionError : public std::exception {
+public:
+  InvalidMotionError(const std::string &);
+  virtual const char *what() const noexcept;
+
+  std::string status_message() const noexcept;
+
+public:
+  std::string status;
+};
+
 } // namespace flom::errors
 
 #endif

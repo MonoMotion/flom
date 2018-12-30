@@ -26,6 +26,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace flom {
@@ -50,9 +51,13 @@ public:
   static Motion load_json_string(std::string const &);
   static Motion load_legacy_json(std::ifstream &);
 
-  Motion();
-  // With model name
-  explicit Motion(std::string const &);
+  Motion(const std::unordered_set<std::string> &joint_names,
+         const std::unordered_set<std::string> &effector_names,
+         const std::string &model = "");
+
+  Motion(const std::unordered_set<std::string> &joint_names,
+         const std::unordered_map<std::string, EffectorType> &effector_types,
+         const std::string &model = "");
 
   Motion(Motion const &);
   ~Motion();
