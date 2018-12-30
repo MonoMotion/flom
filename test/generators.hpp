@@ -164,7 +164,11 @@ template <> struct Arbitrary<flom::Motion> {
                   [](auto i){ return static_cast<double>(i) / 100; }
                 )
               );
-            auto effectors_gen = gen::container<std::vector<flom::Effector>>(num_effectors, gen::arbitrary<flom::Effector>());
+            auto effector_gen = gen::build(
+                gen::construct<flom::Effector>(),
+                gen::set(&flom::Effector::location, gen::arbitrary<flom::Location>()),
+                gen::set(&flom::Effector::rotation, gen::arbitrary<flom::Rotation>()));
+            auto effectors_gen = gen::container<std::vector<flom::Effector>>(num_effectors, effector_gen);
             auto frames_gen = gen::nonEmpty(gen::container<std::vector<std::pair<std::vector<double>, std::vector<flom::Effector>>>>(gen::pair(positions_gen, effectors_gen)));
             return gen::tuple(joint_names_gen, effector_names_gen, frames_gen);
         }));
