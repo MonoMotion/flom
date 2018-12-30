@@ -25,7 +25,9 @@
 
 #include "motion.pb.h"
 
+#include <functional>
 #include <map>
+#include <numeric>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -69,6 +71,21 @@ public:
 
   bool is_valid() const;
 };
+
+template <typename K> std::size_t names_hash(const std::unordered_set<K> &s) {
+  auto h{s.hash_function()};
+  return std::accumulate(std::cbegin(s), std::cend(s),
+                         static_cast<std::size_t>(0),
+                         [&h](auto r, const auto &p) { return r ^ h(p); });
+}
+
+template <typename K, typename V>
+std::size_t names_hash(const std::unordered_map<K, V> &m) {
+  auto h{m.hash_function()};
+  return std::accumulate(
+      std::cbegin(m), std::cend(m), static_cast<std::size_t>(0),
+      [&h](auto r, const auto &p) { return r ^ h(p.first); });
+}
 
 } // namespace flom
 
