@@ -113,6 +113,7 @@ private:
   base_iterator it;
 
 public:
+  keyframe_iterator() noexcept : it() {}
   explicit keyframe_iterator(base_iterator it_) noexcept : it(it_) {}
 
   keyframe_iterator(const keyframe_iterator &) = default;
