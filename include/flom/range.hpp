@@ -101,7 +101,7 @@ class CheckedFrameRef {
 public:
   using reference_type = Frame &;
 
-  CheckedFrameRef(reference_type value_, Motion *motion_)
+  CheckedFrameRef(reference_type value_, const Motion *motion_)
       : value(value_), motion(motion_) {}
 
   CheckedFrameRef &operator=(const Frame &frame) & {
@@ -146,10 +146,10 @@ public:
   keyframe_iterator &operator=(keyframe_iterator &&) = default;
 
   const value_type &operator*() const;
-  value_type &operator*();
+  CheckedFrameRef operator*();
 
   const value_type &operator->() const;
-  value_type &operator->();
+  CheckedFrameRef operator->();
 
   keyframe_iterator &operator++() noexcept;
   keyframe_iterator operator++(int) noexcept;

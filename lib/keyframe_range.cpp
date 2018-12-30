@@ -6,15 +6,15 @@ namespace flom {
 const keyframe_iterator::value_type &keyframe_iterator::operator*() const {
   return this->it->second;
 }
-keyframe_iterator::value_type &keyframe_iterator::operator*() {
-  return this->it->second;
+CheckedFrameRef keyframe_iterator::operator*() {
+  return {this->it->second, this->motion};
 }
 
 const keyframe_iterator::value_type &keyframe_iterator::operator->() const {
   return this->it->second;
 }
-keyframe_iterator::value_type &keyframe_iterator::operator->() {
-  return this->it->second;
+CheckedFrameRef keyframe_iterator::operator->() {
+  return {this->it->second, this->motion};
 }
 
 keyframe_iterator &keyframe_iterator::operator++() noexcept {
