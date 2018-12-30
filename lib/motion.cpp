@@ -148,6 +148,7 @@ bool Motion::Impl::is_valid() const {
 }
 
 bool Motion::Impl::is_valid_frame(const Frame &frame) const {
+  // TODO: cache *_hash on construction
   auto const joints_hash = names_hash(this->joint_names);
   auto const effectors_hash = names_hash(this->effector_types);
 
