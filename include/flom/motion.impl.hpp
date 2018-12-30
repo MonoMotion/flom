@@ -55,7 +55,7 @@ public:
   LoopType loop;
   std::map<double, Frame> raw_frames;
 
-  // These two member must not be changed after construction
+  // keys of these two member must not be changed after construction
   std::unordered_set<std::string> joint_names;
   std::unordered_map<std::string, EffectorType> effector_types;
 
