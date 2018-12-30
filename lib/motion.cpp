@@ -106,7 +106,36 @@ void Motion::insert_keyframe(double t, const Frame &frame) {
   this->impl->raw_frames[t] = frame;
 }
 
-void Motion::delete_keyframe(double t) { this->impl->raw_frames.erase(t); }
+void Motion::delete_keyframe(double t, bool loose) {
+  if (this->impl->raw_frames.erase(t) != 0) {
+    return;
+  }
+  if (!loose) {
+    throw std::out_of_range("keyframe not found");
+  }
+
+  // loose mode - find closest key
+  auto const lower = this->impl->raw_frames.lower_bound(t);
+  auto const begin = std::cbegin(this->impl->raw_frames);
+
+  std::remove_const_t<decltype(begin)> it;
+  if (lower != begin) {
+    auto const previous = std::prev(lower);
+    if ((t - previous->first) < (lower->first - t)) {
+      it = previous;
+    } else {
+      it = lower;
+    }
+  } else {
+    it = lower;
+  }
+
+  if (!almost_equal(t, it->first)) {
+    throw std::out_of_range("keyframe not found");
+  }
+
+  this->impl->raw_frames.erase(it);
+}
 
 LoopType Motion::loop() const { return this->impl->loop; }
 
