@@ -215,7 +215,6 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
       // TODO: Use <algorithm> (e.g. std::copy)
       for (auto it = std::cbegin(positions); it != std::cend(positions); ++it) {
         f.positions[it.key()] = it.value();
-        m.impl->joint_names.insert(it.key());
       }
       auto const effectors = frame["effector"];
       for (auto it = std::cbegin(effectors); it != std::cend(effectors); ++it) {
