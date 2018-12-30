@@ -104,6 +104,10 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
                    });
   }
 
+  if (!m.is_valid()) {
+    throw errors::InvalidMotionError{"while loading parsed motion data"};
+  }
+
   // copy occurs...
   return m;
 }
@@ -131,6 +135,11 @@ std::string Motion::dump_json_string() const {
 }
 
 proto::Motion Motion::Impl::to_protobuf() const {
+  if (!this->is_valid()) {
+    throw errors::InvalidMotionError{
+        "converting motion data before serializaion"};
+  }
+
   proto::Motion m;
   m.set_model_id(this->model_id);
   if (this->loop == LoopType::Wrap) {
