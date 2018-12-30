@@ -57,8 +57,7 @@ public:
         joint_names(joints), effector_types() {
     this->effector_types.reserve(effectors.size());
     for (const auto &name : effectors) {
-      auto const end = std::cend(this->effector_types);
-      this->effector_types.emplace_hint(end, name, EffectorType{});
+      this->effector_types.emplace(name, EffectorType{});
     }
     this->add_initial_frame();
   }
