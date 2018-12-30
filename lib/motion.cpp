@@ -25,6 +25,8 @@
 
 #include "motion.pb.h"
 
+#include <boost/range/adaptors.hpp>
+
 #include <cmath>
 #include <string>
 
@@ -160,11 +162,11 @@ bool Motion::Impl::is_valid_frame(const Frame &frame) const {
 }
 
 KeyRange<std::string> Motion::joint_names() const {
-  return this->impl->raw_frames.begin()->second.joint_names();
+  return this->impl->joint_names;
 }
 
 KeyRange<std::string> Motion::effector_names() const {
-  return this->impl->raw_frames.begin()->second.effector_names();
+  return this->impl->effector_types | boost::adaptors::map_keys;
 }
 
 bool operator==(const Motion &m1, const Motion &m2) {
