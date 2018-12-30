@@ -137,6 +137,10 @@ void Motion::delete_keyframe(double t, bool loose) {
   this->impl->raw_frames.erase(it);
 }
 
+KeyframeRange Motion::keyframes() {
+  return {std::begin(this->impl->raw_frames), std::end(this->impl->raw_frames)};
+}
+
 LoopType Motion::loop() const { return this->impl->loop; }
 
 void Motion::set_loop(LoopType loop) { this->impl->loop = loop; }

@@ -41,6 +41,7 @@ struct EffectorType {
 };
 
 class FrameRange;
+class KeyframeRange;
 
 class Motion {
   friend bool operator==(const Motion &, const Motion &);
@@ -83,6 +84,7 @@ public:
   [[deprecated]] Frame &get_or_insert_frame(double t);
   void insert_keyframe(double t, const Frame &);
   void delete_keyframe(double t, bool loose = true);
+  KeyframeRange keyframes();
 
   EffectorType effector_type(const std::string &) const;
   void set_effector_type(const std::string &, EffectorType);
