@@ -20,9 +20,9 @@
 #ifndef FLOM_RANGE_HPP
 #define FLOM_RANGE_HPP
 
+#include "flom/errors.hpp"
 #include "flom/frame.hpp"
 #include "flom/motion.hpp"
-#include "flom/errors.hpp"
 
 #include <iterator>
 #include <map>
@@ -97,24 +97,24 @@ public:
   iterator end() noexcept { return {}; }
 };
 
-class CheckedFrameWrapper {
+class CheckedFrameRef {
 public:
-  using value_type = Frame &;
+  using reference_type = Frame &;
 
-  CheckedFrameWrapper(value_type value_, Motion *motion_)
+  CheckedFrameRef(reference_type value_, Motion *motion_)
       : value(value_), motion(motion_) {}
 
-  CheckedFrameWrapper &operator=(const Frame &frame) & {
+  CheckedFrameRef &operator=(const Frame &frame) & {
     if (!this->motion->is_valid_frame(frame)) {
       throw errors::InvalidFrameError{"in CheckedFrameWrapper"};
     }
     this->value = frame;
   }
 
-  operator value_type() const noexcept { return this->value; }
+  operator reference_type() const noexcept { return this->value; }
 
 private:
-  value_type value;
+  reference_type value;
   const Motion *motion;
 };
 
