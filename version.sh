@@ -21,6 +21,8 @@
 
 set -euo pipefail
 
+cd "$(dirname "$0")"
+
 function main() {
   local annotated=$(git describe --tags --abbrev=0 2> /dev/null)
   local description=$(git describe --always)
