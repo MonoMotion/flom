@@ -80,7 +80,7 @@ public:
   std::string model_id() const;
   void set_model_id(std::string const &);
 
-  Frame &get_or_insert_frame(double t);
+  [[deprecated]] Frame &get_or_insert_frame(double t);
 
   EffectorType effector_type(const std::string &) const;
   void set_effector_type(const std::string &, EffectorType);
