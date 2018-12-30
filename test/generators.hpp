@@ -147,7 +147,7 @@ template <> struct Arbitrary<flom::Motion> {
         // UTF8 string is required
         gen::nonEmpty(gen::container<std::string>(gen::inRange('a', 'z'))),
         gen::element(flom::LoopType::None, flom::LoopType::Wrap),
-        gen::nonZero<double>(),
+        gen::positive<double>(),
         gen::mapcat(
            gen::pair(
              gen::arbitrary<std::size_t>(),
