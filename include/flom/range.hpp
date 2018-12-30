@@ -24,6 +24,7 @@
 #include "flom/motion.hpp"
 
 #include <iterator>
+#include <map>
 #include <memory>
 
 namespace flom {
@@ -93,6 +94,81 @@ public:
 
   iterator begin() noexcept { return {this->motion, this->fps}; }
   iterator end() noexcept { return {}; }
+};
+
+class keyframe_iterator {
+public:
+  using iterator_category = std::input_iterator_tag;
+  using value_type = Frame;
+  using difference_type = std::ptrdiff_t;
+  using pointer = Frame *;
+  using reference = Frame &;
+
+  using base_iterator = std::map<double, Frame>::iterator;
+
+private:
+  friend bool operator==(const keyframe_iterator &,
+                         const keyframe_iterator &) noexcept;
+  friend difference_type operator-(const keyframe_iterator &,
+                                   const keyframe_iterator &) noexcept;
+
+  base_iterator it;
+
+public:
+  explicit keyframe_iterator(base_iterator it_) noexcept : it(it_) {}
+
+  keyframe_iterator(const keyframe_iterator &) = default;
+  keyframe_iterator(keyframe_iterator &&) = default;
+  keyframe_iterator &operator=(const keyframe_iterator &) = default;
+  keyframe_iterator &operator=(keyframe_iterator &&) = default;
+
+  value_type operator*() const { return this->it->second; }
+
+  keyframe_iterator &operator++() noexcept {
+    this->it++;
+    return *this;
+  }
+  keyframe_iterator operator++(int) noexcept {
+    auto const copy = *this;
+    ++(*this);
+    return copy;
+  }
+
+  keyframe_iterator &operator--() noexcept {
+    this->it--;
+    return *this;
+  }
+  keyframe_iterator operator--(int) noexcept {
+    auto const copy = *this;
+    --(*this);
+    return copy;
+  }
+};
+
+bool operator==(const keyframe_iterator &, const keyframe_iterator &) noexcept;
+bool operator!=(const keyframe_iterator &, const keyframe_iterator &) noexcept;
+
+class KeyframeRange {
+public:
+  using value_type = Frame;
+  using iterator = keyframe_iterator;
+  using base_iterator = typename std::map<double, Frame>::iterator;
+
+private:
+  base_iterator begin_it;
+  base_iterator end_it;
+
+public:
+  KeyframeRange() = delete;
+  KeyframeRange(base_iterator begin_, base_iterator end_)
+      : begin_it(begin_), end_it(end_) {}
+  KeyframeRange(const KeyframeRange &) = default;
+  KeyframeRange(KeyframeRange &&) = default;
+  KeyframeRange &operator=(const KeyframeRange &) = default;
+  KeyframeRange &operator=(KeyframeRange &&) = default;
+
+  iterator begin() noexcept { return iterator{this->begin_it}; }
+  iterator end() noexcept { return iterator{this->end_it}; }
 };
 
 } // namespace flom
