@@ -99,6 +99,13 @@ Frame &Motion::get_or_insert_frame(double t) {
   return this->impl->raw_frames[t];
 }
 
+void Motion::insert_keyframe(double t, const Frame &frame) {
+  if (!this->impl->is_valid_frame(frame)) {
+    throw errors::InvalidMotionError{"during keyframe insertion"};
+  }
+  this->impl->raw_frames[t] = frame;
+}
+
 LoopType Motion::loop() const { return this->impl->loop; }
 
 void Motion::set_loop(LoopType loop) { this->impl->loop = loop; }
