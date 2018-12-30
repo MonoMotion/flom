@@ -135,8 +135,19 @@ bool Motion::Impl::is_valid() const {
   // which is constructed only using public interface,
   // must not be marked as invalid by this method.
   //
-  // TODO: check whether all frames has same names
-  return this->raw_frames.size() > 0 && this->raw_frames.begin()->first == 0;
+  if (this->raw_frames.size() == 0 || this->raw_frames.begin()->first != 0) {
+    return false;
+  }
+
+  auto const joints_hash = names_hash(this->joint_names);
+  auto const effectors_hash = names_hash(this->effector_types);
+  for (auto const &[t, frame] : this->raw_frames) {
+    auto const &[p, e] = frame;
+    if (names_hash(p) != joints_hash || names_hash(e) != effectors_hash) {
+      return false;
+    }
+  }
+  return true;
 }
 
 KeyRange<std::string> Motion::joint_names() const {
