@@ -48,9 +48,6 @@ Motion::Motion(Motion const &m)
 
 Motion::~Motion() {}
 
-// private default constructor
-Motion::Motion() : impl(std::make_unique<Motion::Impl>()) {}
-
 bool Motion::is_valid() const { return this->impl && this->impl->is_valid(); }
 
 Frame Motion::frame_at(double t) const {

@@ -64,8 +64,6 @@ public:
   // Hash of keys of effector_types
   std::size_t effectors_hash;
 
-  Impl() : loop(LoopType::None) { this->add_initial_frame(); }
-
   Impl(const std::unordered_set<std::string> &joints,
        const std::unordered_map<std::string, EffectorType> &effectors,
        const std::string &model = "")
