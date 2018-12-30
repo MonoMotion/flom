@@ -127,7 +127,19 @@ double Motion::length() const {
 void Motion::Impl::add_initial_frame() {
   assert(this->raw_frames.size() == 0 && "raw_frames already initialized");
 
-  this->raw_frames.emplace(0.0, Frame{});
+  Frame frame;
+
+  frame.positions.reserve(this->joint_names.size());
+  for (const auto &name : this->joint_names) {
+    frame.positions.emplace(name, 0.0);
+  }
+
+  frame.effectors.reserve(this->effector_types.size());
+  for (const auto &[name, type] : this->effector_types) {
+    frame.effectors.emplace(name, Effector{});
+  }
+
+  this->raw_frames.emplace(0.0, frame);
 }
 
 bool Motion::Impl::is_valid() const {
