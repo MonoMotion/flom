@@ -24,6 +24,9 @@
 #include <boost/qvm/quat_operations.hpp>
 #include <boost/qvm/vec.hpp>
 
+#include <boost/range/adaptors.hpp>
+#include <boost/range/algorithm.hpp>
+
 #include <rapidcheck.h>
 
 #include <flom/effector.hpp>
@@ -125,7 +128,11 @@ template <> struct Arbitrary<flom::Motion> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
         [](std::string const &model_id, flom::LoopType loop, double fps, auto const& frames) {
-          flom::Motion m(model_id);
+          std::unordered_set<std::string> joint_names, effector_names;
+          auto const& init_frame = frames[0];
+          boost::copy(init_frame.first | boost::adaptors::map_keys, std::inserter(joint_names, std::end(joint_names)));
+          boost::copy(init_frame.second | boost::adaptors::map_keys, std::inserter(effector_names, std::end(effector_names)));
+          flom::Motion m(joint_names, effector_names, model_id);
           m.set_loop(loop);
           unsigned i = 0;
           for (auto const& [p, e] : frames) {
