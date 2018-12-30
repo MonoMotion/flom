@@ -98,7 +98,7 @@ public:
 
 class keyframe_iterator {
 public:
-  using iterator_category = std::input_iterator_tag;
+  using iterator_category = std::bidirectional_iterator_tag;
   using value_type = Frame;
   using difference_type = std::ptrdiff_t;
   using pointer = Frame *;
@@ -122,27 +122,17 @@ public:
   keyframe_iterator &operator=(const keyframe_iterator &) = default;
   keyframe_iterator &operator=(keyframe_iterator &&) = default;
 
-  value_type operator*() const { return this->it->second; }
+  const value_type &operator*() const;
+  value_type &operator*();
 
-  keyframe_iterator &operator++() noexcept {
-    this->it++;
-    return *this;
-  }
-  keyframe_iterator operator++(int) noexcept {
-    auto const copy = *this;
-    ++(*this);
-    return copy;
-  }
+  const value_type &operator->() const;
+  value_type &operator->();
 
-  keyframe_iterator &operator--() noexcept {
-    this->it--;
-    return *this;
-  }
-  keyframe_iterator operator--(int) noexcept {
-    auto const copy = *this;
-    --(*this);
-    return copy;
-  }
+  keyframe_iterator &operator++() noexcept;
+  keyframe_iterator operator++(int) noexcept;
+
+  keyframe_iterator &operator--() noexcept;
+  keyframe_iterator operator--(int) noexcept;
 };
 
 bool operator==(const keyframe_iterator &, const keyframe_iterator &) noexcept;
