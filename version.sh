@@ -20,4 +20,12 @@
 
 set -euo pipefail
 
-git describe --always
+function main() {
+  local annotated=$(git describe --tags --abbrev=0 2> /dev/null)
+  local description=$(git describe --always)
+  local replaced=${description/${annotated}-/${annotated}+}
+  local semver=${replaced#v}
+  echo $semver
+}
+
+main
