@@ -106,6 +106,8 @@ void Motion::insert_keyframe(double t, const Frame &frame) {
   this->impl->raw_frames[t] = frame;
 }
 
+void Motion::delete_keyframe(double t) { this->impl->raw_frames.erase(t); }
+
 LoopType Motion::loop() const { return this->impl->loop; }
 
 void Motion::set_loop(LoopType loop) { this->impl->loop = loop; }
