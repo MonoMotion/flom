@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
+# This script prints semver-compatible version string calculated from current state of git
 
 set -euo pipefail
 
