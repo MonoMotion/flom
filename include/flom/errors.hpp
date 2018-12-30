@@ -47,6 +47,17 @@ private:
   double t;
 };
 
+class KeyframeNotFoundError : public std::exception {
+public:
+  explicit KeyframeNotFoundError(double);
+  virtual const char *what() const noexcept;
+
+  double time() const noexcept;
+
+private:
+  double t;
+};
+
 class ParseError : public std::exception {
 public:
   // TODO: include additional information

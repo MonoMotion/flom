@@ -111,7 +111,7 @@ void Motion::delete_keyframe(double t, bool loose) {
     return;
   }
   if (!loose) {
-    throw std::out_of_range("keyframe not found");
+    throw errors::KeyframeNotFoundError{t};
   }
 
   // loose mode - find closest key
@@ -131,7 +131,7 @@ void Motion::delete_keyframe(double t, bool loose) {
   }
 
   if (!almost_equal(t, it->first)) {
-    throw std::out_of_range("keyframe not found");
+    throw errors::KeyframeNotFoundError{t};
   }
 
   this->impl->raw_frames.erase(it);

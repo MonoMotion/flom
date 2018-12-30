@@ -41,6 +41,14 @@ const char *OutOfFramesError::what() const noexcept {
 
 double OutOfFramesError::time() const noexcept { return this->t; }
 
+KeyframeNotFoundError::KeyframeNotFoundError(double time) : t(time) {}
+
+const char *KeyframeNotFoundError::what() const noexcept {
+  return "Keyframe not found at supplied time";
+}
+
+double KeyframeNotFoundError::time() const noexcept { return this->t; }
+
 ParseError::ParseError() {}
 
 const char *ParseError::what() const noexcept {
