@@ -37,9 +37,15 @@ public:
   std::map<double, Frame> raw_frames;
   std::unordered_map<std::string, EffectorType> effector_types;
 
-  Impl() : model_id(), loop(LoopType::None), raw_frames(), effector_types() {}
+  Impl() : model_id(), loop(LoopType::None), raw_frames(), effector_types() {
+    this->add_initial_frame();
+  }
   Impl(std::string const &model)
-      : model_id(model), loop(LoopType::None), raw_frames(), effector_types() {}
+      : model_id(model), loop(LoopType::None), raw_frames(), effector_types() {
+    this->add_initial_frame();
+  }
+
+  void add_initial_frame();
 
   static Motion from_protobuf(proto::Motion const &);
   proto::Motion to_protobuf() const;
