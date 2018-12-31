@@ -203,6 +203,24 @@ RC_BOOST_PROP(insert_keyframe, (flom::Motion m, double t)) {
   RC_ASSERT(m.frame_at(t) == frame);
 }
 
+RC_BOOST_PROP(insert_init_keyframe, (flom::Motion m)) {
+  //
+  // Check if insertion to t == 0 is working properly
+  // Issue: #34
+  //
+
+  RC_PRE(boost::size(m.joint_names()) != 0);
+  RC_PRE(boost::size(m.effector_names()) != 0);
+
+  auto frame = m.new_keyframe();
+  // Modify frame in some way
+  frame.positions.begin()->second = 1;
+  frame.effectors.begin()->second.location = flom::Location{};
+
+  m.insert_keyframe(0, frame);
+  RC_ASSERT(m.frame_at(0) == frame);
+}
+
 RC_BOOST_PROP(insert_keyframe_invalid,
               (flom::Motion m, double t, const flom::Frame &f)) {
   RC_PRE(t >= 0);
