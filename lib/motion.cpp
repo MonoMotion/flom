@@ -98,10 +98,6 @@ bool Motion::is_in_range_at(double t) const {
   }
 }
 
-Frame &Motion::get_or_insert_frame(double t) {
-  return this->impl->raw_frames[t];
-}
-
 void Motion::insert_keyframe(double t, const Frame &frame) {
   if (!this->impl->is_valid_frame(frame)) {
     throw errors::InvalidFrameError{"during keyframe insertion"};
