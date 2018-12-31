@@ -109,6 +109,7 @@ public:
       throw errors::InvalidFrameError{"in CheckedFrameWrapper"};
     }
     this->value = frame;
+    return *this;
   }
 
   operator reference_type() const noexcept { return this->value; }
