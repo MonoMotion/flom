@@ -209,7 +209,7 @@ RC_BOOST_PROP(delete_init_keyframe, (flom::Motion m)) {
 }
 
 RC_BOOST_PROP(delete_keyframe, (flom::Motion m, double t)) {
-  RC_PRE(t >= 0);
+  RC_PRE(t > 0);
 
   auto const frame = m.new_keyframe();
   m.insert_keyframe(t, frame);
