@@ -251,6 +251,16 @@ RC_BOOST_PROP(keyframe_range, (flom::Motion m)) {
   }
 }
 
+RC_BOOST_PROP(keyframe_range_assign, (flom::Motion m)) {
+  auto const f = m.new_keyframe();
+  for (auto &&[t, keyframe] : m.keyframes()) {
+    keyframe = f;
+  }
+  for (auto const &[t, keyframe] : m.keyframes()) {
+    RC_ASSERT(keyframe == f);
+  }
+}
+
 RC_BOOST_PROP(keyframe_range_checked, (flom::Motion m, const flom::Frame &f)) {
   RC_PRE(!m.is_valid_frame(f));
   for (auto &&[t, keyframe] : m.keyframes()) {
