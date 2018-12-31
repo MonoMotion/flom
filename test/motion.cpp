@@ -203,6 +203,20 @@ RC_BOOST_PROP(insert_keyframe, (flom::Motion m, double t)) {
   RC_ASSERT(m.frame_at(t) == frame);
 }
 
+RC_BOOST_PROP(keyframe_range, (flom::Motion m)) {
+  for (auto const &[t, keyframe] : m.keyframes()) {
+    RC_ASSERT(m.is_valid_frame(keyframe));
+    RC_ASSERT(m.frame_at(t) == keyframe);
+  }
+}
+
+RC_BOOST_PROP(keyframe_range_checked, (flom::Motion m, const flom::Frame &f)) {
+  RC_PRE(!m.is_valid_frame(f));
+  for (auto &&[t, keyframe] : m.keyframes()) {
+    RC_ASSERT_THROWS_AS(keyframe = f, flom::errors::InvalidFrameError);
+  }
+}
+
 RC_BOOST_PROP(dump_load, (const flom::Motion &m)) {
   RC_ASSERT(m.is_valid());
 
