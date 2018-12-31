@@ -82,6 +82,7 @@ public:
   std::string model_id() const;
   void set_model_id(std::string const &);
 
+  Frame new_keyframe() const;
   void insert_keyframe(double t, const Frame &);
   void delete_keyframe(double t, bool loose = true);
   KeyframeRange keyframes();

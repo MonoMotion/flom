@@ -87,6 +87,7 @@ public:
   }
 
   void add_initial_frame();
+  Frame new_keyframe() const noexcept;
 
   static Motion from_protobuf(proto::Motion const &);
   proto::Motion to_protobuf() const;

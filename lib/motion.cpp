@@ -163,9 +163,9 @@ double Motion::length() const {
   return std::next(this->impl->raw_frames.end(), -1)->first;
 }
 
-void Motion::Impl::add_initial_frame() {
-  assert(this->raw_frames.size() == 0 && "raw_frames already initialized");
+Frame Motion::new_keyframe() const { return this->impl->new_keyframe(); }
 
+Frame Motion::Impl::new_keyframe() const noexcept {
   Frame frame;
 
   frame.positions.reserve(this->joint_names.size());
@@ -178,7 +178,13 @@ void Motion::Impl::add_initial_frame() {
     frame.effectors.emplace(name, Effector{});
   }
 
-  this->raw_frames.emplace(0.0, frame);
+  return frame;
+}
+
+void Motion::Impl::add_initial_frame() {
+  assert(this->raw_frames.size() == 0 && "raw_frames already initialized");
+
+  this->raw_frames.emplace(0.0, this->new_keyframe());
 }
 
 bool Motion::Impl::is_valid() const {
