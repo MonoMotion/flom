@@ -208,6 +208,17 @@ RC_BOOST_PROP(delete_init_keyframe, (flom::Motion m)) {
                       flom::errors::InitKeyframeDeleteError);
 }
 
+RC_BOOST_PROP(delete_keyframe, (flom::Motion m, double t)) {
+  RC_PRE(t >= 0);
+
+  auto const frame = m.new_keyframe();
+  m.insert_keyframe(t, frame);
+  m.delete_keyframe(t);
+
+  RC_ASSERT_THROWS_AS(m.delete_keyframe(t),
+                      flom::errors::KeyframeNotFoundError);
+}
+
 RC_BOOST_PROP(keyframe_range, (flom::Motion m)) {
   for (auto const &[t, keyframe] : m.keyframes()) {
     RC_ASSERT(m.is_valid_frame(keyframe));
