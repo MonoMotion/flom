@@ -92,9 +92,9 @@ std::string InvalidFrameError::status_message() const noexcept {
   return this->status;
 }
 
-InitKeyframeDeleteError::InitKeyframeDeleteError() {}
+InitKeyframeError::InitKeyframeError() {}
 
-const char *InitKeyframeDeleteError::what() const noexcept {
+const char *InitKeyframeError::what() const noexcept {
   return "Attempt to delete initial keyframe";
 }
 

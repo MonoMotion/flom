@@ -105,9 +105,9 @@ public:
   std::string status;
 };
 
-class InitKeyframeDeleteError : public std::exception {
+class InitKeyframeError : public std::exception {
 public:
-  InitKeyframeDeleteError();
+  InitKeyframeError();
   virtual const char *what() const noexcept;
 };
 

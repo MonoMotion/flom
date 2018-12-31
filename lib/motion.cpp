@@ -107,7 +107,7 @@ void Motion::insert_keyframe(double t, const Frame &frame) {
 
 void Motion::delete_keyframe(double t, bool loose) {
   if (t == 0 || (loose && almost_equal(t, 0))) {
-    throw errors::InitKeyframeDeleteError{};
+    throw errors::InitKeyframeError{};
   }
 
   if (this->impl->raw_frames.erase(t) != 0) {
