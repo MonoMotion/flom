@@ -24,6 +24,7 @@
 #include <rapidcheck/boost_test.h>
 
 #include <boost/range/algorithm.hpp>
+#include <boost/range/size.hpp>
 
 #include <cmath>
 #include <filesystem>
@@ -209,8 +210,8 @@ RC_BOOST_PROP(insert_init_keyframe, (flom::Motion m)) {
   // Issue: #34
   //
 
-  RC_PRE(boost::size(m.joint_names()) != 0);
-  RC_PRE(boost::size(m.effector_names()) != 0);
+  RC_PRE(!boost::empty(m.joint_names()));
+  RC_PRE(!boost::empty(m.effector_names()));
 
   auto frame = m.new_keyframe();
   // Modify frame in some way
