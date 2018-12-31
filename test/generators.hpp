@@ -134,13 +134,14 @@ template <> struct Arbitrary<flom::Motion> {
           m.set_loop(loop);
           unsigned i = 0;
           for (auto const& [p, e] : frames) {
-            auto& f = m.get_or_insert_frame(fps * i++);
+            flom::Frame f;
             for(auto const& pair : boost::combine(joint_names, p)) {
               f.positions.emplace(boost::get<0>(pair), boost::get<1>(pair));
             }
             for(auto const& pair : boost::combine(effector_names, e)) {
               f.effectors.emplace(boost::get<0>(pair), boost::get<1>(pair));
             }
+            m.insert_keyframe(fps * i++, f);
           }
           return m;
         },

@@ -103,7 +103,7 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
                      // TODO: Delete copy
                      return std::make_pair(p.first, e);
                    });
-    m.impl->raw_frames.insert_or_assign(frame_proto.t(), frame);
+    m.insert_keyframe(frame_proto.t(), frame);
   }
 
   if (!m.is_valid()) {
