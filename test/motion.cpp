@@ -188,6 +188,12 @@ RC_BOOST_PROP(effector_list, (const flom::Motion &m, double t)) {
   RC_ASSERT(o1 == o2);
 }
 
+RC_BOOST_PROP(new_frame, (const flom::Motion &m)) {
+  RC_ASSERT(m.is_valid());
+  auto const frame = m.new_keyframe();
+  RC_ASSERT(m.is_valid_frame(frame));
+}
+
 RC_BOOST_PROP(dump_load, (const flom::Motion &m)) {
   RC_ASSERT(m.is_valid());
 
