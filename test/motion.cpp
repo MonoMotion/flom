@@ -230,8 +230,7 @@ RC_BOOST_PROP(insert_keyframe_invalid,
 }
 
 RC_BOOST_PROP(delete_init_keyframe, (flom::Motion m)) {
-  RC_ASSERT_THROWS_AS(m.delete_keyframe(0),
-                      flom::errors::InitKeyframeError);
+  RC_ASSERT_THROWS_AS(m.delete_keyframe(0), flom::errors::InitKeyframeError);
 }
 
 RC_BOOST_PROP(delete_keyframe, (flom::Motion m, double t)) {
