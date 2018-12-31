@@ -92,4 +92,10 @@ std::string InvalidFrameError::status_message() const noexcept {
   return this->status;
 }
 
+InitKeyframeDeleteError::InitKeyframeDeleteError() {}
+
+const char *InitKeyframeDeleteError::what() const noexcept {
+  return "Attempt to delete initial keyframe";
+}
+
 } // namespace flom::errors

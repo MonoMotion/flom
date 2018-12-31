@@ -105,6 +105,12 @@ public:
   std::string status;
 };
 
+class InitKeyframeDeleteError : public std::exception {
+public:
+  InitKeyframeDeleteError();
+  virtual const char *what() const noexcept;
+};
+
 } // namespace flom::errors
 
 #endif

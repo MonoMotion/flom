@@ -203,6 +203,11 @@ RC_BOOST_PROP(insert_keyframe, (flom::Motion m, double t)) {
   RC_ASSERT(m.frame_at(t) == frame);
 }
 
+RC_BOOST_PROP(delete_init_keyframe, (flom::Motion m)) {
+  RC_ASSERT_THROWS_AS(m.delete_keyframe(0),
+                      flom::errors::InitKeyframeDeleteError);
+}
+
 RC_BOOST_PROP(keyframe_range, (flom::Motion m)) {
   for (auto const &[t, keyframe] : m.keyframes()) {
     RC_ASSERT(m.is_valid_frame(keyframe));
