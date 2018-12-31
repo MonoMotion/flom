@@ -121,13 +121,15 @@ private:
 
 class keyframe_iterator {
 public:
-  using iterator_category = std::bidirectional_iterator_tag;
-  using value_type = Frame;
-  using difference_type = std::ptrdiff_t;
-  using pointer = Frame *;
-  using reference = Frame &;
-
   using base_iterator = std::map<double, Frame>::iterator;
+
+  using iterator_category = std::bidirectional_iterator_tag;
+  using value_type = std::iterator_traits<base_iterator>::value_type;
+  using difference_type = std::iterator_traits<base_iterator>::difference_type;
+  using pointer = std::iterator_traits<base_iterator>::pointer;
+  using reference = std::iterator_traits<base_iterator>::reference;
+
+  using checked_value_type = std::pair<const double, CheckedFrameRef>;
 
 private:
   friend bool operator==(const keyframe_iterator &,
@@ -147,10 +149,10 @@ public:
   keyframe_iterator &operator=(keyframe_iterator &&) = default;
 
   const value_type &operator*() const;
-  CheckedFrameRef operator*();
+  checked_value_type operator*();
 
   const value_type &operator->() const;
-  CheckedFrameRef operator->();
+  checked_value_type operator->();
 
   keyframe_iterator &operator++() noexcept;
   keyframe_iterator operator++(int) noexcept;

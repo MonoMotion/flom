@@ -4,17 +4,19 @@
 namespace flom {
 
 const keyframe_iterator::value_type &keyframe_iterator::operator*() const {
-  return this->it->second;
+  return *this->it;
 }
-CheckedFrameRef keyframe_iterator::operator*() {
-  return {this->it->second, this->motion};
+keyframe_iterator::checked_value_type keyframe_iterator::operator*() {
+  return std::make_pair(this->it->first,
+                        CheckedFrameRef{this->it->second, this->motion});
 }
 
 const keyframe_iterator::value_type &keyframe_iterator::operator->() const {
-  return this->it->second;
+  return *this->it;
 }
-CheckedFrameRef keyframe_iterator::operator->() {
-  return {this->it->second, this->motion};
+keyframe_iterator::checked_value_type keyframe_iterator::operator->() {
+  return std::make_pair(this->it->first,
+                        CheckedFrameRef{this->it->second, this->motion});
 }
 
 keyframe_iterator &keyframe_iterator::operator++() noexcept {
