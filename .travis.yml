@@ -3,6 +3,10 @@ sudo: true
 script: cmake
 dist: xenial
 
+cache:
+  directories:
+    - $HOME/Library/Caches/Homebrew
+
 services:
   - docker
 
@@ -20,6 +24,12 @@ matrix:
     env: COMPILER='clang++' BUILD_TYPE='Release'
   - os: osx
     env: COMPILER='clang++' BUILD_TYPE='Debug'
+
+before_cache:
+- |
+  if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+    brew cleanup
+  fi
 
 install:
 - cd ${TRAVIS_BUILD_DIR}

@@ -25,19 +25,33 @@
 
 #include "motion.pb.h"
 
+#include <boost/range/adaptors.hpp>
+
 #include <cmath>
 #include <string>
 
 namespace flom {
 
-Motion::Motion() : impl(std::make_unique<Motion::Impl>()) {}
-Motion::Motion(std::string const &model)
-    : impl(std::make_unique<Motion::Impl>(model)) {}
+Motion::Motion(const std::unordered_set<std::string> &joint_names,
+               const std::unordered_set<std::string> &effector_names,
+               const std::string &model)
+    : impl(std::make_unique<Motion::Impl>(joint_names, effector_names, model)) {
+}
+Motion::Motion(
+    const std::unordered_set<std::string> &joint_names,
+    const std::unordered_map<std::string, EffectorType> &effector_types,
+    const std::string &model)
+    : impl(std::make_unique<Motion::Impl>(joint_names, effector_types, model)) {
+}
 Motion::Motion(Motion const &m)
     : impl(std::make_unique<Motion::Impl>(*m.impl)) {}
+
 Motion::~Motion() {}
 
 bool Motion::is_valid() const { return this->impl && this->impl->is_valid(); }
+bool Motion::is_valid_frame(const Frame &f) const {
+  return this->impl->is_valid_frame(f);
+}
 
 Frame Motion::frame_at(double t) const {
   if (std::isnan(t) || t < 0) {
@@ -84,8 +98,51 @@ bool Motion::is_in_range_at(double t) const {
   }
 }
 
-Frame &Motion::get_or_insert_frame(double t) {
-  return this->impl->raw_frames[t];
+void Motion::insert_keyframe(double t, const Frame &frame) {
+  if (!this->impl->is_valid_frame(frame)) {
+    throw errors::InvalidFrameError{"during keyframe insertion"};
+  }
+  this->impl->raw_frames[t] = frame;
+}
+
+void Motion::delete_keyframe(double t, bool loose) {
+  if (t == 0 || (loose && almost_equal(t, 0))) {
+    throw errors::InitKeyframeError{};
+  }
+
+  if (this->impl->raw_frames.erase(t) != 0) {
+    return;
+  }
+  if (!loose) {
+    throw errors::KeyframeNotFoundError{t};
+  }
+
+  // loose mode - find closest key
+  auto const lower = this->impl->raw_frames.lower_bound(t);
+  auto const begin = std::cbegin(this->impl->raw_frames);
+
+  std::remove_const_t<decltype(begin)> it;
+  if (lower != begin) {
+    auto const previous = std::prev(lower);
+    if ((t - previous->first) < (lower->first - t)) {
+      it = previous;
+    } else {
+      it = lower;
+    }
+  } else {
+    it = lower;
+  }
+
+  if (!almost_equal(t, it->first)) {
+    throw errors::KeyframeNotFoundError{t};
+  }
+
+  this->impl->raw_frames.erase(it);
+}
+
+KeyframeRange Motion::keyframes() {
+  return {std::begin(this->impl->raw_frames), std::end(this->impl->raw_frames),
+          *this};
 }
 
 LoopType Motion::loop() const { return this->impl->loop; }
@@ -110,6 +167,30 @@ double Motion::length() const {
   return std::next(this->impl->raw_frames.end(), -1)->first;
 }
 
+Frame Motion::new_keyframe() const { return this->impl->new_keyframe(); }
+
+Frame Motion::Impl::new_keyframe() const noexcept {
+  Frame frame;
+
+  frame.positions.reserve(this->joint_names.size());
+  for (const auto &name : this->joint_names) {
+    frame.positions.emplace(name, 0.0);
+  }
+
+  frame.effectors.reserve(this->effector_types.size());
+  for (const auto &[name, type] : this->effector_types) {
+    frame.effectors.emplace(name, Effector{});
+  }
+
+  return frame;
+}
+
+void Motion::Impl::add_initial_frame() {
+  assert(this->raw_frames.size() == 0 && "raw_frames already initialized");
+
+  this->raw_frames.emplace(0.0, this->new_keyframe());
+}
+
 bool Motion::Impl::is_valid() const {
   // for internal use
   //
@@ -117,16 +198,33 @@ bool Motion::Impl::is_valid() const {
   // which is constructed only using public interface,
   // must not be marked as invalid by this method.
   //
-  // TODO: check whether all frames has same names
-  return this->raw_frames.size() > 0 && this->raw_frames.begin()->first == 0;
+  if (this->raw_frames.size() == 0 || this->raw_frames.begin()->first != 0) {
+    return false;
+  }
+
+  for (auto const &[t, frame] : this->raw_frames) {
+    if (!this->is_valid_frame(frame)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool Motion::Impl::is_valid_frame(const Frame &frame) const {
+  auto const &[p, e] = frame;
+  if (names_hash(p) != this->joints_hash ||
+      names_hash(e) != this->effectors_hash) {
+    return false;
+  }
+  return true;
 }
 
 KeyRange<std::string> Motion::joint_names() const {
-  return this->impl->raw_frames.begin()->second.joint_names();
+  return this->impl->joint_names;
 }
 
 KeyRange<std::string> Motion::effector_names() const {
-  return this->impl->raw_frames.begin()->second.effector_names();
+  return this->impl->effector_types | boost::adaptors::map_keys;
 }
 
 bool operator==(const Motion &m1, const Motion &m2) {

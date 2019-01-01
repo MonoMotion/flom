@@ -17,36 +17,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
+# This script prints semver-compatible version string calculated from current state of git
 
 set -euo pipefail
 
-VERSION_TXT="VERSION.txt"
-
 cd "$(dirname "$0")"
 
-function get_meta() {
-  local branch=$(git name-rev HEAD | sed 's/.* \([^~]*\).*/\1/')
-
-  if [ "$branch" == "master" ]; then
-    exit
-  fi
-
-  echo -n "+"
-
-  if [ "${TRAVIS_PULL_REQUEST:-false}" != false ]; then
-    echo "pr_$TRAVIS_PULL_REQUEST"
-  else
-    echo "${branch//[^[:alnum:]-]/-}"
-  fi
-}
-
 function main() {
-  local base_version=$(cat $VERSION_TXT)
-  local meta_version=$(get_meta)
-
-  echo "${base_version}${meta_version}"
+  local annotated=$(git describe --tags --abbrev=0 2> /dev/null)
+  local description=$(git describe --always)
+  local replaced=${description/${annotated}-/${annotated}+}
+  local semver=${replaced#v}
+  echo $semver
 }
 
 main
-
-

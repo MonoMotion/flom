@@ -26,6 +26,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace flom {
@@ -40,6 +41,7 @@ struct EffectorType {
 };
 
 class FrameRange;
+class KeyframeRange;
 
 class Motion {
   friend bool operator==(const Motion &, const Motion &);
@@ -50,14 +52,19 @@ public:
   static Motion load_json_string(std::string const &);
   static Motion load_legacy_json(std::ifstream &);
 
-  Motion();
-  // With model name
-  explicit Motion(std::string const &);
+  Motion(const std::unordered_set<std::string> &joint_names,
+         const std::unordered_set<std::string> &effector_names,
+         const std::string &model = "");
+
+  Motion(const std::unordered_set<std::string> &joint_names,
+         const std::unordered_map<std::string, EffectorType> &effector_types,
+         const std::string &model = "");
 
   Motion(Motion const &);
   ~Motion();
 
   bool is_valid() const;
+  bool is_valid_frame(const Frame &) const;
 
   Frame frame_at(double t) const;
 
@@ -75,7 +82,10 @@ public:
   std::string model_id() const;
   void set_model_id(std::string const &);
 
-  Frame &get_or_insert_frame(double t);
+  Frame new_keyframe() const;
+  void insert_keyframe(double t, const Frame &);
+  void delete_keyframe(double t, bool loose = true);
+  KeyframeRange keyframes();
 
   EffectorType effector_type(const std::string &) const;
   void set_effector_type(const std::string &, EffectorType);

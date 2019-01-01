@@ -47,6 +47,17 @@ private:
   double t;
 };
 
+class KeyframeNotFoundError : public std::exception {
+public:
+  explicit KeyframeNotFoundError(double);
+  virtual const char *what() const noexcept;
+
+  double time() const noexcept;
+
+private:
+  double t;
+};
+
 class ParseError : public std::exception {
 public:
   // TODO: include additional information
@@ -81,6 +92,23 @@ public:
 
 public:
   std::string status;
+};
+
+class InvalidFrameError : public std::exception {
+public:
+  InvalidFrameError(const std::string &);
+  virtual const char *what() const noexcept;
+
+  std::string status_message() const noexcept;
+
+public:
+  std::string status;
+};
+
+class InitKeyframeError : public std::exception {
+public:
+  InitKeyframeError();
+  virtual const char *what() const noexcept;
 };
 
 } // namespace flom::errors

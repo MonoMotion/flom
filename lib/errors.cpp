@@ -41,6 +41,14 @@ const char *OutOfFramesError::what() const noexcept {
 
 double OutOfFramesError::time() const noexcept { return this->t; }
 
+KeyframeNotFoundError::KeyframeNotFoundError(double time) : t(time) {}
+
+const char *KeyframeNotFoundError::what() const noexcept {
+  return "Keyframe not found at supplied time";
+}
+
+double KeyframeNotFoundError::time() const noexcept { return this->t; }
+
 ParseError::ParseError() {}
 
 const char *ParseError::what() const noexcept {
@@ -71,6 +79,23 @@ const char *JSONDumpError::what() const noexcept {
 
 std::string JSONDumpError::status_message() const noexcept {
   return this->status;
+}
+
+InvalidFrameError::InvalidFrameError(const std::string &message)
+    : status(message) {}
+
+const char *InvalidFrameError::what() const noexcept {
+  return "Invalid motion data is detected";
+}
+
+std::string InvalidFrameError::status_message() const noexcept {
+  return this->status;
+}
+
+InitKeyframeError::InitKeyframeError() {}
+
+const char *InitKeyframeError::what() const noexcept {
+  return "Attempt to delete initial keyframe";
 }
 
 } // namespace flom::errors
