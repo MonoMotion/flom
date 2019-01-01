@@ -41,7 +41,7 @@ RC_BOOST_PROP(new_keyframe, (const flom::Motion &m)) {
 }
 
 RC_BOOST_PROP(insert_keyframe, (flom::Motion m)) {
-  auto const t = *gen::nonNegative<double>();
+  auto const t = *rc::gen::nonNegative<double>();
 
   RC_ASSERT(m.is_valid());
   auto const frame = m.new_keyframe();
@@ -68,9 +68,8 @@ RC_BOOST_PROP(insert_init_keyframe, (flom::Motion m)) {
   RC_ASSERT(m.frame_at(0) == frame);
 }
 
-RC_BOOST_PROP(insert_keyframe_invalid,
-              (flom::Motion m, const flom::Frame &f)) {
-  auto const t = *gen::nonNegative<double>();
+RC_BOOST_PROP(insert_keyframe_invalid, (flom::Motion m, const flom::Frame &f)) {
+  auto const t = *rc::gen::nonNegative<double>();
 
   RC_PRE(!m.is_valid_frame(f));
   RC_ASSERT_THROWS_AS(m.insert_keyframe(t, f), flom::errors::InvalidFrameError);
@@ -81,7 +80,7 @@ RC_BOOST_PROP(delete_init_keyframe, (flom::Motion m)) {
 }
 
 RC_BOOST_PROP(delete_keyframe, (flom::Motion m)) {
-  auto const t = *gen::positive<double>();
+  auto const t = *rc::gen::positive<double>();
 
   auto const frame = m.new_keyframe();
   m.insert_keyframe(t, frame);
