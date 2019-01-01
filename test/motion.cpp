@@ -24,6 +24,7 @@
 #include <rapidcheck/boost_test.h>
 
 #include <boost/range/algorithm.hpp>
+#include <boost/range/size.hpp>
 
 #include <cmath>
 #include <filesystem>
@@ -186,6 +187,85 @@ RC_BOOST_PROP(effector_list, (const flom::Motion &m, double t)) {
   boost::copy(m.effector_names(), std::inserter(o2, std::end(o2)));
 
   RC_ASSERT(o1 == o2);
+}
+
+RC_BOOST_PROP(new_keyframe, (const flom::Motion &m)) {
+  RC_ASSERT(m.is_valid());
+  auto const frame = m.new_keyframe();
+  RC_ASSERT(m.is_valid_frame(frame));
+}
+
+RC_BOOST_PROP(insert_keyframe, (flom::Motion m, double t)) {
+  RC_PRE(t >= 0);
+  RC_ASSERT(m.is_valid());
+  auto const frame = m.new_keyframe();
+  m.insert_keyframe(t, frame);
+
+  RC_ASSERT(m.frame_at(t) == frame);
+}
+
+RC_BOOST_PROP(insert_init_keyframe, (flom::Motion m)) {
+  //
+  // Check if insertion to t == 0 is working properly
+  // Issue: #34
+  //
+
+  RC_PRE(!boost::empty(m.joint_names()));
+  RC_PRE(!boost::empty(m.effector_names()));
+
+  auto frame = m.new_keyframe();
+  // Modify frame in some way
+  frame.positions.begin()->second = 1;
+  frame.effectors.begin()->second.location = flom::Location{};
+
+  m.insert_keyframe(0, frame);
+  RC_ASSERT(m.frame_at(0) == frame);
+}
+
+RC_BOOST_PROP(insert_keyframe_invalid,
+              (flom::Motion m, double t, const flom::Frame &f)) {
+  RC_PRE(t >= 0);
+  RC_PRE(!m.is_valid_frame(f));
+  RC_ASSERT_THROWS_AS(m.insert_keyframe(t, f), flom::errors::InvalidFrameError);
+}
+
+RC_BOOST_PROP(delete_init_keyframe, (flom::Motion m)) {
+  RC_ASSERT_THROWS_AS(m.delete_keyframe(0), flom::errors::InitKeyframeError);
+}
+
+RC_BOOST_PROP(delete_keyframe, (flom::Motion m, double t)) {
+  RC_PRE(t > 0);
+
+  auto const frame = m.new_keyframe();
+  m.insert_keyframe(t, frame);
+  m.delete_keyframe(t);
+
+  RC_ASSERT_THROWS_AS(m.delete_keyframe(t),
+                      flom::errors::KeyframeNotFoundError);
+}
+
+RC_BOOST_PROP(keyframe_range, (flom::Motion m)) {
+  for (auto const &[t, keyframe] : m.keyframes()) {
+    RC_ASSERT(m.is_valid_frame(keyframe));
+    RC_ASSERT(m.frame_at(t) == keyframe);
+  }
+}
+
+RC_BOOST_PROP(keyframe_range_assign, (flom::Motion m)) {
+  auto const f = m.new_keyframe();
+  for (auto &&[t, keyframe] : m.keyframes()) {
+    keyframe = f;
+  }
+  for (auto const &[t, keyframe] : m.keyframes()) {
+    RC_ASSERT(keyframe == f);
+  }
+}
+
+RC_BOOST_PROP(keyframe_range_checked, (flom::Motion m, const flom::Frame &f)) {
+  RC_PRE(!m.is_valid_frame(f));
+  for (auto &&[t, keyframe] : m.keyframes()) {
+    RC_ASSERT_THROWS_AS(keyframe = f, flom::errors::InvalidFrameError);
+  }
 }
 
 RC_BOOST_PROP(dump_load, (const flom::Motion &m)) {

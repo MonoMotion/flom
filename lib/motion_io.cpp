@@ -82,7 +82,7 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
     m.impl->loop = LoopType::None;
   }
   for (auto const &frame_proto : motion_proto.frames()) {
-    auto &frame = m.impl->raw_frames[frame_proto.t()];
+    Frame frame;
     auto const &positions_proto = frame_proto.positions();
     std::copy(std::cbegin(positions_proto), std::cend(positions_proto),
               std::inserter(frame.positions, std::end(frame.positions)));
@@ -103,10 +103,11 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
                      // TODO: Delete copy
                      return std::make_pair(p.first, e);
                    });
+    m.insert_keyframe(frame_proto.t(), frame);
   }
 
   if (!m.is_valid()) {
-    throw errors::InvalidMotionError{"while loading parsed motion data"};
+    throw errors::InvalidFrameError{"while loading parsed motion data"};
   }
 
   // copy occurs...
@@ -137,7 +138,7 @@ std::string Motion::dump_json_string() const {
 
 proto::Motion Motion::Impl::to_protobuf() const {
   if (!this->is_valid()) {
-    throw errors::InvalidMotionError{
+    throw errors::InvalidFrameError{
         "converting motion data before serializaion"};
   }
 
@@ -260,7 +261,7 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
   }
 
   if (!m.is_valid()) {
-    throw errors::InvalidMotionError{"while loading legacy motion data"};
+    throw errors::InvalidFrameError{"while loading legacy motion data"};
   }
 
   // copy occurs...
