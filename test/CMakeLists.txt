@@ -28,8 +28,14 @@ flom_add_test(test_frame)
 add_executable(test_motion_keyframe motion_keyframe.cpp)
 flom_add_test(test_motion_keyframe)
 
+add_executable(test_motion_keyframe_range motion_keyframe_range.cpp)
+flom_add_test(test_motion_keyframe_range)
+
 add_executable(test_motion_frame motion_frame.cpp)
 flom_add_test(test_motion_frame)
+
+add_executable(test_motion_frame_range motion_frame_range.cpp)
+flom_add_test(test_motion_frame_range)
 
 add_executable(test_motion_io motion_io.cpp)
 if(USE_LIBCXX)

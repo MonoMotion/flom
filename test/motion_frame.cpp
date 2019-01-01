@@ -98,38 +98,4 @@ RC_BOOST_PROP(invalid_time, (const flom::Motion &m)) {
   RC_ASSERT_THROWS_AS(m.frame_at(nan), flom::errors::InvalidTimeError);
 }
 
-RC_BOOST_PROP(frames_range_none, (const flom::Motion &m)) {
-  auto const fps = *rc::gen::positive<double>();
-
-  RC_PRE(m.length() >= fps);
-  RC_PRE(m.loop() == flom::LoopType::None);
-  RC_ASSERT(m.is_valid());
-
-  unsigned long count = 0;
-  for (auto const &frame : m.frames(fps)) {
-    RC_ASSERT(frame == m.frame_at(count * fps));
-    if (count * fps > m.length()) {
-      RC_FAIL("Iteration does not over");
-      break;
-    }
-    count++;
-  }
-}
-
-RC_BOOST_PROP(frames_range_wrap, (const flom::Motion &m)) {
-  auto const fps = *rc::gen::positive<double>();
-
-  RC_PRE(m.loop() == flom::LoopType::Wrap);
-  RC_ASSERT(m.is_valid());
-
-  unsigned long count = 0;
-  for (auto const &frame : m.frames(fps)) {
-    RC_ASSERT(frame == m.frame_at(count * fps));
-    if (count * fps > m.length() * 2) {
-      break;
-    }
-    count++;
-  }
-}
-
 BOOST_AUTO_TEST_SUITE_END()
