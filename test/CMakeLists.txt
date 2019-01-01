@@ -28,6 +28,9 @@ flom_add_test(test_frame)
 add_executable(test_motion motion.cpp)
 flom_add_test(test_motion)
 
+add_executable(test_motion_keyframe motion_keyframe.cpp)
+flom_add_test(test_motion_keyframe)
+
 add_executable(test_motion_io motion_io.cpp)
 if(USE_LIBCXX)
   target_link_libraries(test_motion_io PRIVATE c++fs)
