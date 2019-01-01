@@ -25,9 +25,6 @@ flom_add_test(test_effector)
 add_executable(test_frame frame.cpp)
 flom_add_test(test_frame)
 
-add_executable(test_motion motion.cpp)
-flom_add_test(test_motion)
-
 add_executable(test_motion_keyframe motion_keyframe.cpp)
 flom_add_test(test_motion_keyframe)
 
@@ -41,3 +38,6 @@ else()
   target_link_libraries(test_motion_io PRIVATE stdc++fs)
 endif()
 flom_add_test(test_motion_io)
+
+add_executable(test_motion_misc motion_misc.cpp)
+flom_add_test(test_motion_misc)

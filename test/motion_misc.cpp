@@ -24,22 +24,17 @@
 #include <rapidcheck/boost_test.h>
 
 #include <boost/range/algorithm.hpp>
-#include <boost/range/size.hpp>
 
-#include <cmath>
-#include <filesystem>
-#include <fstream>
-#include <iomanip>
+#include <string>
 #include <unordered_set>
 
-#include <flom/errors.hpp>
 #include <flom/motion.hpp>
 
 #include "generators.hpp"
 #include "operators.hpp"
 #include "printers.hpp"
 
-BOOST_AUTO_TEST_SUITE(motion)
+BOOST_AUTO_TEST_SUITE(motion_misc)
 
 BOOST_AUTO_TEST_CASE(empty_motion_valid) {
   std::unordered_set<std::string> j, e;
