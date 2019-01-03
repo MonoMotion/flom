@@ -56,11 +56,10 @@ RC_BOOST_PROP(effector_list, (const flom::Frame &f)) {
   RC_ASSERT(o1 == o2);
 }
 
-RC_BOOST_PROP(interpolation, (const flom::Frame &f1)) {
+RC_BOOST_PROP(interpolation, (const flom::Frame &f1, std::size_t n)) {
   const double t = static_cast<double>(*rc::gen::inRange(0, 100)) / 100;
-  const double d = static_cast<double>(*rc::gen::inRange(0, 100)) / 100;
 
-  auto f2 = f1 * d;
+  auto const f2 = f1.repeated(n);
   auto const f3 = flom::interpolate(t, f1, f2);
   for (auto &&[key, val] : f3.positions) {
     RC_ASSERT(val ==
