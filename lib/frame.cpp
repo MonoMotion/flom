@@ -26,6 +26,17 @@
 
 namespace flom {
 
+FrameDifference::FrameDifference(const Frame& f1, const Frame& f2) {
+  for (auto const&[k, e] : f1.effectors) {
+    auto const o = other.effectors.at(k);
+    this->effectors.emplace(k, e.difference(o))
+  }
+  for (auto const&[k, p] : f1.positions) {
+    auto const o = other.positions.at(k);
+    this->positions.emplace(k, e - o)
+  }
+}
+
 FrameDifference &FrameDifference::repeat(std::size_t n) {
   for (auto &&[k, e] : this->effectors) {
     e.repeat(n);
