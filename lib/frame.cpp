@@ -27,17 +27,17 @@
 namespace flom {
 
 FrameDifference operator-(const Frame &f1, const Frame &f2) {
-  return FrameDifference {f1, f2};
+  return FrameDifference{f1, f2};
 }
 
-FrameDifference::FrameDifference(const Frame& f1, const Frame& f2) {
-  for (auto const&[k, e] : f1.effectors) {
-    auto const o = other.effectors.at(k);
-    this->effectors.emplace(k, e - o)
+FrameDifference::FrameDifference(const Frame &f1, const Frame &f2) {
+  for (auto const &[k, e] : f1.effectors) {
+    auto const o = f2.effectors.at(k);
+    this->effectors.emplace(k, e - o);
   }
-  for (auto const&[k, p] : f1.positions) {
-    auto const o = other.positions.at(k);
-    this->positions.emplace(k, e - o)
+  for (auto const &[k, p] : f1.positions) {
+    auto const o = f2.positions.at(k);
+    this->positions.emplace(k, p - o);
   }
 }
 
@@ -63,7 +63,7 @@ FrameDifference FrameDifference::repeated(std::size_t n) const {
 
 FrameDifference FrameDifference::composed(const FrameDifference &other) const {
   FrameDifference copy{*this};
-  return copy.compose(n);
+  return copy.compose(other);
 }
 
 Frame &Frame::compose(const Frame &other) {

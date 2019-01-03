@@ -58,21 +58,26 @@ bool operator==(const Rotation &, const Rotation &);
 bool operator!=(const Rotation &, const Rotation &);
 bool almost_equal(const Rotation &, const Rotation &);
 
+struct Effector;
+
 class EffectorDifference {
+  friend struct Effector;
+  friend EffectorDifference operator-(const Effector &, const Effector &);
+
 private:
   std::optional<Location::value_type> location;
   std::optional<Rotation::value_type> rotation;
 
-  EffectorDifference(const Effector&, const Effector&);
+  EffectorDifference(const Effector &, const Effector &);
 
 public:
   EffectorDifference() = delete;
 
-  EffectorDifference(const EffectorDifference&) = default;
-  EffectorDifference(EffectorDifference&&) = default;
+  EffectorDifference(const EffectorDifference &) = default;
+  EffectorDifference(EffectorDifference &&) = default;
 
-  EffectorDifference& operator=(const EffectorDifference&) = default;
-  EffectorDifference& operator=(EffectorDifference&&) = default;
+  EffectorDifference &operator=(const EffectorDifference &) = default;
+  EffectorDifference &operator=(EffectorDifference &&) = default;
 
   EffectorDifference &repeat(std::size_t);
   EffectorDifference repeated(std::size_t) const;
@@ -80,7 +85,6 @@ public:
   EffectorDifference &compose(const EffectorDifference &);
   EffectorDifference composed(const EffectorDifference &) const;
 };
-
 
 struct Effector {
   std::optional<Location> location;
@@ -96,7 +100,7 @@ struct Effector {
 bool operator==(const Effector &, const Effector &);
 bool operator!=(const Effector &, const Effector &);
 bool almost_equal(const Effector &, const Effector &);
-EffectorDifference operator-(const Effector &, const Effector&);
+EffectorDifference operator-(const Effector &, const Effector &);
 
 bool almost_equal(double, double);
 
