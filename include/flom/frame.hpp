@@ -67,9 +67,6 @@ struct Frame {
   KeyRange<std::string> joint_names() const;
   KeyRange<std::string> effector_names() const;
 
-  Frame &repeat(std::size_t);
-  Frame repeated(std::size_t) const;
-
   Frame &compose(const Frame &);
   Frame composed(const Frame &) const;
 
