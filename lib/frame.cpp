@@ -26,13 +26,6 @@
 
 namespace flom {
 
-Frame &Frame::repeat(std::size_t n) {
-  for (auto &&[k, e] : this->effectors) {
-    e.repeat(n);
-  }
-  return *this;
-}
-
 Frame &Frame::compose(const Frame &other) {
   for (auto &&[k, e] : this->effectors) {
     auto const o = other.effectors.at(k);
@@ -41,9 +34,17 @@ Frame &Frame::compose(const Frame &other) {
   return *this;
 }
 
-Frame Frame::repeated(std::size_t n) const {
+Frame &Frame::compose(const FrameDifference &other) {
+  for (auto &&[k, e] : this->effectors) {
+    auto const o = other.effectors.at(k);
+    e.compose(o);
+  }
+  return *this;
+}
+
+Frame Frame::composed(const FrameDifference &other) const {
   Frame copy{*this};
-  return copy.repeat(n);
+  return copy.compose(other);
 }
 
 Frame Frame::composed(const Frame &other) const {
