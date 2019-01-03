@@ -38,7 +38,9 @@ Effector &Effector::repeat(std::size_t n) {
     this->location->vec *= n;
   }
   if (this->rotation) {
-    this->rotation->quat *= n;
+    for (std::size_t i = 0; i < n; i++) {
+      this->rotation->quat *= this->rotation->quat;
+    }
   }
   return *this;
 }
@@ -48,7 +50,7 @@ Effector &Effector::compose(const Effector &other) {
     this->location->vec += other.location->vec;
   }
   if (this->rotation && other.rotation) {
-    this->rotation->quat += other.rotation->quat;
+    this->rotation->quat *= other.rotation->quat;
   }
   return *this;
 }
