@@ -38,6 +38,8 @@ Effector &Effector::repeat(std::size_t n) {
     this->location->vec *= n;
   }
   if (this->rotation) {
+    // TODO: Don't call normalize here
+    boost::qvm::normalize(this->rotation->quat);
     for (std::size_t i = 0; i < n; i++) {
       this->rotation->quat *= this->rotation->quat;
     }
@@ -50,7 +52,9 @@ Effector &Effector::compose(const Effector &other) {
     this->location->vec += other.location->vec;
   }
   if (this->rotation && other.rotation) {
-    this->rotation->quat *= other.rotation->quat;
+    // TODO: Don't call normalize here
+    boost::qvm::normalize(this->rotation->quat);
+    this->rotation->quat *= boost::qvm::normalized(other.rotation->quat);
   }
   return *this;
 }
