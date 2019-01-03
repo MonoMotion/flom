@@ -47,8 +47,8 @@ RC_BOOST_PROP(retrieve_frame_wrap, (const flom::Motion &m)) {
     expected_frame = m.frame_at(0);
   } else {
     auto len = m.length();
-    auto mul = static_cast<unsigned>(t / len);
-    expected_frame = m.frame_at(std::fmod(t, len)) + m.frame_at(len) * mul;
+    // auto mul = static_cast<unsigned>(t / len);
+    expected_frame = m.frame_at(std::fmod(t, len));
   }
 
   // Using non-strict version of operator== defined in operators.hpp
@@ -69,8 +69,8 @@ RC_BOOST_PROP(retrieve_frame_none, (const flom::Motion &m)) {
     expected_frame = m.frame_at(0);
   } else {
     auto len = m.length();
-    auto mul = static_cast<unsigned>(t / len);
-    expected_frame = m.frame_at(std::fmod(t, len)) + m.frame_at(len) * mul;
+    // auto mul = static_cast<unsigned>(t / len);
+    expected_frame = m.frame_at(std::fmod(t, len));
   }
 
   // Using non-strict version of operator== defined in operators.hpp

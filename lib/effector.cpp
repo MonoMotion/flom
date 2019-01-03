@@ -84,26 +84,6 @@ bool almost_equal(const Location &l1, const Location &l2) {
                          [](auto e1, auto e2) { return almost_equal(e1, e2); });
 }
 
-Effector &Effector::operator+=(const Effector &x) {
-  if (this->location && x.location) {
-    this->location->vec += x.location->vec;
-  }
-  if (this->rotation && x.rotation) {
-    this->rotation->quat += x.rotation->quat;
-  }
-  return *this;
-}
-
-Effector &Effector::operator-=(const Effector &x) {
-  if (this->location && x.location) {
-    this->location->vec -= x.location->vec;
-  }
-  if (this->rotation && x.rotation) {
-    this->rotation->quat -= x.rotation->quat;
-  }
-  return *this;
-}
-
 bool operator==(const Effector &e1, const Effector &e2) {
   return e1.location == e2.location && e1.rotation == e2.rotation;
 }

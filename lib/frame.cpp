@@ -39,30 +39,6 @@ Frame interpolate(double t, Frame const &a, Frame const &b) {
   return f;
 }
 
-Frame &Frame::operator+=(const Frame &x) {
-  for (auto &&[k, v1] : this->positions) {
-    auto const &v2 = x.positions.at(k);
-    v1 += v2;
-  }
-  for (auto &&[k, v1] : this->effectors) {
-    auto const &v2 = x.effectors.at(k);
-    v1 += v2;
-  }
-  return *this;
-}
-
-Frame &Frame::operator-=(const Frame &x) {
-  for (auto &&[k, v1] : this->positions) {
-    auto const &v2 = x.positions.at(k);
-    v1 -= v2;
-  }
-  for (auto &&[k, v1] : this->effectors) {
-    auto const &v2 = x.effectors.at(k);
-    v1 -= v2;
-  }
-  return *this;
-}
-
 bool operator==(const Frame &f1, const Frame &f2) {
   return f1.positions == f2.positions && f1.effectors == f2.effectors;
 }

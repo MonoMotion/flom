@@ -36,38 +36,6 @@
 
 BOOST_AUTO_TEST_SUITE(frame)
 
-RC_BOOST_PROP(mul_scalar, (const flom::Frame &f, double v)) {
-  auto f2 = f * v;
-  for (auto &&[key, val] : f.positions) {
-    RC_ASSERT(f2.positions.at(key) == val * v);
-  }
-  for (auto &&[key, val] : f.effectors) {
-    RC_ASSERT(f2.effectors.at(key) == val * v);
-  }
-}
-
-RC_BOOST_PROP(add, (const flom::Frame &f1)) {
-  auto f2 = f1;
-  auto const f3 = f1 + f2;
-  for (auto &&[key, val] : f3.positions) {
-    RC_ASSERT(val == f1.positions.at(key) + f2.positions.at(key));
-  }
-  for (auto &&[key, val] : f3.effectors) {
-    RC_ASSERT(val == f1.effectors.at(key) + f2.effectors.at(key));
-  }
-}
-
-RC_BOOST_PROP(sub, (const flom::Frame &f1)) {
-  auto f2 = f1;
-  auto const f3 = f1 - f2;
-  for (auto &&[key, val] : f3.positions) {
-    RC_ASSERT(val == f1.positions.at(key) - f2.positions.at(key));
-  }
-  for (auto &&[key, val] : f3.effectors) {
-    RC_ASSERT(val == f1.effectors.at(key) - f2.effectors.at(key));
-  }
-}
-
 RC_BOOST_PROP(joint_list, (const flom::Frame &f)) {
   std::unordered_set<std::string> o1, o2;
   std::transform(std::cbegin(f.positions), std::cend(f.positions),
