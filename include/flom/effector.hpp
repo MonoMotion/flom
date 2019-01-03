@@ -57,7 +57,10 @@ struct Effector {
   std::optional<Rotation> rotation;
 
   Effector &repeat(std::size_t);
+  Effector repeated(std::size_t) const;
+
   Effector &compose(const Effector &);
+  Effector composed(const Effector &) const;
 };
 
 bool operator==(const Effector &, const Effector &);

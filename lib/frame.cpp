@@ -41,6 +41,16 @@ Frame &Frame::compose(const Frame &other) {
   return *this;
 }
 
+Frame Frame::repeated(std::size_t n) const {
+  Frame copy{*this};
+  return copy.repeat(n);
+}
+
+Frame Frame::composed(const Frame &other) const {
+  Frame copy{*this};
+  return copy.compose(other);
+}
+
 Frame interpolate(double t, Frame const &a, Frame const &b) {
   Frame f;
   for (auto const &[k, v1] : a.positions) {

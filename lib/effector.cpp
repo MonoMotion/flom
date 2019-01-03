@@ -53,6 +53,16 @@ Effector &Effector::compose(const Effector &other) {
   return *this;
 }
 
+Effector Effector::repeated(std::size_t n) const {
+  Effector copy{*this};
+  return copy.repeat(n);
+}
+
+Effector Effector::composed(const Effector &other) const {
+  Effector copy{*this};
+  return copy.compose(other);
+}
+
 Effector interpolate(double t, Effector const &a, Effector const &b) {
   Effector e;
   if (a.rotation && b.rotation) {
