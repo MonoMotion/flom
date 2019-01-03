@@ -56,14 +56,6 @@ FrameDifference &FrameDifference::operator+=(const FrameDifference &other) {
   return *this;
 }
 
-Frame &Frame::operator+=(const Frame &other) {
-  for (auto &&[k, e] : this->effectors) {
-    auto const o = other.effectors.at(k);
-    e.compose(o);
-  }
-  return *this;
-}
-
 Frame &Frame::operator+=(const FrameDifference &other) {
   for (auto &&[k, e] : this->effectors) {
     auto const o = other.effectors.at(k);

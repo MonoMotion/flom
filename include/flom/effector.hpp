@@ -88,7 +88,6 @@ struct Effector : boost::operators<Effector> {
   std::optional<Location> location;
   std::optional<Rotation> rotation;
 
-  Effector &operator+=(const Effector &);
   Effector &operator+=(const EffectorDifference &);
 };
 

@@ -68,7 +68,6 @@ struct Frame : boost::operators<Frame> {
   KeyRange<std::string> joint_names() const;
   KeyRange<std::string> effector_names() const;
 
-  Frame &operator+=(const Frame &);
   Frame &operator+=(const FrameDifference &);
 };
 

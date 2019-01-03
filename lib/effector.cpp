@@ -74,18 +74,6 @@ EffectorDifference &EffectorDifference::operator*=(std::size_t n) {
   return *this;
 }
 
-Effector &Effector::operator+=(const Effector &other) {
-  if (this->location && other.location) {
-    this->location->vec += other.location->vec;
-  }
-  if (this->rotation && other.rotation) {
-    // TODO: Don't call normalize here
-    boost::qvm::normalize(this->rotation->quat);
-    this->rotation->quat *= boost::qvm::normalized(other.rotation->quat);
-  }
-  return *this;
-}
-
 Effector &Effector::operator+=(const EffectorDifference &other) {
   if (this->location && other.location) {
     this->location->vec += *other.location;
