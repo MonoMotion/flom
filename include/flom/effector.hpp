@@ -33,8 +33,10 @@ namespace flom {
 namespace qvm = boost::qvm;
 
 struct Location {
+  using value_type = qvm::vec<double, 3>;
+
   double weight;
-  qvm::vec<double, 3> vec;
+  value_type vec;
 
   Location() : weight(0) {}
 };
@@ -44,8 +46,10 @@ bool operator!=(const Location &, const Location &);
 bool almost_equal(const Location &, const Location &);
 
 struct Rotation {
+  using value_type = qvm::quat<double>;
+
   double weight;
-  qvm::quat<double> quat;
+  value_type quat;
 
   Rotation() : weight(0) {}
 };
@@ -54,20 +58,45 @@ bool operator==(const Rotation &, const Rotation &);
 bool operator!=(const Rotation &, const Rotation &);
 bool almost_equal(const Rotation &, const Rotation &);
 
+class EffectorDifference {
+private:
+  std::optional<Location::value_type> location;
+  std::optional<Rotation::value_type> rotation;
+
+  EffectorDifference(const Effector&, const Effector&);
+
+public:
+  EffectorDifference() = delete;
+
+  EffectorDifference(const EffectorDifference&) = default;
+  EffectorDifference(EffectorDifference&&) = default;
+
+  EffectorDifference& operator=(const EffectorDifference&) = default;
+  EffectorDifference& operator=(EffectorDifference&&) = default;
+
+  EffectorDifference &repeat(std::size_t);
+  EffectorDifference repeated(std::size_t) const;
+
+  EffectorDifference &compose(const EffectorDifference &);
+  EffectorDifference composed(const EffectorDifference &) const;
+};
+
+
 struct Effector {
   std::optional<Location> location;
   std::optional<Rotation> rotation;
 
-  Effector &repeat(std::size_t);
-  Effector repeated(std::size_t) const;
-
   Effector &compose(const Effector &);
   Effector composed(const Effector &) const;
+
+  Effector &compose(const EffectorDifference &);
+  Effector composed(const EffectorDifference &) const;
 };
 
 bool operator==(const Effector &, const Effector &);
 bool operator!=(const Effector &, const Effector &);
 bool almost_equal(const Effector &, const Effector &);
+EffectorDifference operator-(const Effector &, const Effector&);
 
 bool almost_equal(double, double);
 
