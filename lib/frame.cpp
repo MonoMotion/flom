@@ -41,14 +41,14 @@ FrameDifference::FrameDifference(const Frame &f1, const Frame &f2) {
   }
 }
 
-FrameDifference &FrameDifference::repeat(std::size_t n) {
+FrameDifference &FrameDifference::operator*=(std::size_t n) {
   for (auto &&[k, e] : this->effectors) {
     e.repeat(n);
   }
   return *this;
 }
 
-FrameDifference &FrameDifference::compose(const FrameDifference &other) {
+FrameDifference &FrameDifference::operator+=(const FrameDifference &other) {
   for (auto &&[k, e] : this->effectors) {
     auto const o = other.effectors.at(k);
     e.compose(o);
@@ -56,17 +56,7 @@ FrameDifference &FrameDifference::compose(const FrameDifference &other) {
   return *this;
 }
 
-FrameDifference FrameDifference::repeated(std::size_t n) const {
-  FrameDifference copy{*this};
-  return copy.repeat(n);
-}
-
-FrameDifference FrameDifference::composed(const FrameDifference &other) const {
-  FrameDifference copy{*this};
-  return copy.compose(other);
-}
-
-Frame &Frame::compose(const Frame &other) {
+Frame &Frame::operator+=(const Frame &other) {
   for (auto &&[k, e] : this->effectors) {
     auto const o = other.effectors.at(k);
     e.compose(o);
@@ -74,22 +64,12 @@ Frame &Frame::compose(const Frame &other) {
   return *this;
 }
 
-Frame &Frame::compose(const FrameDifference &other) {
+Frame &Frame::operator+=(const FrameDifference &other) {
   for (auto &&[k, e] : this->effectors) {
     auto const o = other.effectors.at(k);
     e.compose(o);
   }
   return *this;
-}
-
-Frame Frame::composed(const FrameDifference &other) const {
-  Frame copy{*this};
-  return copy.compose(other);
-}
-
-Frame Frame::composed(const Frame &other) const {
-  Frame copy{*this};
-  return copy.compose(other);
 }
 
 Frame interpolate(double t, Frame const &a, Frame const &b) {

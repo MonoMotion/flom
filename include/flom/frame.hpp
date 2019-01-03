@@ -25,6 +25,7 @@
 #include <string>
 #include <unordered_map>
 
+#include <boost/operators.hpp>
 #include <boost/range/any_range.hpp>
 
 namespace flom {
@@ -37,7 +38,7 @@ using KeyRange =
 
 struct Frame;
 
-class FrameDifference {
+class FrameDifference : boost::operators<FrameDifference> {
   friend struct Frame;
   friend FrameDifference operator-(const Frame &, const Frame &);
 
@@ -56,25 +57,19 @@ public:
   FrameDifference &operator=(const FrameDifference &) = default;
   FrameDifference &operator=(FrameDifference &&) = default;
 
-  FrameDifference &repeat(std::size_t);
-  FrameDifference repeated(std::size_t) const;
-
-  FrameDifference &compose(const FrameDifference &);
-  FrameDifference composed(const FrameDifference &) const;
+  FrameDifference &operator*=(std::size_t);
+  FrameDifference &operator+=(const FrameDifference &);
 };
 
-struct Frame {
+struct Frame : boost::operators<Frame> {
   std::unordered_map<std::string, double> positions;
   std::unordered_map<std::string, Effector> effectors;
 
   KeyRange<std::string> joint_names() const;
   KeyRange<std::string> effector_names() const;
 
-  Frame &compose(const Frame &);
-  Frame composed(const Frame &) const;
-
-  Frame &compose(const FrameDifference &);
-  Frame composed(const FrameDifference &) const;
+  Frame &operator+=(const Frame &);
+  Frame &operator+=(const FrameDifference &);
 };
 
 FrameDifference operator-(const Frame &, const Frame &);
