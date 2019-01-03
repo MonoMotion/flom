@@ -47,8 +47,8 @@ EffectorDifference::EffectorDifference(const Effector &e1, const Effector &e2) {
   }
 }
 
-EffectorDifference &
-EffectorDifference::compose(const EffectorDifference &other) {
+EffectorDifference &EffectorDifference::
+operator+=(const EffectorDifference &other) {
   if (this->location && other.location) {
     (*this->location) += (*other.location);
   }
@@ -60,7 +60,7 @@ EffectorDifference::compose(const EffectorDifference &other) {
   return *this;
 }
 
-EffectorDifference &EffectorDifference::repeat(std::size_t n) {
+EffectorDifference &EffectorDifference::operator*=(std::size_t n) {
   if (this->location) {
     (*this->location) *= n;
   }
@@ -74,18 +74,7 @@ EffectorDifference &EffectorDifference::repeat(std::size_t n) {
   return *this;
 }
 
-EffectorDifference
-EffectorDifference::composed(const EffectorDifference &other) const {
-  EffectorDifference copy{*this};
-  return copy.compose(other);
-}
-
-EffectorDifference EffectorDifference::repeated(std::size_t n) const {
-  EffectorDifference copy{*this};
-  return copy.repeat(n);
-}
-
-Effector &Effector::compose(const Effector &other) {
+Effector &Effector::operator+=(const Effector &other) {
   if (this->location && other.location) {
     this->location->vec += other.location->vec;
   }
@@ -97,9 +86,16 @@ Effector &Effector::compose(const Effector &other) {
   return *this;
 }
 
-Effector Effector::composed(const Effector &other) const {
-  Effector copy{*this};
-  return copy.compose(other);
+Effector &Effector::operator+=(const EffectorDifference &other) {
+  if (this->location && other.location) {
+    this->location->vec += *other.location;
+  }
+  if (this->rotation && other.rotation) {
+    // TODO: Don't call normalize here
+    boost::qvm::normalize(this->rotation->quat);
+    this->rotation->quat *= boost::qvm::normalized(*other.rotation);
+  }
+  return *this;
 }
 
 Effector interpolate(double t, Effector const &a, Effector const &b) {

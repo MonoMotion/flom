@@ -23,6 +23,7 @@
 #include <optional>
 #include <type_traits>
 
+#include <boost/operators.hpp>
 #include <boost/qvm/quat.hpp>
 #include <boost/qvm/quat_operations.hpp>
 #include <boost/qvm/vec.hpp>
@@ -60,9 +61,9 @@ bool almost_equal(const Rotation &, const Rotation &);
 
 struct Effector;
 
-class EffectorDifference {
+class EffectorDifference : boost::operators<EffectorDifference> {
   friend struct Effector;
-  friend EffectorDifference operator-(const Effector &, const Effector &);
+  friend EffectorDifference operator-(const Effector &, const Effector&);
 
 private:
   std::optional<Location::value_type> location;
@@ -79,22 +80,16 @@ public:
   EffectorDifference &operator=(const EffectorDifference &) = default;
   EffectorDifference &operator=(EffectorDifference &&) = default;
 
-  EffectorDifference &repeat(std::size_t);
-  EffectorDifference repeated(std::size_t) const;
-
-  EffectorDifference &compose(const EffectorDifference &);
-  EffectorDifference composed(const EffectorDifference &) const;
+  EffectorDifference &operator*=(std::size_t);
+  EffectorDifference &operator+=(const EffectorDifference &);
 };
 
-struct Effector {
+struct Effector : boost::operators<Effector> {
   std::optional<Location> location;
   std::optional<Rotation> rotation;
 
-  Effector &compose(const Effector &);
-  Effector composed(const Effector &) const;
-
-  Effector &compose(const EffectorDifference &);
-  Effector composed(const EffectorDifference &) const;
+  Effector &operator+=(const Effector &);
+  Effector &operator+=(const EffectorDifference &);
 };
 
 bool operator==(const Effector &, const Effector &);
