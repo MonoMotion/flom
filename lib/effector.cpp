@@ -33,18 +33,56 @@
 
 namespace flom {
 
-Effector &Effector::repeat(std::size_t n) {
+EffectorDifference operator-(const Effector &e1, const Effector &e2) {
+  return EffectorDifference{e1, e2};
+}
+
+EffectorDifference::EffectorDifference(const Effector &e1, const Effector &e2) {
+  // TODO: Check compatibility
+  if (e1.location && e2.location) {
+    this->location = e1.location->vec - e2.location->vec;
+  }
+  if (e1.rotation && e2.rotation) {
+    this->rotation = e1.rotation->quat * boost::qvm::inverse(e2.rotation->quat);
+  }
+}
+
+EffectorDifference &
+EffectorDifference::compose(const EffectorDifference &other) {
+  if (this->location && other.location) {
+    (*this->location) += (*other.location);
+  }
+  if (this->rotation && other.rotation) {
+    // TODO: Don't call normalize here
+    boost::qvm::normalize(*this->rotation);
+    (*this->rotation) *= boost::qvm::normalized(*other.rotation);
+  }
+  return *this;
+}
+
+EffectorDifference &EffectorDifference::repeat(std::size_t n) {
   if (this->location) {
-    this->location->vec *= n;
+    (*this->location) *= n;
   }
   if (this->rotation) {
     // TODO: Don't call normalize here
     for (std::size_t i = 0; i < n; i++) {
-      boost::qvm::normalize(this->rotation->quat);
-      this->rotation->quat *= this->rotation->quat;
+      boost::qvm::normalize(*this->rotation);
+      (*this->rotation) *= (*this->rotation);
     }
   }
   return *this;
+}
+
+EffectorDifference
+EffectorDifference::composed(const EffectorDifference &other) const {
+  EffectorDifference copy{*this};
+  return copy.compose(other);
+}
+
+EffectorDifference EffectorDifference::repeated(std::size_t n) const {
+  EffectorDifference copy{*this};
+  return copy.repeat(n);
 }
 
 Effector &Effector::compose(const Effector &other) {
@@ -57,11 +95,6 @@ Effector &Effector::compose(const Effector &other) {
     this->rotation->quat *= boost::qvm::normalized(other.rotation->quat);
   }
   return *this;
-}
-
-Effector Effector::repeated(std::size_t n) const {
-  Effector copy{*this};
-  return copy.repeat(n);
 }
 
 Effector Effector::composed(const Effector &other) const {
