@@ -73,7 +73,8 @@ Frame Motion::frame_at(double t) const {
 
       auto const skip_episode = static_cast<unsigned>(t / motion_length);
       auto const trailing_t = t - skip_episode * motion_length;
-      return this->frame_at(trailing_t);
+      return this->frame_at(trailing_t)
+          .compose(last->second.repeat(skip_episode));
     } else {
       throw errors::OutOfFramesError(t);
     }
