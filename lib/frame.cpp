@@ -26,10 +26,14 @@
 
 namespace flom {
 
+FrameDifference operator-(const Frame &f1, const Frame &f2) {
+  return FrameDifference {f1, f2};
+}
+
 FrameDifference::FrameDifference(const Frame& f1, const Frame& f2) {
   for (auto const&[k, e] : f1.effectors) {
     auto const o = other.effectors.at(k);
-    this->effectors.emplace(k, e.difference(o))
+    this->effectors.emplace(k, e - o)
   }
   for (auto const&[k, p] : f1.positions) {
     auto const o = other.positions.at(k);

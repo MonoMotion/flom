@@ -36,7 +36,7 @@ using KeyRange =
                      std::add_lvalue_reference_t<K>, std::ptrdiff_t>;
 
 class FrameDifference {
-  friend struct Frame;
+  friend FrameDifference difference(const Frame &, const Frame &);
 
 private:
   std::unordered_map<std::string, double> positions;
@@ -72,10 +72,9 @@ struct Frame {
 
   Frame &compose(const FrameDifference &);
   Frame composed(const FrameDifference &) const;
-
-  FrameDifference difference(const Frame&) const;
 };
 
+FrameDifference operator-(const Frame &, const Frame &);
 bool operator==(const Frame &, const Frame &);
 bool operator!=(const Frame &, const Frame &);
 bool almost_equal(const Frame &, const Frame &);
