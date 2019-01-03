@@ -91,6 +91,8 @@ bool operator==(const Rotation &r1, const Rotation &r2) {
   return r1.weight == r2.weight && r1.quat == r2.quat;
 }
 
+bool operator!=(const Rotation &r1, const Rotation &r2) { return !(r1 == r2); }
+
 bool almost_equal(const Rotation &r1, const Rotation &r2) {
   return almost_equal(r1.weight, r2.weight) &&
          boost::qvm::cmp(r1.quat, r2.quat,
@@ -108,6 +110,8 @@ bool operator==(const Location &l1, const Location &l2) {
   return l1.weight == l2.weight && l1.vec == l2.vec;
 }
 
+bool operator!=(const Location &l1, const Location &l2) { return !(l1 == l2); }
+
 bool almost_equal(const Location &l1, const Location &l2) {
   return almost_equal(l1.weight, l2.weight) &&
          boost::qvm::cmp(l1.vec, l2.vec,
@@ -117,6 +121,8 @@ bool almost_equal(const Location &l1, const Location &l2) {
 bool operator==(const Effector &e1, const Effector &e2) {
   return e1.location == e2.location && e1.rotation == e2.rotation;
 }
+
+bool operator!=(const Effector &e1, const Effector &e2) { return !(e1 == e2); }
 
 bool almost_equal(const Effector &e1, const Effector &e2) {
   // TODO: Refactor: Remove mutable variable

@@ -40,6 +40,7 @@ struct Location {
 };
 
 bool operator==(const Location &, const Location &);
+bool operator!=(const Location &, const Location &);
 bool almost_equal(const Location &, const Location &);
 
 struct Rotation {
@@ -50,6 +51,7 @@ struct Rotation {
 };
 
 bool operator==(const Rotation &, const Rotation &);
+bool operator!=(const Rotation &, const Rotation &);
 bool almost_equal(const Rotation &, const Rotation &);
 
 struct Effector {
@@ -64,6 +66,7 @@ struct Effector {
 };
 
 bool operator==(const Effector &, const Effector &);
+bool operator!=(const Effector &, const Effector &);
 bool almost_equal(const Effector &, const Effector &);
 
 bool almost_equal(double, double);

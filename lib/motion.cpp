@@ -234,4 +234,6 @@ bool operator==(const Motion &m1, const Motion &m2) {
          m1.impl->raw_frames == m2.impl->raw_frames;
 }
 
+bool operator!=(const Motion &m1, const Motion &m2) { return !(m1 == m2); }
+
 } // namespace flom
