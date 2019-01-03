@@ -26,6 +26,31 @@
 
 namespace flom {
 
+FrameDifference &FrameDifference::repeat(std::size_t n) {
+  for (auto &&[k, e] : this->effectors) {
+    e.repeat(n);
+  }
+  return *this;
+}
+
+FrameDifference &FrameDifference::compose(const FrameDifference &other) {
+  for (auto &&[k, e] : this->effectors) {
+    auto const o = other.effectors.at(k);
+    e.compose(o);
+  }
+  return *this;
+}
+
+FrameDifference FrameDifference::repeated(std::size_t n) const {
+  FrameDifference copy{*this};
+  return copy.repeat(n);
+}
+
+FrameDifference FrameDifference::composed(const FrameDifference &other) const {
+  FrameDifference copy{*this};
+  return copy.compose(n);
+}
+
 Frame &Frame::compose(const Frame &other) {
   for (auto &&[k, e] : this->effectors) {
     auto const o = other.effectors.at(k);
