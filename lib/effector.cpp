@@ -39,8 +39,8 @@ Effector &Effector::repeat(std::size_t n) {
   }
   if (this->rotation) {
     // TODO: Don't call normalize here
-    boost::qvm::normalize(this->rotation->quat);
     for (std::size_t i = 0; i < n; i++) {
+      boost::qvm::normalize(this->rotation->quat);
       this->rotation->quat *= this->rotation->quat;
     }
   }
