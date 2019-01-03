@@ -70,6 +70,9 @@ struct Frame {
   Frame &compose(const Frame &);
   Frame composed(const Frame &) const;
 
+  Frame &compose(const FrameDifference &);
+  Frame composed(const FrameDifference &) const;
+
   FrameDifference difference(const Frame&) const;
 };
 
