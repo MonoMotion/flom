@@ -34,12 +34,25 @@
 
 BOOST_AUTO_TEST_SUITE(motion_frame)
 
-RC_BOOST_PROP(retrieve_frame_zero, (const flom::Motion &m)) {
+RC_BOOST_PROP(retrieve_frame_zero, (flom::Motion m)) {
   auto const t = *rc::gen::nonNegative<double>();
 
-  RC_PRE(m.length() == 0);
   RC_PRE(m.loop() == flom::LoopType::Wrap);
   RC_ASSERT(m.is_valid());
+
+  {
+    // Clear keyframes
+    std::vector<double> t_list;
+    for (auto const &[t, f] : m.keyframes()) {
+      if (t != 0) {
+        t_list.push_back(t);
+      }
+    }
+    for (auto time : t_list) {
+      m.delete_keyframe(time);
+    }
+    RC_ASSERT(m.length() == 0);
+  }
 
   auto const frame = m.frame_at(t);
 
@@ -50,12 +63,17 @@ RC_BOOST_PROP(retrieve_frame_zero, (const flom::Motion &m)) {
 }
 
 RC_BOOST_PROP(retrieve_frame_over, (const flom::Motion &m)) {
-  auto const t = *rc::gen::nonNegative<double>();
+  auto t = *rc::gen::nonNegative<double>();
 
   auto const len = m.length();
 
   RC_PRE(len != 0);
-  RC_PRE(len < t);
+
+  // RC_PRE(len < t);
+  if (len >= t) {
+    t += len;
+  }
+
   RC_PRE(m.loop() == flom::LoopType::Wrap);
   RC_ASSERT(m.is_valid());
 
@@ -63,7 +81,8 @@ RC_BOOST_PROP(retrieve_frame_over, (const flom::Motion &m)) {
 
   auto const mul = static_cast<unsigned>(t / len);
   auto last = m.frame_at(len);
-  auto const expected_frame = m.frame_at(std::fmod(t, len)).compose(last.repeat(mul));
+  auto const expected_frame =
+      m.frame_at(std::fmod(t, len)).compose(last.repeat(mul));
 
   // Using non-strict version of operator== defined in operators.hpp
   RC_ASSERT(frame == expected_frame);
