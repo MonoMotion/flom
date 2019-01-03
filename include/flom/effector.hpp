@@ -55,6 +55,9 @@ bool almost_equal(const Rotation &, const Rotation &);
 struct Effector {
   std::optional<Location> location;
   std::optional<Rotation> rotation;
+
+  Effector &repeat(std::size_t);
+  Effector &compose(const Effector &);
 };
 
 bool operator==(const Effector &, const Effector &);

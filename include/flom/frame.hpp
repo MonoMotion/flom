@@ -41,6 +41,9 @@ struct Frame {
 
   KeyRange<std::string> joint_names() const;
   KeyRange<std::string> effector_names() const;
+
+  Frame &repeat(std::size_t);
+  Frame &compose(const Frame &);
 };
 
 bool operator==(const Frame &, const Frame &);

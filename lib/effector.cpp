@@ -33,6 +33,26 @@
 
 namespace flom {
 
+Effector &Effector::repeat(std::size_t n) {
+  if (this->location) {
+    this->location->vec *= n;
+  }
+  if (this->rotation) {
+    this->rotation->quat *= n;
+  }
+  return *this;
+}
+
+Effector &Effector::compose(const Effector &other) {
+  if (this->location && other.location) {
+    this->location->vec += other.location->vec;
+  }
+  if (this->rotation && other.rotation) {
+    this->rotation->quat += other.rotation->quat;
+  }
+  return *this;
+}
+
 Effector interpolate(double t, Effector const &a, Effector const &b) {
   Effector e;
   if (a.rotation && b.rotation) {

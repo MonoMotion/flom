@@ -26,6 +26,21 @@
 
 namespace flom {
 
+Frame &Frame::repeat(std::size_t n) {
+  for (auto &&[k, e] : this->effectors) {
+    e.repeat(n);
+  }
+  return *this;
+}
+
+Frame &Frame::compose(const Frame &other) {
+  for (auto &&[k, e] : this->effectors) {
+    auto const o = other.effectors.at(k);
+    e.compose(o);
+  }
+  return *this;
+}
+
 Frame interpolate(double t, Frame const &a, Frame const &b) {
   Frame f;
   for (auto const &[k, v1] : a.positions) {
