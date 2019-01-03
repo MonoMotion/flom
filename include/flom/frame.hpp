@@ -35,6 +35,31 @@ using KeyRange =
     boost::any_range<K, boost::forward_traversal_tag,
                      std::add_lvalue_reference_t<K>, std::ptrdiff_t>;
 
+class FrameDifference {
+  friend struct Frame;
+
+private:
+  std::unordered_map<std::string, double> positions;
+  std::unordered_map<std::string, Effector> effectors;
+
+  FrameDifference(const Frame&, const Frame&);
+
+public:
+  FrameDifference() = delete;
+
+  FrameDifference(const FrameDifference&) = default;
+  FrameDifference(FrameDifference&&) = default;
+
+  FrameDifference& operator=(const FrameDifference&) = default;
+  FrameDifference& operator=(FrameDifference&&) = default;
+
+  FrameDifference &repeat(std::size_t);
+  FrameDifference repeated(std::size_t) const;
+
+  FrameDifference &compose(const FrameDifference &);
+  FrameDifference composed(const FrameDifference &) const;
+};
+
 struct Frame {
   std::unordered_map<std::string, double> positions;
   std::unordered_map<std::string, Effector> effectors;
@@ -47,6 +72,8 @@ struct Frame {
 
   Frame &compose(const Frame &);
   Frame composed(const Frame &) const;
+
+  FrameDifference difference(const Frame&) const;
 };
 
 bool operator==(const Frame &, const Frame &);
