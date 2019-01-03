@@ -68,6 +68,8 @@ bool operator==(const Frame &f1, const Frame &f2) {
   return f1.positions == f2.positions && f1.effectors == f2.effectors;
 }
 
+bool operator!=(const Frame &f1, const Frame &f2) { return !(f1 == f2); }
+
 bool almost_equal(const Frame &f1, const Frame &f2) {
   auto p = std::all_of(std::cbegin(f1.positions), std::cend(f1.positions),
                        [&f2](auto const &pair) {
