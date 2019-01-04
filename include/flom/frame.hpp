@@ -38,7 +38,9 @@ using KeyRange =
 
 struct Frame;
 
-class FrameDifference : boost::operators<FrameDifference> {
+class FrameDifference
+    : boost::addable<FrameDifference,
+                     boost::multipliable<FrameDifference, std::size_t>> {
   friend struct Frame;
   friend FrameDifference operator-(const Frame &, const Frame &);
 
@@ -61,7 +63,7 @@ public:
   FrameDifference &operator+=(const FrameDifference &);
 };
 
-struct Frame : boost::operators<Frame> {
+struct Frame : boost::addable<Frame, FrameDifference> {
   std::unordered_map<std::string, double> positions;
   std::unordered_map<std::string, Effector> effectors;
 
