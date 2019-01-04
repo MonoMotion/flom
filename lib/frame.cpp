@@ -77,6 +77,17 @@ Frame interpolate(double t, Frame const &a, Frame const &b) {
   return f;
 }
 
+Frame Frame::new_compatible_frame() const {
+  Frame copy{*this};
+  for (auto &&[k, v] : copy.positions) {
+    v = 0.0;
+  }
+  for (auto &&[k, v] : copy.effectors) {
+    v = Effector{};
+  }
+  return copy;
+}
+
 bool operator==(const Frame &f1, const Frame &f2) {
   return f1.positions == f2.positions && f1.effectors == f2.effectors;
 }
