@@ -43,7 +43,7 @@ FrameDifference::FrameDifference(const Frame &f1, const Frame &f2) {
 
 FrameDifference &FrameDifference::operator*=(std::size_t n) {
   for (auto &&[k, e] : this->effectors) {
-    e.repeat(n);
+    e *= n;
   }
   return *this;
 }
@@ -51,7 +51,7 @@ FrameDifference &FrameDifference::operator*=(std::size_t n) {
 FrameDifference &FrameDifference::operator+=(const FrameDifference &other) {
   for (auto &&[k, e] : this->effectors) {
     auto const o = other.effectors.at(k);
-    e.compose(o);
+    e += o;
   }
   return *this;
 }
@@ -59,7 +59,7 @@ FrameDifference &FrameDifference::operator+=(const FrameDifference &other) {
 Frame &Frame::operator+=(const FrameDifference &other) {
   for (auto &&[k, e] : this->effectors) {
     auto const o = other.effectors.at(k);
-    e.compose(o);
+    e += o;
   }
   return *this;
 }
