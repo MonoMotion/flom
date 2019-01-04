@@ -122,9 +122,10 @@ RC_BOOST_PROP(retrieve_frame_over, (const flom::Motion &m)) {
   auto const frame = m.frame_at(t);
 
   auto const mul = static_cast<unsigned>(t / len);
-  auto last = m.frame_at(len);
+  auto const last = m.frame_at(len);
+  auto const init = m.frame_at(0);
   auto const expected_frame =
-      m.frame_at(std::fmod(t, len)).compose(last.repeat(mul));
+      m.frame_at(std::fmod(t, len)) + (last - init) * mul;
 
   // Using non-strict version of operator== defined in operators.hpp
   RC_ASSERT(frame == expected_frame);
