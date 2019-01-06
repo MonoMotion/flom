@@ -89,6 +89,8 @@ public:
   KeyRange<std::string> joint_names() const;
   KeyRange<std::string> effector_names() const;
 
+  FrameDifference world_effector_difference(const Frame &, const Frame &) const;
+
 private:
   class Impl;
   std::unique_ptr<Impl> impl;
