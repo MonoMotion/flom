@@ -20,6 +20,8 @@
 #ifndef FLOM_EFFECTOR_HPP
 #define FLOM_EFFECTOR_HPP
 
+#include "flom/effector_type.hpp"
+
 #include <optional>
 #include <type_traits>
 
@@ -71,9 +73,10 @@ private:
   std::optional<Location::value_type> location;
   std::optional<Rotation::value_type> rotation;
 
-  EffectorDifference(const Effector &, const Effector &);
-
 public:
+  EffectorDifference(const Effector &, const Effector &);
+  EffectorDifference(EffectorType, const Effector &, const Effector &);
+
   EffectorDifference() = delete;
 
   EffectorDifference(const EffectorDifference &) = default;

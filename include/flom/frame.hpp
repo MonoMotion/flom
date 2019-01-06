@@ -48,9 +48,11 @@ private:
   std::unordered_map<std::string, double> positions;
   std::unordered_map<std::string, EffectorDifference> effectors;
 
-  FrameDifference(const Frame &, const Frame &);
-
 public:
+  FrameDifference(const Frame &, const Frame &);
+  FrameDifference(const std::unordered_map<std::string, EffectorType> &,
+                  const Frame &, const Frame &);
+
   FrameDifference() = delete;
 
   FrameDifference(const FrameDifference &) = default;

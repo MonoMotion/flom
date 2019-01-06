@@ -37,12 +37,16 @@ EffectorDifference operator-(const Effector &e1, const Effector &e2) {
   return EffectorDifference{e1, e2};
 }
 
-EffectorDifference::EffectorDifference(const Effector &e1, const Effector &e2) {
+EffectorDifference::EffectorDifference(const Effector &e1, const Effector &e2)
+    : EffectorDifference(EffectorType::all_world(), e1, e2) {}
+
+EffectorDifference::EffectorDifference(EffectorType type, const Effector &e1,
+                                       const Effector &e2) {
   // TODO: Check compatibility
-  if (e1.location && e2.location) {
+  if (type.location == CoordinateSystem::World && e1.location && e2.location) {
     this->location = e1.location->vec - e2.location->vec;
   }
-  if (e1.rotation && e2.rotation) {
+  if (type.rotation == CoordinateSystem::World && e1.rotation && e2.rotation) {
     this->rotation = e1.rotation->quat * boost::qvm::inverse(e2.rotation->quat);
   }
 }

@@ -18,6 +18,7 @@
 //
 
 #include "flom/frame.hpp"
+#include "flom/effector_type.hpp"
 #include "flom/interpolation.hpp"
 
 #include <boost/range/adaptors.hpp>
@@ -34,6 +35,20 @@ FrameDifference::FrameDifference(const Frame &f1, const Frame &f2) {
   for (auto const &[k, e] : f1.effectors) {
     auto const o = f2.effectors.at(k);
     this->effectors.emplace(k, e - o);
+  }
+  for (auto const &[k, p] : f1.positions) {
+    auto const o = f2.positions.at(k);
+    this->positions.emplace(k, p - o);
+  }
+}
+
+FrameDifference::FrameDifference(
+    const std::unordered_map<std::string, EffectorType> &types, const Frame &f1,
+    const Frame &f2) {
+  for (auto const &[k, e] : f1.effectors) {
+    auto const o = f2.effectors.at(k);
+    auto const type = types.at(k);
+    this->effectors.emplace(k, EffectorDifference{type, e, o});
   }
   for (auto const &[k, p] : f1.positions) {
     auto const o = f2.positions.at(k);
