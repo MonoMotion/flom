@@ -20,6 +20,8 @@
 #ifndef FLOM_EFFECTOR_TYPE_HPP
 #define FLOM_EFFECTOR_TYPE_HPP
 
+namespace flom {
+
 enum class CoordinateSystem { World, Local };
 
 struct EffectorType {
@@ -38,5 +40,7 @@ struct EffectorType {
     return type;
   }
 };
+
+} // namespace flom
 
 #endif
