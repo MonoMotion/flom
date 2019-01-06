@@ -20,6 +20,7 @@
 #ifndef FLOM_MOTION_HPP
 #define FLOM_MOTION_HPP
 
+#include "flom/effector_type.hpp"
 #include "flom/frame.hpp"
 
 #include <fstream>
@@ -32,13 +33,6 @@
 namespace flom {
 
 enum class LoopType { None, Wrap };
-
-enum class CoordinateSystem { World, Local };
-
-struct EffectorType {
-  CoordinateSystem location;
-  CoordinateSystem rotation;
-};
 
 class FrameRange;
 class KeyframeRange;
