@@ -32,6 +32,31 @@
 
 BOOST_AUTO_TEST_SUITE(effector)
 
+RC_BOOST_PROP(diff_mul_scalar,
+              (const flom::EffectorDifference &d, unsigned short v)) {
+  RC_PRE(v != 0);
+
+  auto const d1 = d * v;
+  auto d2 = d;
+  for (std::size_t i = 0; i < v - 1; i++) {
+    d2 += d;
+  }
+  RC_ASSERT(d1 == d2);
+}
+
+RC_BOOST_PROP(diff_add, (const flom::Effector &e1, unsigned short mul)) {
+  auto e2 = e1.new_compatible_effector();
+  auto const diff1 = e1 - e2;
+  auto const diff2 = diff1 * mul;
+  RC_ASSERT((e1 + diff1) + diff2 == e1 + (diff1 + diff2));
+}
+
+RC_BOOST_PROP(sub, (const flom::Effector &e1)) {
+  auto e2 = e1.new_compatible_effector();
+  auto const diff = e1 - e2;
+  RC_ASSERT(e2 + diff == e1);
+}
+
 RC_BOOST_PROP(interpolation_location,
               (const flom::Effector &e1, const flom::Effector &e2)) {
   RC_PRE(e1.location && e2.location);
