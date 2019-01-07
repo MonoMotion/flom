@@ -103,6 +103,10 @@ Frame Frame::new_compatible_frame() const {
   return copy;
 }
 
+bool operator==(const FrameDifference &d1, const FrameDifference &d2) {
+  return d1.positions == d2.positions && d1.effectors == d2.effectors;
+}
+
 bool operator==(const Frame &f1, const Frame &f2) {
   return f1.positions == f2.positions && f1.effectors == f2.effectors;
 }

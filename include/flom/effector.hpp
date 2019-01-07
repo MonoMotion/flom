@@ -64,10 +64,14 @@ bool almost_equal(const Rotation &, const Rotation &);
 struct Effector;
 
 class EffectorDifference
-    : boost::addable<EffectorDifference,
-                     boost::multipliable<EffectorDifference, std::size_t>> {
+    : boost::addable<
+          EffectorDifference,
+          boost::equality_comparable<
+              EffectorDifference,
+              boost::multipliable<EffectorDifference, std::size_t>>> {
   friend struct Effector;
-  friend EffectorDifference operator-(const Effector &, const Effector &);
+  friend bool operator==(const EffectorDifference &,
+                         const EffectorDifference &);
 
 private:
   std::optional<Location::value_type> location;
@@ -88,6 +92,8 @@ public:
   EffectorDifference &operator*=(std::size_t);
   EffectorDifference &operator+=(const EffectorDifference &);
 };
+
+bool operator==(const EffectorDifference &, const EffectorDifference &);
 
 struct Effector : boost::addable<Effector, EffectorDifference> {
   std::optional<Location> location;

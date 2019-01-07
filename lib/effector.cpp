@@ -90,6 +90,10 @@ Effector &Effector::operator+=(const EffectorDifference &other) {
   return *this;
 }
 
+bool operator==(const EffectorDifference &d1, const EffectorDifference &d2) {
+  return d1.location == d2.location && d1.rotation == d2.rotation;
+}
+
 Effector interpolate(double t, Effector const &a, Effector const &b) {
   Effector e;
   if (a.rotation && b.rotation) {
