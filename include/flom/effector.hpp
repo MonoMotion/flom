@@ -55,7 +55,8 @@ struct Rotation {
   double weight;
   value_type quat;
 
-  Rotation() : weight(0) {}
+  // TODO: ensure stored quaternion is normalized
+  Rotation() : weight(0), quat({1, 0, 0, 0}) {}
 };
 
 bool operator==(const Rotation &, const Rotation &);
