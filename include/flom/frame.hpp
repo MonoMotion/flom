@@ -45,6 +45,7 @@ class FrameDifference
                          boost::multipliable<FrameDifference, std::size_t>>> {
   friend struct Frame;
   friend bool operator==(const FrameDifference &, const FrameDifference &);
+  friend bool almost_equal(const FrameDifference &, const FrameDifference &);
 
 private:
   std::unordered_map<std::string, double> positions;
@@ -68,6 +69,7 @@ public:
 };
 
 bool operator==(const FrameDifference &, const FrameDifference &);
+bool almost_equal(const FrameDifference &, const FrameDifference &);
 
 struct Frame : boost::addable<Frame, FrameDifference> {
   std::unordered_map<std::string, double> positions;

@@ -94,6 +94,21 @@ bool operator==(const EffectorDifference &d1, const EffectorDifference &d2) {
   return d1.location == d2.location && d1.rotation == d2.rotation;
 }
 
+bool almost_equal(const EffectorDifference &d1, const EffectorDifference &d2) {
+  const bool l =
+      static_cast<bool>(d1.location) == static_cast<bool>(d2.location);
+  const bool r =
+      static_cast<bool>(d1.rotation) == static_cast<bool>(d2.rotation);
+  if (!l || !r)
+    return false;
+  bool result = true;
+  if (d1.location)
+    result = result && almost_equal(*d1.location, *d2.location);
+  if (d1.rotation)
+    result = result && almost_equal(*d1.rotation, *d2.rotation);
+  return result;
+}
+
 Effector interpolate(double t, Effector const &a, Effector const &b) {
   Effector e;
   if (a.rotation && b.rotation) {
@@ -135,10 +150,14 @@ bool operator==(const Rotation &r1, const Rotation &r2) {
 
 bool operator!=(const Rotation &r1, const Rotation &r2) { return !(r1 == r2); }
 
-bool almost_equal(const Rotation &r1, const Rotation &r2) {
-  return almost_equal(r1.weight, r2.weight) &&
-         boost::qvm::cmp(r1.quat, r2.quat,
+bool almost_equal(const Rotation::value_type &q1,
+                  const Rotation::value_type &q2) {
+  return boost::qvm::cmp(q1, q2,
                          [](auto e1, auto e2) { return almost_equal(e1, e2); });
+}
+
+bool almost_equal(const Rotation &r1, const Rotation &r2) {
+  return almost_equal(r1.weight, r2.weight) && almost_equal(r1.quat, r2.quat);
 }
 
 Location interpolate(double t, Location const &a, Location const &b) {
@@ -154,10 +173,14 @@ bool operator==(const Location &l1, const Location &l2) {
 
 bool operator!=(const Location &l1, const Location &l2) { return !(l1 == l2); }
 
-bool almost_equal(const Location &l1, const Location &l2) {
-  return almost_equal(l1.weight, l2.weight) &&
-         boost::qvm::cmp(l1.vec, l2.vec,
+bool almost_equal(const Location::value_type &v1,
+                  const Location::value_type &v2) {
+  return boost::qvm::cmp(v1, v2,
                          [](auto e1, auto e2) { return almost_equal(e1, e2); });
+}
+
+bool almost_equal(const Location &l1, const Location &l2) {
+  return almost_equal(l1.weight, l2.weight) && almost_equal(l1.vec, l2.vec);
 }
 
 bool operator==(const Effector &e1, const Effector &e2) {

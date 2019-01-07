@@ -46,6 +46,7 @@ struct Location {
 
 bool operator==(const Location &, const Location &);
 bool operator!=(const Location &, const Location &);
+bool almost_equal(const Location::value_type &, const Location::value_type &);
 bool almost_equal(const Location &, const Location &);
 
 struct Rotation {
@@ -59,6 +60,7 @@ struct Rotation {
 
 bool operator==(const Rotation &, const Rotation &);
 bool operator!=(const Rotation &, const Rotation &);
+bool almost_equal(const Rotation::value_type &, const Rotation::value_type &);
 bool almost_equal(const Rotation &, const Rotation &);
 
 struct Effector;
@@ -72,6 +74,8 @@ class EffectorDifference
   friend struct Effector;
   friend bool operator==(const EffectorDifference &,
                          const EffectorDifference &);
+  friend bool almost_equal(const EffectorDifference &,
+                           const EffectorDifference &);
 
 private:
   std::optional<Location::value_type> location;
@@ -94,6 +98,7 @@ public:
 };
 
 bool operator==(const EffectorDifference &, const EffectorDifference &);
+bool almost_equal(const EffectorDifference &, const EffectorDifference &);
 
 struct Effector : boost::addable<Effector, EffectorDifference> {
   std::optional<Location> location;
