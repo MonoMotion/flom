@@ -72,14 +72,9 @@ class EffectorDifference
           boost::equality_comparable<
               EffectorDifference,
               boost::multipliable<EffectorDifference, std::size_t>>> {
-  friend struct Effector;
-  friend bool operator==(const EffectorDifference &,
-                         const EffectorDifference &);
-  friend bool almost_equal(const EffectorDifference &, const EffectorDifference &);
-
 private:
-  std::optional<Location::value_type> location;
-  std::optional<Rotation::value_type> rotation;
+  std::optional<Location::value_type> location_;
+  std::optional<Rotation::value_type> rotation_;
 
 public:
   EffectorDifference(const Effector &, const Effector &);
@@ -92,6 +87,12 @@ public:
 
   EffectorDifference &operator=(const EffectorDifference &) = default;
   EffectorDifference &operator=(EffectorDifference &&) = default;
+
+  const std::optional<Location::value_type> &location() const &;
+  std::optional<Location::value_type> location() &&;
+
+  const std::optional<Rotation::value_type> &rotation() const &;
+  std::optional<Rotation::value_type> rotation() &&;
 
   EffectorDifference &operator*=(std::size_t);
   EffectorDifference &operator+=(const EffectorDifference &);
