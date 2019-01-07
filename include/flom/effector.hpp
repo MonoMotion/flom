@@ -74,8 +74,7 @@ class EffectorDifference
   friend struct Effector;
   friend bool operator==(const EffectorDifference &,
                          const EffectorDifference &);
-  friend bool almost_equal(const EffectorDifference &,
-                           const EffectorDifference &);
+  friend bool almost_equal(const EffectorDifference &, const EffectorDifference &);
 
 private:
   std::optional<Location::value_type> location;

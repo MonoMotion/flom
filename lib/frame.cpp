@@ -98,7 +98,8 @@ Frame Frame::new_compatible_frame() const {
     v = 0.0;
   }
   for (auto &&[k, v] : copy.effectors) {
-    v = Effector{};
+    Effector e{v.new_compatible_effector()};
+    v = e;
   }
   return copy;
 }
