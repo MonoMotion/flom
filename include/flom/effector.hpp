@@ -99,6 +99,9 @@ struct Effector : boost::addable<Effector, EffectorDifference> {
   std::optional<Location> location;
   std::optional<Rotation> rotation;
 
+  // TODO: Add is_compatible and test for this using is_compatible
+  Effector new_compatible_effector() const;
+
   Effector &operator+=(const EffectorDifference &);
 };
 

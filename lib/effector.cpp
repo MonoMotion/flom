@@ -118,6 +118,17 @@ Rotation interpolate(double t, Rotation const &a, Rotation const &b) {
   return result;
 }
 
+Effector Effector::new_compatible_effector() const {
+  Effector e;
+  if (this->location) {
+    e.location = Location{};
+  }
+  if (this->rotation) {
+    e.rotation = Rotation{};
+  }
+  return e;
+}
+
 bool operator==(const Rotation &r1, const Rotation &r2) {
   return r1.weight == r2.weight && r1.quat == r2.quat;
 }
