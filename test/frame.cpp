@@ -48,7 +48,7 @@ RC_BOOST_PROP(diff_mul_scalar,
   RC_ASSERT(d1 == d2);
 }
 
-RC_BOOST_PROP(diff_add, (const flom::Frame &f1, std::size_t mul)) {
+RC_BOOST_PROP(diff_add, (const flom::Frame &f1, unsigned short mul)) {
   auto f2 = f1.new_compatible_frame();
   auto const diff1 = f1 - f2;
   auto const diff2 = diff1 * mul;
@@ -58,8 +58,7 @@ RC_BOOST_PROP(diff_add, (const flom::Frame &f1, std::size_t mul)) {
 RC_BOOST_PROP(sub, (const flom::Frame &f1)) {
   auto f2 = f1.new_compatible_frame();
   auto const diff = f1 - f2;
-  auto lhs = f2 + diff;
-  RC_ASSERT(lhs == f1);
+  RC_ASSERT(f2 + diff == f1);
 }
 
 RC_BOOST_PROP(joint_list, (const flom::Frame &f)) {
