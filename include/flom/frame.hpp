@@ -50,8 +50,6 @@ private:
 
 public:
   FrameDifference(const Frame &, const Frame &);
-  FrameDifference(const std::unordered_map<std::string, EffectorType> &,
-                  const Frame &, const Frame &);
 
   FrameDifference() = delete;
 

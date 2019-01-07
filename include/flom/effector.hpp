@@ -20,8 +20,6 @@
 #ifndef FLOM_EFFECTOR_HPP
 #define FLOM_EFFECTOR_HPP
 
-#include "flom/effector_type.hpp"
-
 #include <optional>
 #include <type_traits>
 
@@ -78,7 +76,6 @@ private:
 
 public:
   EffectorDifference(const Effector &, const Effector &);
-  EffectorDifference(EffectorType, const Effector &, const Effector &);
 
   EffectorDifference() = delete;
 
