@@ -74,8 +74,7 @@ Frame Motion::frame_at(double t) const {
       auto const skip_episode = static_cast<unsigned>(t / motion_length);
       auto const trailing_t = t - skip_episode * motion_length;
       auto const init_frame = this->impl->raw_frames.begin()->second;
-      auto const diff =
-          this->world_effector_difference(last->second, init_frame);
+      auto const diff = last->second - init_frame;
       return this->frame_at(trailing_t) + diff * skip_episode;
     } else {
       throw errors::OutOfFramesError(t);
@@ -228,11 +227,6 @@ KeyRange<std::string> Motion::joint_names() const {
 
 KeyRange<std::string> Motion::effector_names() const {
   return this->impl->effector_types | boost::adaptors::map_keys;
-}
-
-FrameDifference Motion::world_effector_difference(const Frame &f1,
-                                                  const Frame &f2) const {
-  return FrameDifference{this->impl->effector_types, f1, f2};
 }
 
 bool operator==(const Motion &m1, const Motion &m2) {
