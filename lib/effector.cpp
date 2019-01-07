@@ -44,71 +44,79 @@ EffectorDifference::EffectorDifference(EffectorType type, const Effector &e1,
                                        const Effector &e2) {
   // TODO: Check compatibility
   if (type.location == CoordinateSystem::World && e1.location && e2.location) {
-    this->location_ = e1.location->vec - e2.location->vec;
+    this->location_ = Location{};
+    this->location_->vec = e1.location->vec - e2.location->vec;
+    this->location_->weight = e1.location->weight - e2.location->weight;
   }
   if (type.rotation == CoordinateSystem::World && e1.rotation && e2.rotation) {
-    this->rotation_ =
+    this->rotation_ = Rotation{};
+    this->rotation_->quat =
         e1.rotation->quat * boost::qvm::inverse(e2.rotation->quat);
+    this->rotation_->weight = e1.rotation->weight - e2.rotation->weight;
   }
 }
 
 EffectorDifference &EffectorDifference::
 operator+=(const EffectorDifference &other) {
   if (this->location_ && other.location_) {
-    (*this->location_) += (*other.location_);
+    this->location_->vec += other.location_->vec;
+    this->location_->weight += other.location_->weight;
   }
   if (this->rotation_ && other.rotation_) {
     // TODO: Don't call normalize here
-    boost::qvm::normalize(*this->rotation_);
-    (*this->rotation_) *= boost::qvm::normalized(*other.rotation_);
+    boost::qvm::normalize(this->rotation_->quat);
+    this->rotation_->quat *= boost::qvm::normalized(other.rotation_->quat);
+    this->rotation_->weight += other.rotation_->weight;
   }
   return *this;
 }
 
 EffectorDifference &EffectorDifference::operator*=(std::size_t n) {
   if (this->location_) {
-    (*this->location_) *= n;
+    this->location_->vec *= n;
+    this->location_->weight *= n;
   }
   if (this->rotation_) {
     if (n == 0) {
-      this->rotation_ = boost::qvm::identity_quat<double>();
+      this->rotation_->quat = boost::qvm::identity_quat<double>();
     } else {
-      auto const quat = boost::qvm::normalized(*this->rotation_);
+      auto const quat = boost::qvm::normalized(this->rotation_->quat);
       // TODO: Don't call normalize here
       for (std::size_t i = 0; i < n - 1; i++) {
-        boost::qvm::normalize(*this->rotation_);
-        (*this->rotation_) *= quat;
+        boost::qvm::normalize(this->rotation_->quat);
+        this->rotation_->quat *= quat;
       }
     }
+    this->rotation_->weight *= n;
   }
   return *this;
 }
 
 Effector &Effector::operator+=(const EffectorDifference &other) {
   if (this->location && other.location()) {
-    this->location->vec += *other.location();
+    this->location->vec += other.location()->vec;
+    this->location->weight += other.location()->weight;
   }
   if (this->rotation && other.rotation()) {
     // TODO: Don't call normalize here
     boost::qvm::normalize(this->rotation->quat);
-    this->rotation->quat *= boost::qvm::normalized(*other.rotation());
+    this->rotation->quat *= boost::qvm::normalized(other.rotation()->quat);
+    this->rotation->weight += other.rotation()->weight;
   }
   return *this;
 }
 
-const std::optional<Location::value_type> &
-EffectorDifference::location() const & {
+const std::optional<Location> &EffectorDifference::location() const & {
   return this->location_;
 }
-std::optional<Location::value_type> EffectorDifference::location() && {
+std::optional<Location> EffectorDifference::location() && {
   return std::move(this->location_);
 }
 
-const std::optional<Rotation::value_type> &
-EffectorDifference::rotation() const & {
+const std::optional<Rotation> &EffectorDifference::rotation() const & {
   return this->rotation_;
 }
-std::optional<Rotation::value_type> EffectorDifference::rotation() && {
+std::optional<Rotation> EffectorDifference::rotation() && {
   return std::move(this->rotation_);
 }
 

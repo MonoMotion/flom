@@ -73,8 +73,8 @@ class EffectorDifference
               EffectorDifference,
               boost::multipliable<EffectorDifference, std::size_t>>> {
 private:
-  std::optional<Location::value_type> location_;
-  std::optional<Rotation::value_type> rotation_;
+  std::optional<Location> location_;
+  std::optional<Rotation> rotation_;
 
 public:
   EffectorDifference(const Effector &, const Effector &);
@@ -88,11 +88,11 @@ public:
   EffectorDifference &operator=(const EffectorDifference &) = default;
   EffectorDifference &operator=(EffectorDifference &&) = default;
 
-  const std::optional<Location::value_type> &location() const &;
-  std::optional<Location::value_type> location() &&;
+  const std::optional<Location> &location() const &;
+  std::optional<Location> location() &&;
 
-  const std::optional<Rotation::value_type> &rotation() const &;
-  std::optional<Rotation::value_type> rotation() &&;
+  const std::optional<Rotation> &rotation() const &;
+  std::optional<Rotation> rotation() &&;
 
   EffectorDifference &operator*=(std::size_t);
   EffectorDifference &operator+=(const EffectorDifference &);
