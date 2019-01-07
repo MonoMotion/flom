@@ -43,13 +43,10 @@ class FrameDifference
                      boost::equality_comparable<
                          FrameDifference,
                          boost::multipliable<FrameDifference, std::size_t>>> {
-  friend struct Frame;
-  friend bool operator==(const FrameDifference &, const FrameDifference &);
-  friend bool almost_equal(const FrameDifference &, const FrameDifference &);
 
 private:
-  std::unordered_map<std::string, double> positions;
-  std::unordered_map<std::string, EffectorDifference> effectors;
+  std::unordered_map<std::string, double> positions_;
+  std::unordered_map<std::string, EffectorDifference> effectors_;
 
 public:
   FrameDifference(const Frame &, const Frame &);
@@ -63,6 +60,13 @@ public:
 
   FrameDifference &operator=(const FrameDifference &) = default;
   FrameDifference &operator=(FrameDifference &&) = default;
+
+  const std::unordered_map<std::string, double> &positions() const &;
+  std::unordered_map<std::string, double> positions() &&;
+
+  const std::unordered_map<std::string, EffectorDifference> &
+  effectors() const &;
+  std::unordered_map<std::string, EffectorDifference> effectors() &&;
 
   FrameDifference &operator*=(std::size_t);
   FrameDifference &operator+=(const FrameDifference &);
