@@ -125,6 +125,64 @@ template <> struct Arbitrary<flom::Frame> {
   }
 };
 
+template <> struct Arbitrary<flom::EffectorDifference> {
+  static auto arbitrary() -> decltype(auto) {
+    auto effector_gen = gen::build(
+        gen::construct<flom::Effector>(),
+        gen::set(&flom::Effector::location, gen::arbitrary<flom::Location>()),
+        gen::set(&flom::Effector::rotation, gen::arbitrary<flom::Rotation>())
+      );
+    return gen::apply(
+        [](const auto& e1, const auto& e2) {
+          return e1 - e2;
+        },
+        effector_gen,
+        effector_gen
+        );
+  }
+};
+
+
+template <> struct Arbitrary<flom::FrameDifference> {
+  static auto arbitrary() -> decltype(auto) {
+    return gen::apply(
+        [](const auto& t) {
+          auto const& [f1, positions, effectors] = t;
+          auto f2 = f1.new_compatible_frame();
+          {
+            auto it = positions.begin();
+            for(auto&& [k, v] : f2.positions) {
+              v = *it;
+              it++;
+            }
+          }
+          {
+            auto it = effectors.begin();
+            for(auto&& [k, v] : f2.effectors) {
+              v = *it;
+              it++;
+            }
+          }
+          return f2 - f1;
+        },
+        gen::mapcat(
+          gen::arbitrary<flom::Frame>()
+          , [](const flom::Frame& f1) {
+            auto position_gen = gen::map(gen::inRange(-half_pi_100, half_pi_100),
+                [](auto i){ return static_cast<double>(i) / 100; }
+              );
+            auto positions_gen = gen::container<std::vector<double>>(f1.positions.size(), position_gen);
+            auto effector_gen = gen::build(
+                gen::construct<flom::Effector>(),
+                gen::set(&flom::Effector::location, gen::arbitrary<flom::Location>()),
+                gen::set(&flom::Effector::rotation, gen::arbitrary<flom::Rotation>())
+              );
+            auto effectors_gen = gen::container<std::vector<flom::Effector>>(f1.effectors.size(), effector_gen);
+            return gen::tuple(gen::just(f1), positions_gen, effectors_gen);
+          }));
+  }
+};
+
 template <> struct Arbitrary<flom::Motion> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
