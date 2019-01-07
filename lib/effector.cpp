@@ -70,10 +70,15 @@ EffectorDifference &EffectorDifference::operator*=(std::size_t n) {
     (*this->location_) *= n;
   }
   if (this->rotation_) {
-    // TODO: Don't call normalize here
-    for (std::size_t i = 0; i < n; i++) {
-      boost::qvm::normalize(*this->rotation_);
-      (*this->rotation_) *= (*this->rotation_);
+    if (n == 0) {
+      this->rotation_ = boost::qvm::identity_quat<double>();
+    } else {
+      auto const quat = boost::qvm::normalized(*this->rotation_);
+      // TODO: Don't call normalize here
+      for (std::size_t i = 0; i < n - 1; i++) {
+        boost::qvm::normalize(*this->rotation_);
+        (*this->rotation_) *= quat;
+      }
     }
   }
   return *this;
