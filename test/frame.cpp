@@ -36,6 +36,32 @@
 
 BOOST_AUTO_TEST_SUITE(frame)
 
+RC_BOOST_PROP(diff_mul_scalar,
+              (const flom::FrameDifference &d, unsigned short v)) {
+  RC_PRE(v != 0);
+
+  auto const d1 = d * v;
+  auto d2 = d;
+  for (std::size_t i = 0; i < v - 1; i++) {
+    d2 += d;
+  }
+  RC_ASSERT(d1 == d2);
+}
+
+RC_BOOST_PROP(diff_add, (const flom::Frame &f1, std::size_t mul)) {
+  auto f2 = f1.new_compatible_frame();
+  auto const diff1 = f1 - f2;
+  auto const diff2 = diff1 * mul;
+  RC_ASSERT((f1 + diff1) + diff2 == f1 + (diff1 + diff2));
+}
+
+RC_BOOST_PROP(sub, (const flom::Frame &f1)) {
+  auto f2 = f1.new_compatible_frame();
+  auto const diff = f1 - f2;
+  auto lhs = f2 + diff;
+  RC_ASSERT(lhs == f1);
+}
+
 RC_BOOST_PROP(joint_list, (const flom::Frame &f)) {
   std::unordered_set<std::string> o1, o2;
   std::transform(std::cbegin(f.positions), std::cend(f.positions),
