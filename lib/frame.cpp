@@ -74,6 +74,9 @@ FrameDifference::effectors() && {
 }
 
 FrameDifference &FrameDifference::operator*=(std::size_t n) {
+  for (auto &&[k, p] : this->positions_) {
+    p *= n;
+  }
   for (auto &&[k, e] : this->effectors_) {
     e *= n;
   }
@@ -81,14 +84,22 @@ FrameDifference &FrameDifference::operator*=(std::size_t n) {
 }
 
 FrameDifference &FrameDifference::operator+=(const FrameDifference &other) {
+  for (auto &&[k, p] : this->positions_) {
+    auto const o = other.positions_.at(k);
+    p += o;
+  }
   for (auto &&[k, e] : this->effectors_) {
-    auto const o = other.effectors().at(k);
+    auto const o = other.effectors_.at(k);
     e += o;
   }
   return *this;
 }
 
 Frame &Frame::operator+=(const FrameDifference &other) {
+  for (auto &&[k, p] : this->positions) {
+    auto const o = other.positions().at(k);
+    p += o;
+  }
   for (auto &&[k, e] : this->effectors) {
     auto const o = other.effectors().at(k);
     e += o;
