@@ -27,6 +27,14 @@
 
 namespace flom {
 
+bool operator==(const FrameDifference& v1, const FrameDifference& v2) {
+  return almost_equal(v1, v2);
+}
+
+bool operator==(const EffectorDifference& v1, const EffectorDifference& v2) {
+  return almost_equal(v1, v2);
+}
+
 bool operator==(const Frame& v1, const Frame& v2) {
   return almost_equal(v1, v2);
 }

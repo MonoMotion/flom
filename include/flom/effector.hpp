@@ -33,52 +33,85 @@ namespace flom {
 
 namespace qvm = boost::qvm;
 
-struct Location : boost::operators<Location> {
+struct Location {
+  using value_type = qvm::vec<double, 3>;
+
   double weight;
-  qvm::vec<double, 3> vec;
+  value_type vec;
 
   Location() : weight(0) {}
 };
 
 bool operator==(const Location &, const Location &);
+bool operator!=(const Location &, const Location &);
+bool almost_equal(const Location::value_type &, const Location::value_type &);
 bool almost_equal(const Location &, const Location &);
 
-struct Rotation : boost::operators<Rotation> {
-  double weight;
-  qvm::quat<double> quat;
+struct Rotation {
+  using value_type = qvm::quat<double>;
 
-  Rotation() : weight(0) {}
+  double weight;
+  value_type quat;
+
+  // TODO: ensure stored quaternion is normalized
+  Rotation() : weight(0), quat({1, 0, 0, 0}) {}
 };
 
 bool operator==(const Rotation &, const Rotation &);
+bool operator!=(const Rotation &, const Rotation &);
+bool almost_equal(const Rotation::value_type &, const Rotation::value_type &);
 bool almost_equal(const Rotation &, const Rotation &);
 
-struct Effector : boost::operators<Effector> {
+struct Effector;
+
+class EffectorDifference
+    : boost::addable<
+          EffectorDifference,
+          boost::equality_comparable<
+              EffectorDifference,
+              boost::multipliable<EffectorDifference, std::size_t>>> {
+private:
+  std::optional<Location> location_;
+  std::optional<Rotation> rotation_;
+
+public:
+  EffectorDifference(const Effector &, const Effector &);
+
+  EffectorDifference() = delete;
+
+  EffectorDifference(const EffectorDifference &) = default;
+  EffectorDifference(EffectorDifference &&) = default;
+
+  EffectorDifference &operator=(const EffectorDifference &) = default;
+  EffectorDifference &operator=(EffectorDifference &&) = default;
+
+  const std::optional<Location> &location() const &;
+  std::optional<Location> location() &&;
+
+  const std::optional<Rotation> &rotation() const &;
+  std::optional<Rotation> rotation() &&;
+
+  EffectorDifference &operator*=(std::size_t);
+  EffectorDifference &operator+=(const EffectorDifference &);
+};
+
+bool operator==(const EffectorDifference &, const EffectorDifference &);
+bool almost_equal(const EffectorDifference &, const EffectorDifference &);
+
+struct Effector : boost::addable<Effector, EffectorDifference> {
   std::optional<Location> location;
   std::optional<Rotation> rotation;
 
-  Effector &operator+=(const Effector &x);
-  Effector &operator-=(const Effector &x);
+  // TODO: Add is_compatible and test for this using is_compatible
+  Effector new_compatible_effector() const;
 
-  template <typename T, std::enable_if_t<std::is_arithmetic_v<T>> * = nullptr>
-  Effector &operator*=(T x) {
-    if (this->location) {
-      this->location->vec *= x;
-    }
-    if (this->rotation) {
-      this->rotation->quat *= x;
-    }
-    return *this;
-  }
+  Effector &operator+=(const EffectorDifference &);
 };
 
-template <typename T, std::enable_if_t<std::is_arithmetic_v<T>> * = nullptr>
-Effector operator*(const Effector &t1, T t2) {
-  return Effector(t1) *= t2;
-}
-
 bool operator==(const Effector &, const Effector &);
+bool operator!=(const Effector &, const Effector &);
 bool almost_equal(const Effector &, const Effector &);
+EffectorDifference operator-(const Effector &, const Effector &);
 
 bool almost_equal(double, double);
 

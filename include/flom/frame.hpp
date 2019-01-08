@@ -36,34 +36,59 @@ using KeyRange =
     boost::any_range<K, boost::forward_traversal_tag,
                      std::add_lvalue_reference_t<K>, std::ptrdiff_t>;
 
-struct Frame : boost::operators<Frame> {
+struct Frame;
+
+class FrameDifference
+    : boost::addable<FrameDifference,
+                     boost::equality_comparable<
+                         FrameDifference,
+                         boost::multipliable<FrameDifference, std::size_t>>> {
+
+private:
+  std::unordered_map<std::string, double> positions_;
+  std::unordered_map<std::string, EffectorDifference> effectors_;
+
+public:
+  FrameDifference(const Frame &, const Frame &);
+
+  FrameDifference() = delete;
+
+  FrameDifference(const FrameDifference &) = default;
+  FrameDifference(FrameDifference &&) = default;
+
+  FrameDifference &operator=(const FrameDifference &) = default;
+  FrameDifference &operator=(FrameDifference &&) = default;
+
+  const std::unordered_map<std::string, double> &positions() const &;
+  std::unordered_map<std::string, double> positions() &&;
+
+  const std::unordered_map<std::string, EffectorDifference> &
+  effectors() const &;
+  std::unordered_map<std::string, EffectorDifference> effectors() &&;
+
+  FrameDifference &operator*=(std::size_t);
+  FrameDifference &operator+=(const FrameDifference &);
+};
+
+bool operator==(const FrameDifference &, const FrameDifference &);
+bool almost_equal(const FrameDifference &, const FrameDifference &);
+
+struct Frame : boost::addable<Frame, FrameDifference> {
   std::unordered_map<std::string, double> positions;
   std::unordered_map<std::string, Effector> effectors;
 
   KeyRange<std::string> joint_names() const;
   KeyRange<std::string> effector_names() const;
 
-  Frame &operator+=(const Frame &x);
-  Frame &operator-=(const Frame &x);
+  // TODO: Add is_compatible and test for this using is_compatible
+  Frame new_compatible_frame() const;
 
-  template <typename T, std::enable_if_t<std::is_arithmetic_v<T>> * = nullptr>
-  Frame &operator*=(T x) {
-    for (auto &&[k, v] : this->positions) {
-      v *= x;
-    }
-    for (auto &&[k, v] : this->effectors) {
-      v *= x;
-    }
-    return *this;
-  }
+  Frame &operator+=(const FrameDifference &);
 };
 
-template <typename T, std::enable_if_t<std::is_arithmetic_v<T>> * = nullptr>
-Frame operator*(const Frame &t1, T t2) {
-  return Frame(t1) *= t2;
-}
-
+FrameDifference operator-(const Frame &, const Frame &);
 bool operator==(const Frame &, const Frame &);
+bool operator!=(const Frame &, const Frame &);
 bool almost_equal(const Frame &, const Frame &);
 
 } // namespace flom

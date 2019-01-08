@@ -26,6 +26,72 @@
 
 namespace flom {
 
+FrameDifference operator-(const Frame &f1, const Frame &f2) {
+  return FrameDifference{f1, f2};
+}
+
+FrameDifference::FrameDifference(const Frame &f1, const Frame &f2) {
+  for (auto const &[k, e] : f1.effectors) {
+    auto const o = f2.effectors.at(k);
+    this->effectors_.emplace(k, e - o);
+  }
+  for (auto const &[k, p] : f1.positions) {
+    auto const o = f2.positions.at(k);
+    this->positions_.emplace(k, p - o);
+  }
+}
+
+const std::unordered_map<std::string, double> &
+FrameDifference::positions() const & {
+  return this->positions_;
+}
+std::unordered_map<std::string, double> FrameDifference::positions() && {
+  return std::move(this->positions_);
+}
+
+const std::unordered_map<std::string, EffectorDifference> &
+FrameDifference::effectors() const & {
+  return this->effectors_;
+}
+std::unordered_map<std::string, EffectorDifference>
+FrameDifference::effectors() && {
+  return std::move(this->effectors_);
+}
+
+FrameDifference &FrameDifference::operator*=(std::size_t n) {
+  for (auto &&[k, p] : this->positions_) {
+    p *= n;
+  }
+  for (auto &&[k, e] : this->effectors_) {
+    e *= n;
+  }
+  return *this;
+}
+
+FrameDifference &FrameDifference::operator+=(const FrameDifference &other) {
+  for (auto &&[k, p] : this->positions_) {
+    auto const o = other.positions_.at(k);
+    p += o;
+  }
+  for (auto &&[k, e] : this->effectors_) {
+    auto const o = other.effectors_.at(k);
+    e += o;
+  }
+  return *this;
+}
+
+Frame &Frame::operator+=(const FrameDifference &other) {
+  for (auto &&[k, p] : this->positions) {
+    auto const o = other.positions().at(k);
+    p += o;
+  }
+  for (auto &&[k, e] : this->effectors) {
+    auto const o = other.effectors().at(k);
+    e += o;
+  }
+  return *this;
+}
+
 Frame interpolate(double t, Frame const &a, Frame const &b) {
   Frame f;
   for (auto const &[k, v1] : a.positions) {
@@ -39,32 +105,42 @@ Frame interpolate(double t, Frame const &a, Frame const &b) {
   return f;
 }
 
-Frame &Frame::operator+=(const Frame &x) {
-  for (auto &&[k, v1] : this->positions) {
-    auto const &v2 = x.positions.at(k);
-    v1 += v2;
+Frame Frame::new_compatible_frame() const {
+  Frame copy{*this};
+  for (auto &&[k, v] : copy.positions) {
+    v = 0.0;
   }
-  for (auto &&[k, v1] : this->effectors) {
-    auto const &v2 = x.effectors.at(k);
-    v1 += v2;
+  for (auto &&[k, v] : copy.effectors) {
+    Effector e{v.new_compatible_effector()};
+    v = e;
   }
-  return *this;
+  return copy;
 }
 
-Frame &Frame::operator-=(const Frame &x) {
-  for (auto &&[k, v1] : this->positions) {
-    auto const &v2 = x.positions.at(k);
-    v1 -= v2;
-  }
-  for (auto &&[k, v1] : this->effectors) {
-    auto const &v2 = x.effectors.at(k);
-    v1 -= v2;
-  }
-  return *this;
+bool operator==(const FrameDifference &d1, const FrameDifference &d2) {
+  return d1.positions() == d2.positions() && d1.effectors() == d2.effectors();
 }
 
 bool operator==(const Frame &f1, const Frame &f2) {
   return f1.positions == f2.positions && f1.effectors == f2.effectors;
+}
+
+bool operator!=(const Frame &f1, const Frame &f2) { return !(f1 == f2); }
+
+bool almost_equal(const FrameDifference &f1, const FrameDifference &f2) {
+  auto p = std::all_of(std::cbegin(f1.positions()), std::cend(f1.positions()),
+                       [&f2](auto const &pair) {
+                         auto const &[joint, pos1] = pair;
+                         auto const pos2 = f2.positions().at(joint);
+                         return almost_equal(pos1, pos2);
+                       });
+  auto e = std::all_of(std::cbegin(f1.effectors()), std::cend(f1.effectors()),
+                       [&f2](auto const &pair) {
+                         auto const &[link, e1] = pair;
+                         auto const e2 = f2.effectors().at(link);
+                         return almost_equal(e1, e2);
+                       });
+  return p && e;
 }
 
 bool almost_equal(const Frame &f1, const Frame &f2) {

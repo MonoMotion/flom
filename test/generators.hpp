@@ -125,6 +125,36 @@ template <> struct Arbitrary<flom::Frame> {
   }
 };
 
+template <> struct Arbitrary<flom::EffectorDifference> {
+  static auto arbitrary() -> decltype(auto) {
+    auto effector_gen = gen::build(
+        gen::construct<flom::Effector>(),
+        gen::set(&flom::Effector::location, gen::arbitrary<flom::Location>()),
+        gen::set(&flom::Effector::rotation, gen::arbitrary<flom::Rotation>())
+      );
+    return gen::apply(
+        [](const auto& e1, const auto& e2) {
+          return e1 - e2;
+        },
+        effector_gen,
+        effector_gen
+        );
+  }
+};
+
+
+template <> struct Arbitrary<flom::FrameDifference> {
+  static auto arbitrary() -> decltype(auto) {
+    return gen::apply(
+        [](const auto& f) {
+          auto const empty = f.new_compatible_frame();
+          return f - empty;
+        },
+        gen::arbitrary<flom::Frame>()
+      );
+  }
+};
+
 template <> struct Arbitrary<flom::Motion> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(

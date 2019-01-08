@@ -73,7 +73,9 @@ Frame Motion::frame_at(double t) const {
 
       auto const skip_episode = static_cast<unsigned>(t / motion_length);
       auto const trailing_t = t - skip_episode * motion_length;
-      return this->frame_at(trailing_t) + last->second * skip_episode;
+      auto const init_frame = this->impl->raw_frames.begin()->second;
+      auto const diff = last->second - init_frame;
+      return this->frame_at(trailing_t) + diff * skip_episode;
     } else {
       throw errors::OutOfFramesError(t);
     }
@@ -232,5 +234,7 @@ bool operator==(const Motion &m1, const Motion &m2) {
          m1.impl->loop == m2.impl->loop &&
          m1.impl->raw_frames == m2.impl->raw_frames;
 }
+
+bool operator!=(const Motion &m1, const Motion &m2) { return !(m1 == m2); }
 
 } // namespace flom
