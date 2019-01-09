@@ -20,6 +20,8 @@
 #ifndef FLOM_EFFECTOR_TYPE_HPP
 #define FLOM_EFFECTOR_TYPE_HPP
 
+#include <optional>
+
 namespace flom {
 
 enum class CoordinateSystem { World, Local };
@@ -31,7 +33,8 @@ private:
 
 public:
   EffectorType() = delete;
-  EffectorType(std::optional<CoordinateSystem> location, std::optional<CoordinateSystem> rotation);
+  EffectorType(std::optional<CoordinateSystem> location,
+               std::optional<CoordinateSystem> rotation);
 
   std::optional<CoordinateSystem> location() const;
   std::optional<CoordinateSystem> rotation() const;
