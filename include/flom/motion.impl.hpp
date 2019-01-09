@@ -81,7 +81,8 @@ public:
         effectors_hash(names_hash(effectors)) {
     this->effector_types.reserve(effectors.size());
     for (const auto &name : effectors) {
-      this->effector_types.emplace(name, EffectorType{});
+      this->effector_types.emplace(name,
+                                   EffectorType{std::nullopt, std::nullopt});
     }
     this->add_initial_frame();
   }

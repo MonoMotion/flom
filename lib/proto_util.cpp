@@ -95,15 +95,13 @@ pack_coord_system(std::optional<CoordinateSystem> const &c) {
 }
 
 void pack_effector_type(EffectorType const &e, proto::EffectorType *proto) {
-  proto->set_location(pack_coord_system(e.location));
-  proto->set_rotation(pack_coord_system(e.rotation));
+  proto->set_location(pack_coord_system(e.location()));
+  proto->set_rotation(pack_coord_system(e.rotation()));
 }
 
 EffectorType unpack_effector_type(proto::EffectorType const &proto) {
-  EffectorType e;
-  e.location = unpack_coord_system(proto.location());
-  e.rotation = unpack_coord_system(proto.rotation());
-  return e;
+  return {unpack_coord_system(proto.location()),
+          unpack_coord_system(proto.rotation())};
 }
 
 std::optional<CoordinateSystem>

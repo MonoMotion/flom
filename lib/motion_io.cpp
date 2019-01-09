@@ -228,9 +228,11 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
           // Only last frame is used, so not good code, but this is for
           // importing legacy format anyway (?)
           if (trans_data["space"] == "world") {
-            m.impl->effector_types[it.key()].location = CoordinateSystem::World;
+            m.impl->effector_types.at(it.key()).set_location(
+                CoordinateSystem::World);
           } else if (trans_data["space"] == "local") {
-            m.impl->effector_types[it.key()].location = CoordinateSystem::Local;
+            m.impl->effector_types.at(it.key()).set_location(
+                CoordinateSystem::Local);
           }
           trans.vec = boost::qvm::vec<double, 3>{value[0], value[1], value[2]};
           trans.weight = trans_data["weight"];
@@ -244,9 +246,11 @@ Motion Motion::load_legacy_json(std::ifstream &s) {
           // Only last frame is used, so not good code, but this is for
           // importing legacy format anyway (?)
           if (rot_data["space"] == "world") {
-            m.impl->effector_types[it.key()].rotation = CoordinateSystem::World;
+            m.impl->effector_types.at(it.key()).set_rotation(
+                CoordinateSystem::World);
           } else if (rot_data["space"] == "local") {
-            m.impl->effector_types[it.key()].rotation = CoordinateSystem::Local;
+            m.impl->effector_types.at(it.key()).set_rotation(
+                CoordinateSystem::Local);
           }
           rot.quat =
               boost::qvm::quat<double>{value[0], value[1], value[2], value[3]};
