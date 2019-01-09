@@ -37,7 +37,8 @@
 BOOST_AUTO_TEST_SUITE(motion_misc)
 
 BOOST_AUTO_TEST_CASE(empty_motion_valid) {
-  std::unordered_set<std::string> j, e;
+  std::unordered_set<std::string> j;
+  std::unordered_map<std::string, flom::EffectorType> e;
   auto const empty = flom::Motion(j, e);
   BOOST_TEST(empty.is_valid());
 }
@@ -45,7 +46,7 @@ BOOST_AUTO_TEST_CASE(empty_motion_valid) {
 RC_BOOST_PROP(empty_named_motion_valid,
               (const std::string &name,
                const std::unordered_set<std::string> &j,
-               const std::unordered_set<std::string> &e)) {
+               const std::unordered_map<std::string, flom::EffectorType> &e)) {
   auto const empty = flom::Motion(j, e, name);
   RC_ASSERT(empty.is_valid());
 }
