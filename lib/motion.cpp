@@ -32,11 +32,6 @@
 
 namespace flom {
 
-Motion::Motion(const std::unordered_set<std::string> &joint_names,
-               const std::unordered_set<std::string> &effector_names,
-               const std::string &model)
-    : impl(std::make_unique<Motion::Impl>(joint_names, effector_names, model)) {
-}
 Motion::Motion(
     const std::unordered_set<std::string> &joint_names,
     const std::unordered_map<std::string, EffectorType> &effector_types,

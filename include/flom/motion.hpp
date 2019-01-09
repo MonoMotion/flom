@@ -45,11 +45,6 @@ public:
   static Motion load(std::ifstream &);
   static Motion load_json(std::ifstream &);
   static Motion load_json_string(std::string const &);
-  static Motion load_legacy_json(std::ifstream &);
-
-  Motion(const std::unordered_set<std::string> &joint_names,
-         const std::unordered_set<std::string> &effector_names,
-         const std::string &model = "");
 
   Motion(const std::unordered_set<std::string> &joint_names,
          const std::unordered_map<std::string, EffectorType> &effector_types,

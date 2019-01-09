@@ -74,20 +74,6 @@ public:
     this->add_initial_frame();
   }
 
-  Impl(const std::unordered_set<std::string> &joints,
-       const std::unordered_set<std::string> &effectors,
-       const std::string &model = "")
-      : model_id(model), loop(LoopType::None), raw_frames(),
-        joint_names(joints), effector_types(), joints_hash(names_hash(joints)),
-        effectors_hash(names_hash(effectors)) {
-    this->effector_types.reserve(effectors.size());
-    for (const auto &name : effectors) {
-      this->effector_types.emplace(name,
-                                   EffectorType{std::nullopt, std::nullopt});
-    }
-    this->add_initial_frame();
-  }
-
   void add_initial_frame();
   Frame new_keyframe() const noexcept;
 
