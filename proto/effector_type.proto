@@ -21,16 +21,16 @@ syntax = "proto3";
 
 package flom.proto;
 
-import "frame.proto";
-import "effector_type.proto";
-
-message Motion {
-  string model_id = 1;
-  enum Loop {
-    None = 0;
-    Wrap = 1;
-  }
-  Loop loop = 2;
-  map<string, EffectorType> effector_types = 3;
-  repeated Frame frames = 4;
+enum CoordinateSystem {
+  World = 0;
+  Local = 1;
 }
+
+message EffectorType {
+  message Value {
+    CoordinateSystem value = 1;
+  }
+  Value location = 3;
+  Value rotation = 4;
+}
+
