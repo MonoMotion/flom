@@ -118,6 +118,16 @@ unpack_coord_system(proto::EffectorType::Type const &proto) {
   }
 }
 
+void pack_effector_weight(EffectorWeight const &weight,
+                          proto::EffectorWeight *proto) {
+  proto->set_location(weight.location());
+  proto->set_rotation(weight.rotation());
+}
+
+EffectorWeight unpack_effector_weight(proto::EffectorWeight const &proto) {
+  return {proto.location(), proto.rotation()};
+}
+
 } // namespace proto_util
 
 } // namespace flom

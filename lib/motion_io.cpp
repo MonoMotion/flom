@@ -75,6 +75,12 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
                  [](auto const &p) { return p.first; });
 
   Motion m(joint_names, effector_types, motion_proto.model_id());
+
+  for (auto const &p : motion_proto.effector_weights()) {
+    m.set_effector_weight(p.first,
+                          proto_util::unpack_effector_weight(p.second));
+  }
+
   if (motion_proto.loop() == proto::Motion::Loop::Motion_Loop_Wrap) {
     m.impl->loop = LoopType::Wrap;
   } else if (motion_proto.loop() == proto::Motion::Loop::Motion_Loop_None) {
@@ -147,6 +153,10 @@ proto::Motion Motion::Impl::to_protobuf() const {
     m.set_loop(proto::Motion::Loop::Motion_Loop_Wrap);
   } else if (this->loop == LoopType::None) {
     m.set_loop(proto::Motion::Loop::Motion_Loop_None);
+  }
+  for (auto const &[link, weight] : this->effector_weights) {
+    proto_util::pack_effector_weight(weight,
+                                     &(*m.mutable_effector_weights())[link]);
   }
   for (auto const &[link, type] : this->effector_types) {
     proto_util::pack_effector_type(type, &(*m.mutable_effector_types())[link]);

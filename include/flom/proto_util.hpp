@@ -55,6 +55,9 @@ EffectorType unpack_effector_type(proto::EffectorType const &);
 std::optional<CoordinateSystem>
 unpack_coord_system(proto::EffectorType::Type const &);
 
+void pack_effector_weight(EffectorWeight const &, proto::EffectorWeight *);
+EffectorWeight unpack_effector_weight(proto::EffectorWeight const &);
+
 } // namespace flom::proto_util
 
 #endif
