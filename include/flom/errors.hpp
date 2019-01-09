@@ -111,6 +111,17 @@ public:
   virtual const char *what() const noexcept;
 };
 
+class InvalidWeightError : public std::exception {
+public:
+  explicit InvalidWeightError(double);
+  virtual const char *what() const noexcept;
+
+  double weight() const noexcept;
+
+private:
+  double weight_;
+};
+
 } // namespace flom::errors
 
 #endif

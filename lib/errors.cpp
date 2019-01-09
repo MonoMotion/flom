@@ -98,4 +98,12 @@ const char *InitKeyframeError::what() const noexcept {
   return "Attempt to delete initial keyframe";
 }
 
+InvalidWeightError::InvalidWeightError(double weight) : weight_(weight) {}
+
+const char *InvalidWeightError::what() const noexcept {
+  return "Invalid weight is supplied";
+}
+
+double InvalidWeightError::weight() const noexcept { return this->weight_; }
+
 } // namespace flom::errors

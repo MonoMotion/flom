@@ -21,6 +21,7 @@
 #define FLOM_MOTION_HPP
 
 #include "flom/effector_type.hpp"
+#include "flom/effector_weight.hpp"
 #include "flom/frame.hpp"
 
 #include <fstream>
@@ -84,8 +85,8 @@ public:
   EffectorType effector_type(const std::string &) const;
   void set_effector_type(const std::string &, EffectorType);
 
-  double effector_weight(const std::string &) const;
-  void set_effector_weight(const std::string &, double);
+  EffectorWeight effector_weight(const std::string &) const;
+  void set_effector_weight(const std::string &, EffectorWeight);
 
   double length() const;
 
