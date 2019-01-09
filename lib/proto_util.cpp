@@ -81,8 +81,12 @@ void pack_rotation(Rotation const &rot, proto::Rotation *rot_proto) {
   rot_proto->set_weight(rot.weight);
 }
 
-proto::EffectorType::Type pack_coord_system(CoordinateSystem const &c) {
-  switch (c) {
+proto::EffectorType::Type
+pack_coord_system(std::optional<CoordinateSystem> const &c) {
+  if (!c) {
+    return proto::EffectorType::Type::EffectorType_Type_None;
+  }
+  switch (*c) {
   case CoordinateSystem::World:
     return proto::EffectorType::Type::EffectorType_Type_World;
   case CoordinateSystem::Local:
@@ -102,8 +106,11 @@ EffectorType unpack_effector_type(proto::EffectorType const &proto) {
   return e;
 }
 
-CoordinateSystem unpack_coord_system(proto::EffectorType::Type const &proto) {
-  if (proto == proto::EffectorType::Type::EffectorType_Type_World) {
+std::optional<CoordinateSystem>
+unpack_coord_system(proto::EffectorType::Type const &proto) {
+  if (proto == proto::EffectorType::Type::EffectorType_Type_None) {
+    return std::nullopt;
+  } else if (proto == proto::EffectorType::Type::EffectorType_Type_World) {
     return CoordinateSystem::World;
   } else if (proto == proto::EffectorType::Type::EffectorType_Type_Local) {
     return CoordinateSystem::Local;

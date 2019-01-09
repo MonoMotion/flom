@@ -31,6 +31,8 @@
 #include <boost/qvm/quat.hpp>
 #include <boost/qvm/vec.hpp>
 
+#include <optional>
+
 namespace flom::proto_util {
 
 void pack_vec3(boost::qvm::vec<double, 3> const &, proto::Vec3 *);
@@ -46,10 +48,12 @@ boost::qvm::quat<double> unpack_quat(proto::Quaternion const &);
 Rotation unpack_rotation(proto::Rotation const &);
 
 void pack_effector_type(EffectorType const &, proto::EffectorType *);
-proto::EffectorType::Type pack_coord_system(CoordinateSystem const &);
+proto::EffectorType::Type
+pack_coord_system(std::optional<CoordinateSystem> const &);
 
 EffectorType unpack_effector_type(proto::EffectorType const &);
-CoordinateSystem unpack_coord_system(proto::EffectorType::Type const &);
+std::optional<CoordinateSystem>
+unpack_coord_system(proto::EffectorType::Type const &);
 
 } // namespace flom::proto_util
 
