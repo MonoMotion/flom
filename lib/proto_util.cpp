@@ -47,13 +47,11 @@ void pack_vec3(boost::qvm::vec<double, 3> const &vec, proto::Vec3 *v_proto) {
 Location unpack_location(proto::Location const &trans_proto) {
   Location trans;
   trans.vec = unpack_vec3(trans_proto.vector());
-  trans.weight = trans_proto.weight();
   return trans;
 }
 
 void pack_location(Location const &trans, proto::Location *trans_proto) {
   pack_vec3(trans.vec, trans_proto->mutable_vector());
-  trans_proto->set_weight(trans.weight);
 }
 
 boost::qvm::quat<double> unpack_quat(proto::Quaternion const &quat_proto) {
@@ -72,13 +70,11 @@ void pack_quat(boost::qvm::quat<double> const &quat,
 Rotation unpack_rotation(proto::Rotation const &rot_proto) {
   Rotation rot;
   rot.quat = unpack_quat(rot_proto.quaternion());
-  rot.weight = rot_proto.weight();
   return rot;
 }
 
 void pack_rotation(Rotation const &rot, proto::Rotation *rot_proto) {
   pack_quat(rot.quat, rot_proto->mutable_quaternion());
-  rot_proto->set_weight(rot.weight);
 }
 
 proto::EffectorType::Type

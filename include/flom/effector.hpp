@@ -36,10 +36,9 @@ namespace qvm = boost::qvm;
 struct Location {
   using value_type = qvm::vec<double, 3>;
 
-  double weight;
   value_type vec;
 
-  Location() : weight(0) {}
+  Location() {}
 };
 
 bool operator==(const Location &, const Location &);
@@ -50,11 +49,10 @@ bool almost_equal(const Location &, const Location &);
 struct Rotation {
   using value_type = qvm::quat<double>;
 
-  double weight;
   value_type quat;
 
   // TODO: ensure stored quaternion is normalized
-  Rotation() : weight(0), quat({1, 0, 0, 0}) {}
+  Rotation() : quat({1, 0, 0, 0}) {}
 };
 
 bool operator==(const Rotation &, const Rotation &);

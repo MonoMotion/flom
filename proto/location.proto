@@ -23,8 +23,6 @@ package flom.proto;
 
 message Location {
   Vec3 vector = 1;
-  /* coefficient of importance (0~1) */
-  double weight = 3;
 }
 
 message Vec3 {

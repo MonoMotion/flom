@@ -42,13 +42,11 @@ EffectorDifference::EffectorDifference(const Effector &e1, const Effector &e2) {
   if (e1.location && e2.location) {
     this->location_ = Location{};
     this->location_->vec = e1.location->vec - e2.location->vec;
-    this->location_->weight = e1.location->weight - e2.location->weight;
   }
   if (e1.rotation && e2.rotation) {
     this->rotation_ = Rotation{};
     this->rotation_->quat =
         e1.rotation->quat * boost::qvm::inverse(e2.rotation->quat);
-    this->rotation_->weight = e1.rotation->weight - e2.rotation->weight;
   }
 }
 
@@ -56,13 +54,11 @@ EffectorDifference &EffectorDifference::
 operator+=(const EffectorDifference &other) {
   if (this->location_ && other.location_) {
     this->location_->vec += other.location_->vec;
-    this->location_->weight += other.location_->weight;
   }
   if (this->rotation_ && other.rotation_) {
     // TODO: Don't call normalize here
     boost::qvm::normalize(this->rotation_->quat);
     this->rotation_->quat *= boost::qvm::normalized(other.rotation_->quat);
-    this->rotation_->weight += other.rotation_->weight;
   }
   return *this;
 }
@@ -70,7 +66,6 @@ operator+=(const EffectorDifference &other) {
 EffectorDifference &EffectorDifference::operator*=(std::size_t n) {
   if (this->location_) {
     this->location_->vec *= n;
-    this->location_->weight *= n;
   }
   if (this->rotation_) {
     if (n == 0) {
@@ -83,7 +78,6 @@ EffectorDifference &EffectorDifference::operator*=(std::size_t n) {
         this->rotation_->quat *= quat;
       }
     }
-    this->rotation_->weight *= n;
   }
   return *this;
 }
@@ -91,13 +85,11 @@ EffectorDifference &EffectorDifference::operator*=(std::size_t n) {
 Effector &Effector::operator+=(const EffectorDifference &other) {
   if (this->location && other.location()) {
     this->location->vec += other.location()->vec;
-    this->location->weight += other.location()->weight;
   }
   if (this->rotation && other.rotation()) {
     // TODO: Don't call normalize here
     boost::qvm::normalize(this->rotation->quat);
     this->rotation->quat *= boost::qvm::normalized(other.rotation()->quat);
-    this->rotation->weight += other.rotation()->weight;
   }
   return *this;
 }
@@ -155,7 +147,6 @@ Rotation interpolate(double t, Rotation const &a, Rotation const &b) {
     result.quat = a.quat;
   }
 
-  result.weight = lerp(t, a.weight, b.weight);
   return result;
 }
 
@@ -171,7 +162,7 @@ Effector Effector::new_compatible_effector() const {
 }
 
 bool operator==(const Rotation &r1, const Rotation &r2) {
-  return r1.weight == r2.weight && r1.quat == r2.quat;
+  return r1.quat == r2.quat;
 }
 
 bool operator!=(const Rotation &r1, const Rotation &r2) { return !(r1 == r2); }
@@ -183,18 +174,17 @@ bool almost_equal(const Rotation::value_type &q1,
 }
 
 bool almost_equal(const Rotation &r1, const Rotation &r2) {
-  return almost_equal(r1.weight, r2.weight) && almost_equal(r1.quat, r2.quat);
+  return almost_equal(r1.quat, r2.quat);
 }
 
 Location interpolate(double t, Location const &a, Location const &b) {
   Location result;
   result.vec = lerp(t, a.vec, b.vec);
-  result.weight = lerp(t, a.weight, b.weight);
   return result;
 }
 
 bool operator==(const Location &l1, const Location &l2) {
-  return l1.weight == l2.weight && l1.vec == l2.vec;
+  return l1.vec == l2.vec;
 }
 
 bool operator!=(const Location &l1, const Location &l2) { return !(l1 == l2); }
@@ -206,7 +196,7 @@ bool almost_equal(const Location::value_type &v1,
 }
 
 bool almost_equal(const Location &l1, const Location &l2) {
-  return almost_equal(l1.weight, l2.weight) && almost_equal(l1.vec, l2.vec);
+  return almost_equal(l1.vec, l2.vec);
 }
 
 bool operator==(const Effector &e1, const Effector &e2) {
