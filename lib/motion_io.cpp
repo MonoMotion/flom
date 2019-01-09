@@ -66,9 +66,8 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
                  std::cend(motion_proto.effector_types()),
                  std::inserter(effector_types, std::end(effector_types)),
                  [](auto const &p) {
-                   auto const &[link, type_proto] = p;
                    return std::make_pair(
-                       link, proto_util::unpack_effector_type(type_proto));
+                       p.first, proto_util::unpack_effector_type(p.second));
                  });
   auto const &init_pos = motion_proto.frames(0).positions();
   std::transform(std::cbegin(init_pos), std::cend(init_pos),
