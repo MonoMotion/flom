@@ -21,16 +21,14 @@ syntax = "proto3";
 
 package flom.proto;
 
-enum CoordinateSystem {
-  World = 0;
-  Local = 1;
-}
 
 message EffectorType {
-  message Value {
-    CoordinateSystem value = 1;
+  enum Type {
+    None = 0;
+    World = 1;
+    Local = 2;
   }
-  Value location = 3;
-  Value rotation = 4;
+  Type location = 3;
+  Type rotation = 4;
 }
 
