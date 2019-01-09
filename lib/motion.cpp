@@ -165,6 +165,14 @@ void Motion::set_effector_type(const std::string &name, EffectorType type) {
   this->impl->effector_types.at(name) = type;
 }
 
+double Motion::effector_weight(const std::string &name) const {
+  return this->impl->effector_weights.at(name);
+}
+
+void Motion::set_effector_weight(const std::string &name, double weight) {
+  this->impl->effector_weights.at(name) = weight;
+}
+
 double Motion::length() const {
   return std::next(this->impl->raw_frames.end(), -1)->first;
 }

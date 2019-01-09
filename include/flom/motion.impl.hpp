@@ -58,6 +58,7 @@ public:
   // keys of these two member must not be changed after construction
   const std::unordered_set<std::string> joint_names;
   std::unordered_map<std::string, EffectorType> effector_types;
+  std::unordered_map<std::string, double> effector_weights;
 
   // Hash of joint_names
   const std::size_t joints_hash;

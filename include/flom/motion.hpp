@@ -84,6 +84,9 @@ public:
   EffectorType effector_type(const std::string &) const;
   void set_effector_type(const std::string &, EffectorType);
 
+  double effector_weight(const std::string &) const;
+  void set_effector_weight(const std::string &, double);
+
   double length() const;
 
   KeyRange<std::string> joint_names() const;
