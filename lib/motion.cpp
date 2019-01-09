@@ -156,10 +156,6 @@ EffectorType Motion::effector_type(const std::string &name) const {
   return this->impl->effector_types.at(name);
 }
 
-void Motion::set_effector_type(const std::string &name, EffectorType type) {
-  this->impl->effector_types.at(name) = type;
-}
-
 EffectorWeight Motion::effector_weight(const std::string &name) const {
   return this->impl->effector_weights.at(name);
 }

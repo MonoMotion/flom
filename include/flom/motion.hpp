@@ -78,7 +78,6 @@ public:
   KeyframeRange keyframes();
 
   EffectorType effector_type(const std::string &) const;
-  void set_effector_type(const std::string &, EffectorType);
 
   EffectorWeight effector_weight(const std::string &) const;
   void set_effector_weight(const std::string &, EffectorWeight);
