@@ -68,6 +68,8 @@ public:
 
   FrameDifference &operator*=(std::size_t);
   FrameDifference &operator+=(const FrameDifference &);
+
+  bool is_compatible(const FrameDifference &) const;
 };
 
 bool operator==(const FrameDifference &, const FrameDifference &);
@@ -82,6 +84,7 @@ struct Frame : boost::addable<Frame, FrameDifference> {
 
   Frame new_compatible_frame() const;
   bool is_compatible(const Frame &) const;
+  bool is_compatible(const FrameDifference &) const;
 
   Frame &operator+=(const FrameDifference &);
 };

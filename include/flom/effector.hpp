@@ -91,6 +91,8 @@ public:
 
   EffectorDifference &operator*=(std::size_t);
   EffectorDifference &operator+=(const EffectorDifference &);
+
+  bool is_compatible(const EffectorDifference &) const;
 };
 
 bool operator==(const EffectorDifference &, const EffectorDifference &);
@@ -102,6 +104,7 @@ struct Effector : boost::addable<Effector, EffectorDifference> {
 
   Effector new_compatible_effector() const;
   bool is_compatible(const Effector &) const;
+  bool is_compatible(const EffectorDifference &) const;
 
   Effector &operator+=(const EffectorDifference &);
 };

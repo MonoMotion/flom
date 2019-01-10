@@ -38,7 +38,10 @@ EffectorDifference operator-(const Effector &e1, const Effector &e2) {
 }
 
 EffectorDifference::EffectorDifference(const Effector &e1, const Effector &e2) {
-  // TODO: Check compatibility
+  // Not throwing exception in favor of better performance
+  assert(e1.is_compatible(e2) &&
+         "Cannot perform the operation on Incompatible effectors");
+
   if (e1.location && e2.location) {
     this->location_ = Location{};
     this->location_->vec = e1.location->vec - e2.location->vec;
@@ -52,6 +55,10 @@ EffectorDifference::EffectorDifference(const Effector &e1, const Effector &e2) {
 
 EffectorDifference &EffectorDifference::
 operator+=(const EffectorDifference &other) {
+  // Not throwing exception in favor of better performance
+  assert(this->is_compatible(other) &&
+         "Cannot use incompatibe FrameDifference instance");
+
   if (this->location_ && other.location_) {
     this->location_->vec += other.location_->vec;
   }
@@ -83,6 +90,10 @@ EffectorDifference &EffectorDifference::operator*=(std::size_t n) {
 }
 
 Effector &Effector::operator+=(const EffectorDifference &other) {
+  // Not throwing exception in favor of better performance
+  assert(this->is_compatible(other) &&
+         "Cannot use incompatibe FrameDifference instance");
+
   if (this->location && other.location()) {
     this->location->vec += other.location()->vec;
   }
@@ -128,6 +139,10 @@ bool almost_equal(const EffectorDifference &d1, const EffectorDifference &d2) {
 }
 
 Effector interpolate(double t, Effector const &a, Effector const &b) {
+  // Not throwing exception in favor of better performance
+  assert(a.is_compatible(b) &&
+         "Cannot perform the operation on Incompatible effectors");
+
   Effector e;
   if (a.rotation && b.rotation) {
     e.rotation = interpolate(t, *a.rotation, *b.rotation);
@@ -159,6 +174,22 @@ Effector Effector::new_compatible_effector() const {
     e.rotation = Rotation{};
   }
   return e;
+}
+
+bool EffectorDifference::is_compatible(const EffectorDifference &other) const {
+  bool loc_v = static_cast<bool>(other.location());
+  bool loc_t = static_cast<bool>(this->location());
+  bool rot_v = static_cast<bool>(other.rotation());
+  bool rot_t = static_cast<bool>(this->rotation());
+  return loc_v == loc_t && rot_v == rot_t;
+}
+
+bool Effector::is_compatible(const EffectorDifference &other) const {
+  bool loc_v = static_cast<bool>(other.location());
+  bool loc_t = static_cast<bool>(this->location);
+  bool rot_v = static_cast<bool>(other.rotation());
+  bool rot_t = static_cast<bool>(this->rotation);
+  return loc_v == loc_t && rot_v == rot_t;
 }
 
 bool Effector::is_compatible(const Effector &other) const {
