@@ -71,6 +71,10 @@ public:
       : model_id(model), loop(LoopType::None), raw_frames(),
         joint_names(joints), effector_types(effectors),
         joints_hash(names_hash(joints)), effectors_hash(names_hash(effectors)) {
+    this->effector_weights.reserve(effectors.size());
+    for (const auto &[name, e] : effectors) {
+      this->effector_weights.emplace(name, EffectorWeight{0.0, 0.0});
+    }
     this->add_initial_frame();
   }
 
