@@ -105,7 +105,6 @@ bool operator==(const Rotation &r1, const Rotation &r2) {
 bool almost_equal(const Rotation &r1, const Rotation &r2) {
   return boost::qvm::cmp(r1.quaternion(), r2.quaternion(),
                          [](auto e1, auto e2) { return almost_equal(e1, e2); });
-  ;
 }
 EffectorDifference operator-(const Effector &e1, const Effector &e2) {
   return EffectorDifference{e1, e2};
