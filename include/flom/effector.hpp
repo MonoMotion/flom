@@ -128,8 +128,23 @@ bool operator==(const EffectorDifference &, const EffectorDifference &);
 bool almost_equal(const EffectorDifference &, const EffectorDifference &);
 
 struct Effector : boost::addable<Effector, EffectorDifference> {
-  std::optional<Location> location;
-  std::optional<Rotation> rotation;
+private:
+  std::optional<Location> location_;
+  std::optional<Rotation> rotation_;
+
+public:
+  Effector() = delete;
+  Effector(const std::optional<Location> &, const std::optional<Rotation> &);
+
+  const std::optional<Location> &location() const &;
+  std::optional<Location> location() &&;
+
+  void set_location(const std::optional<Location> &);
+
+  const std::optional<Rotation> &rotation() const &;
+  std::optional<Rotation> rotation() &&;
+
+  void set_rotation(const std::optional<Rotation> &);
 
   Effector new_compatible_effector() const;
   bool is_compatible(const Effector &) const;

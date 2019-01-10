@@ -81,10 +81,10 @@ RC_BOOST_PROP(insert_keyframe_incompatible_effector, (flom::Motion m)) {
 
   auto frame = m.new_keyframe();
   auto &&e = frame.effectors.begin()->second;
-  if (e.location) {
-    e.location = std::nullopt;
+  if (e.location()) {
+    e.set_location(std::nullopt);
   } else {
-    e.location = flom::Location{};
+    e.set_location(flom::Location{});
   }
   RC_ASSERT_THROWS_AS(m.insert_keyframe(t, frame),
                       flom::errors::InvalidFrameError);

@@ -61,11 +61,11 @@ std::ostream &operator<<(std::ostream &os, const Location &v) {
 
 std::ostream &operator<<(std::ostream &os, const Effector &v) {
   os << "effector(";
-  if(v.location) {
-    os << *v.location << ",";
+  if(v.location()) {
+    os << *v.location() << ",";
   }
-  if(v.rotation) {
-    os << *v.rotation << ",";
+  if(v.rotation()) {
+    os << *v.rotation() << ",";
   }
   os << ")";
   return os;

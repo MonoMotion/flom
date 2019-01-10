@@ -21,20 +21,20 @@ void EffectorType::set_rotation(std::optional<CoordinateSystem> rotation) {
 }
 
 Effector EffectorType::new_effector() const {
-  Effector e;
+  Effector e{std::nullopt, std::nullopt};
   if (this->location()) {
-    e.location = Location{};
+    e.set_location(Location{});
   }
   if (this->rotation()) {
-    e.rotation = Rotation{};
+    e.set_rotation(Rotation{});
   }
   return e;
 }
 
 bool EffectorType::is_compatible(const Effector &e) const {
-  bool loc_v = static_cast<bool>(e.location);
+  bool loc_v = static_cast<bool>(e.location());
   bool loc_t = static_cast<bool>(this->location());
-  bool rot_v = static_cast<bool>(e.rotation);
+  bool rot_v = static_cast<bool>(e.rotation());
   bool rot_t = static_cast<bool>(this->rotation());
   return loc_v == loc_t && rot_v == rot_t;
 }

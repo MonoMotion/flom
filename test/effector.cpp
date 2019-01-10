@@ -65,26 +65,26 @@ RC_BOOST_PROP(new_compatible_effector, (const flom::Effector &e1)) {
 
 RC_BOOST_PROP(interpolation_location,
               (const flom::Effector &e1, const flom::Effector &e2)) {
-  RC_PRE(e1.location && e2.location);
+  RC_PRE(e1.location() && e2.location());
   RC_PRE(e1.is_compatible(e2));
 
   const double t = static_cast<double>(*rc::gen::inRange(0, 100)) / 100;
 
   auto e3 = flom::interpolate(t, e1, e2);
-  auto l = flom::interpolate(t, *e1.location, *e2.location);
-  RC_ASSERT(e3.location->vector() == l.vector());
+  auto l = flom::interpolate(t, *e1.location(), *e2.location());
+  RC_ASSERT(e3.location()->vector() == l.vector());
 }
 
 RC_BOOST_PROP(interpolation_rotation,
               (const flom::Effector &e1, const flom::Effector &e2)) {
-  RC_PRE(e1.rotation && e2.rotation);
+  RC_PRE(e1.rotation() && e2.rotation());
   RC_PRE(e1.is_compatible(e2));
 
   const double t = static_cast<double>(*rc::gen::inRange(0, 100)) / 100;
 
   auto e3 = flom::interpolate(t, e1, e2);
-  auto r = flom::interpolate(t, *e1.rotation, *e2.rotation);
-  RC_ASSERT(e3.rotation->quaternion() == r.quaternion());
+  auto r = flom::interpolate(t, *e1.rotation(), *e2.rotation());
+  RC_ASSERT(e3.rotation()->quaternion() == r.quaternion());
 }
 
 BOOST_AUTO_TEST_SUITE_END()

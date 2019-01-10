@@ -96,14 +96,14 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
                    std::inserter(frame.effectors, std::end(frame.effectors)),
                    [](auto const &p) {
                      auto const &effect_proto = p.second;
-                     Effector e;
+                     Effector e{std::nullopt, std::nullopt};
                      if (effect_proto.has_location()) {
-                       e.location = proto_util::unpack_location(
-                           effect_proto.location().value());
+                       e.set_location(proto_util::unpack_location(
+                           effect_proto.location().value()));
                      }
                      if (effect_proto.has_rotation()) {
-                       e.rotation = proto_util::unpack_rotation(
-                           effect_proto.rotation().value());
+                       e.set_rotation(proto_util::unpack_rotation(
+                           effect_proto.rotation().value()));
                      }
                      // TODO: Delete copy
                      return std::make_pair(p.first, e);
@@ -170,12 +170,12 @@ proto::Motion Motion::Impl::to_protobuf() const {
     }
     for (auto const &[link, effect] : frame.effectors) {
       proto::Effector e;
-      if (effect.location) {
-        proto_util::pack_location(*effect.location,
+      if (effect.location()) {
+        proto_util::pack_location(*effect.location(),
                                   e.mutable_location()->mutable_value());
       }
-      if (effect.rotation) {
-        proto_util::pack_rotation(*effect.rotation,
+      if (effect.rotation()) {
+        proto_util::pack_rotation(*effect.rotation(),
                                   e.mutable_rotation()->mutable_value());
       }
       (*frame_proto->mutable_effectors())[link] = e;
