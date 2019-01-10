@@ -163,6 +163,27 @@ template <> struct Arbitrary<flom::FrameDifference> {
   }
 };
 
+flom::Effector convert_effector(const flom::EffectorType& type, flom::Effector e) {
+  // Convert the effector to be compatible with the EffectorType
+  if (!type.location()) {
+    e.location = std::nullopt;
+  } else {
+    if (!e.location) {
+      e.location = flom::Location {};
+    }
+  }
+
+  if (!type.rotation()) {
+    e.rotation = std::nullopt;
+  } else {
+    if (!e.rotation) {
+      e.rotation = flom::Rotation {};
+    }
+  }
+
+  return e;
+}
+
 template <> struct Arbitrary<flom::Motion> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
@@ -177,7 +198,9 @@ template <> struct Arbitrary<flom::Motion> {
               f.positions.emplace(boost::get<0>(pair), boost::get<1>(pair));
             }
             for(auto const& pair : boost::combine(effector_types, e)) {
-              f.effectors.emplace(boost::get<0>(pair).first, boost::get<1>(pair));
+              auto const& [name, type] = boost::get<0>(pair);
+              auto const& eff = boost::get<1>(pair);
+              f.effectors.emplace(name, convert_effector(type, eff));
             }
             m.insert_keyframe(fps * i++, f);
           }

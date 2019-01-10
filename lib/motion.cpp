@@ -181,7 +181,7 @@ Frame Motion::Impl::new_keyframe() const noexcept {
 
   frame.effectors.reserve(this->effector_types.size());
   for (const auto &[name, type] : this->effector_types) {
-    frame.effectors.emplace(name, Effector{});
+    frame.effectors.emplace(name, type.new_effector());
   }
 
   return frame;
@@ -217,6 +217,11 @@ bool Motion::Impl::is_valid_frame(const Frame &frame) const {
   if (names_hash(p) != this->joints_hash ||
       names_hash(e) != this->effectors_hash) {
     return false;
+  }
+  for (auto const &[name, type] : this->effector_types) {
+    if (!type.is_compatible(e.at(name))) {
+      return false;
+    }
   }
   return true;
 }
