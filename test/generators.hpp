@@ -121,13 +121,7 @@ template <> struct Arbitrary<flom::EffectorType> {
 
 template <> struct Arbitrary<flom::Frame> {
   static auto arbitrary() -> decltype(auto) {
-    return gen::build(
-        gen::construct<flom::Frame>(),
-        gen::set(&flom::Frame::positions,
-                 gen::arbitrary<std::unordered_map<std::string, double>>()),
-        gen::set(
-            &flom::Frame::effectors,
-            gen::arbitrary<std::unordered_map<std::string, flom::Effector>>()));
+    return gen::construct<flom::Frame>(gen::arbitrary<std::unordered_map<std::string, double>>(), gen::arbitrary<std::unordered_map<std::string, flom::Effector>>());
   }
 };
 
@@ -187,16 +181,17 @@ template <> struct Arbitrary<flom::Motion> {
           m.set_loop(loop);
           unsigned i = 0;
           for (auto const& [p, e] : frames) {
-            flom::Frame f;
+            std::unordered_map<std::string, double> positions;
+            std::unordered_map<std::string, flom::Effector> effectors;
             for(auto const& pair : boost::combine(joint_names, p)) {
-              f.positions.emplace(boost::get<0>(pair), boost::get<1>(pair));
+              positions.emplace(boost::get<0>(pair), boost::get<1>(pair));
             }
             for(auto const& pair : boost::combine(effector_types, e)) {
               auto const& [name, type] = boost::get<0>(pair);
               auto const& eff = boost::get<1>(pair);
-              f.effectors.emplace(name, convert_effector(type, eff));
+              effectors.emplace(name, convert_effector(type, eff));
             }
-            m.insert_keyframe(fps * i++, f);
+            m.insert_keyframe(fps * i++, flom::Frame{positions, effectors});
           }
           return m;
         },

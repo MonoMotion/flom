@@ -172,19 +172,20 @@ double Motion::length() const {
 Frame Motion::new_keyframe() const { return this->impl->new_keyframe(); }
 
 Frame Motion::Impl::new_keyframe() const noexcept {
-  Frame frame;
+  std::unordered_map<std::string, double> p;
+  std::unordered_map<std::string, Effector> e;
 
-  frame.positions.reserve(this->joint_names.size());
+  p.reserve(this->joint_names.size());
   for (const auto &name : this->joint_names) {
-    frame.positions.emplace(name, 0.0);
+    p.emplace(name, 0.0);
   }
 
-  frame.effectors.reserve(this->effector_types.size());
+  e.reserve(this->effector_types.size());
   for (const auto &[name, type] : this->effector_types) {
-    frame.effectors.emplace(name, type.new_effector());
+    e.emplace(name, type.new_effector());
   }
 
-  return frame;
+  return {p, e};
 }
 
 void Motion::Impl::add_initial_frame() {
@@ -213,7 +214,9 @@ bool Motion::Impl::is_valid() const {
 }
 
 bool Motion::Impl::is_valid_frame(const Frame &frame) const {
-  auto const &[p, e] = frame;
+  auto const &p = frame.positions();
+  auto const &e = frame.effectors();
+
   if (names_hash(p) != this->joints_hash ||
       names_hash(e) != this->effectors_hash) {
     return false;

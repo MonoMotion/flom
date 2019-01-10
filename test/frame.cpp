@@ -69,7 +69,7 @@ RC_BOOST_PROP(new_compatible_frame, (const flom::Frame &f1)) {
 
 RC_BOOST_PROP(joint_list, (const flom::Frame &f)) {
   std::unordered_set<std::string> o1, o2;
-  std::transform(std::cbegin(f.positions), std::cend(f.positions),
+  std::transform(std::cbegin(f.positions()), std::cend(f.positions()),
                  std::inserter(o1, std::end(o1)),
                  [](auto const &p) { return p.first; });
   boost::copy(f.joint_names(), std::inserter(o2, std::end(o2)));
@@ -79,7 +79,7 @@ RC_BOOST_PROP(joint_list, (const flom::Frame &f)) {
 
 RC_BOOST_PROP(effector_list, (const flom::Frame &f)) {
   std::unordered_set<std::string> o1, o2;
-  std::transform(std::cbegin(f.effectors), std::cend(f.effectors),
+  std::transform(std::cbegin(f.effectors()), std::cend(f.effectors()),
                  std::inserter(o1, std::end(o1)),
                  [](auto const &p) { return p.first; });
   boost::copy(f.effector_names(), std::inserter(o2, std::end(o2)));
@@ -92,13 +92,13 @@ RC_BOOST_PROP(interpolation, (const flom::Frame &f1)) {
 
   auto const f2 = f1.new_compatible_frame();
   auto const f3 = flom::interpolate(t, f1, f2);
-  for (auto &&[key, val] : f3.positions) {
-    RC_ASSERT(val ==
-              flom::interpolate(t, f1.positions.at(key), f2.positions.at(key)));
+  for (auto &&[key, val] : f3.positions()) {
+    RC_ASSERT(val == flom::interpolate(t, f1.positions().at(key),
+                                       f2.positions().at(key)));
   }
-  for (auto &&[key, val] : f3.effectors) {
-    RC_ASSERT(val ==
-              flom::interpolate(t, f1.effectors.at(key), f2.effectors.at(key)));
+  for (auto &&[key, val] : f3.effectors()) {
+    RC_ASSERT(val == flom::interpolate(t, f1.effectors().at(key),
+                                       f2.effectors().at(key)));
   }
 }
 

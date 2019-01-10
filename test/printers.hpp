@@ -100,11 +100,11 @@ std::ostream &operator<<(std::ostream &os, const FrameDifference &v) {
 std::ostream &operator<<(std::ostream &os, const Frame &v) {
   os << "frame(\n";
   os << "positions(";
-  for(auto const& [j, p] : v.positions) {
+  for(auto const& [j, p] : v.positions()) {
    os << j << ": " << p << ", ";
   }
   os << ")\neffectors(";
-  for(auto const& [l, e] : v.effectors) {
+  for(auto const& [l, e] : v.effectors()) {
    os << l << ": " << e << ", ";
   }
   os << "))";

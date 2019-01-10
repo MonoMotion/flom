@@ -35,12 +35,12 @@ FrameDifference::FrameDifference(const Frame &f1, const Frame &f2) {
   assert(f1.is_compatible(f2) &&
          "Cannot perform the operation on Incompatible frames");
 
-  for (auto const &[k, e] : f1.effectors) {
-    auto const o = f2.effectors.at(k);
+  for (auto const &[k, e] : f1.effectors()) {
+    auto const o = f2.effectors().at(k);
     this->effectors_.emplace(k, e - o);
   }
-  for (auto const &[k, p] : f1.positions) {
-    auto const o = f2.positions.at(k);
+  for (auto const &[k, p] : f1.positions()) {
+    auto const o = f2.positions().at(k);
     this->positions_.emplace(k, p - o);
   }
 }
@@ -93,11 +93,11 @@ Frame &Frame::operator+=(const FrameDifference &other) {
   assert(this->is_compatible(other) &&
          "Cannot use an incompatible FrameDifference instance");
 
-  for (auto &&[k, p] : this->positions) {
+  for (auto &&[k, p] : this->positions_) {
     auto const o = other.positions().at(k);
     p += o;
   }
-  for (auto &&[k, e] : this->effectors) {
+  for (auto &&[k, e] : this->effectors_) {
     auto const o = other.effectors().at(k);
     e += o;
   }
@@ -110,23 +110,23 @@ Frame interpolate(double t, Frame const &a, Frame const &b) {
          "Cannot perform the operation on Incompatible frames");
 
   Frame f;
-  for (auto const &[k, v1] : a.positions) {
-    auto const v2 = b.positions.at(k);
-    f.positions.emplace(k, lerp(t, v1, v2));
+  for (auto const &[k, v1] : a.positions()) {
+    auto const v2 = b.positions().at(k);
+    f.set_position(k, lerp(t, v1, v2));
   }
-  for (auto const &[k, v1] : a.effectors) {
-    auto const v2 = b.effectors.at(k);
-    f.effectors.emplace(k, interpolate(t, v1, v2));
+  for (auto const &[k, v1] : a.effectors()) {
+    auto const v2 = b.effectors().at(k);
+    f.set_effector(k, interpolate(t, v1, v2));
   }
   return f;
 }
 
 Frame Frame::new_compatible_frame() const {
   Frame copy{*this};
-  for (auto &&[k, v] : copy.positions) {
+  for (auto &&[k, v] : copy.positions_) {
     v = 0.0;
   }
-  for (auto &&[k, v] : copy.effectors) {
+  for (auto &&[k, v] : copy.effectors_) {
     Effector e{v.new_compatible_effector()};
     v = e;
   }
@@ -144,7 +144,7 @@ bool FrameDifference::is_compatible(const FrameDifference &other) const {
   return true;
 }
 bool Frame::is_compatible(const FrameDifference &other) const {
-  for (auto const &[k, v] : this->effectors) {
+  for (auto const &[k, v] : this->effectors()) {
     auto const &o = other.effectors().at(k);
     if (!v.is_compatible(o)) {
       return false;
@@ -154,8 +154,8 @@ bool Frame::is_compatible(const FrameDifference &other) const {
   return true;
 }
 bool Frame::is_compatible(const Frame &other) const {
-  for (auto const &[k, v] : this->effectors) {
-    auto const &o = other.effectors.at(k);
+  for (auto const &[k, v] : this->effectors()) {
+    auto const &o = other.effectors().at(k);
     if (!v.is_compatible(o)) {
       return false;
     }
@@ -222,6 +222,10 @@ void Frame::set_positions(const Frame::PositionsMap &positions) {
   this->positions_ = positions;
 }
 
+void Frame::set_position(const std::string &name, double v) {
+  this->positions_[name] = v;
+}
+
 const Frame::EffectorsMap &Frame::effectors() const & {
   return this->effectors_;
 }
@@ -231,6 +235,10 @@ Frame::EffectorsMap Frame::effectors() && {
 
 void Frame::set_effectors(const Frame::EffectorsMap &effectors) {
   this->effectors_ = effectors;
+}
+
+void Frame::set_effector(const std::string &name, const Effector &v) {
+  this->effectors_[name] = v;
 }
 
 KeyRange<std::string> Frame::joint_names() const {

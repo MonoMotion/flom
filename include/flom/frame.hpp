@@ -91,11 +91,13 @@ public:
   PositionsMap positions() &&;
 
   void set_positions(const PositionsMap &);
+  void set_position(const std::string &, double);
 
   const EffectorsMap &effectors() const &;
   EffectorsMap effectors() &&;
 
   void set_effectors(const EffectorsMap &);
+  void set_effector(const std::string &, const Effector &);
 
   KeyRange<std::string> joint_names() const;
   KeyRange<std::string> effector_names() const;
