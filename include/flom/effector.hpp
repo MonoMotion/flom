@@ -33,12 +33,19 @@ namespace flom {
 
 namespace qvm = boost::qvm;
 
-struct Location {
+class Location {
+public:
   using value_type = qvm::vec<double, 3>;
 
+private;
   value_type vec;
 
-  Location() {}
+public:
+  Location() = default;
+  explicit Location(const value_type&);
+
+  const value_type& vector() const;
+  void set_vector(const value_type&);
 };
 
 bool operator==(const Location &, const Location &);
@@ -47,12 +54,18 @@ bool almost_equal(const Location::value_type &, const Location::value_type &);
 bool almost_equal(const Location &, const Location &);
 
 struct Rotation {
+public:
   using value_type = qvm::quat<double>;
 
+private:
   value_type quat;
 
-  // TODO: ensure stored quaternion is normalized
-  Rotation() : quat({1, 0, 0, 0}) {}
+public:
+  Rotation();
+  explicit Rotation(const value_type&);
+
+  const value_type& quaternion() const;
+  void set_quaternion(const value_type&);
 };
 
 bool operator==(const Rotation &, const Rotation &);
