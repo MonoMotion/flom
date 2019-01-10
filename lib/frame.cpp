@@ -169,7 +169,7 @@ bool operator==(const FrameDifference &d1, const FrameDifference &d2) {
 }
 
 bool operator==(const Frame &f1, const Frame &f2) {
-  return f1.positions == f2.positions && f1.effectors == f2.effectors;
+  return f1.positions() == f2.positions() && f1.effectors() == f2.effectors();
 }
 
 bool operator!=(const Frame &f1, const Frame &f2) { return !(f1 == f2); }
@@ -191,27 +191,54 @@ bool almost_equal(const FrameDifference &f1, const FrameDifference &f2) {
 }
 
 bool almost_equal(const Frame &f1, const Frame &f2) {
-  auto p = std::all_of(std::cbegin(f1.positions), std::cend(f1.positions),
+  auto p = std::all_of(std::cbegin(f1.positions()), std::cend(f1.positions()),
                        [&f2](auto const &pair) {
                          auto const &[joint, pos1] = pair;
-                         auto const pos2 = f2.positions.at(joint);
+                         auto const pos2 = f2.positions().at(joint);
                          return almost_equal(pos1, pos2);
                        });
-  auto e = std::all_of(std::cbegin(f1.effectors), std::cend(f1.effectors),
+  auto e = std::all_of(std::cbegin(f1.effectors()), std::cend(f1.effectors()),
                        [&f2](auto const &pair) {
                          auto const &[link, e1] = pair;
-                         auto const e2 = f2.effectors.at(link);
+                         auto const e2 = f2.effectors().at(link);
                          return almost_equal(e1, e2);
                        });
   return p && e;
 }
 
+Frame::Frame() = default;
+Frame::Frame(const Frame::PositionsMap &positions,
+             const Frame::EffectorsMap &effectors)
+    : positions_(positions), effectors_(effectors) {}
+
+const Frame::PositionsMap &Frame::positions() const & {
+  return this->positions_;
+}
+Frame::PositionsMap Frame::positions() && {
+  return std::move(this->positions_);
+}
+
+void Frame::set_positions(const Frame::PositionsMap &positions) {
+  this->positions_ = positions;
+}
+
+const Frame::EffectorsMap &Frame::effectors() const & {
+  return this->effectors_;
+}
+Frame::EffectorsMap Frame::effectors() && {
+  return std::move(this->effectors_);
+}
+
+void Frame::set_effectors(const Frame::EffectorsMap &effectors) {
+  this->effectors_ = effectors;
+}
+
 KeyRange<std::string> Frame::joint_names() const {
-  return this->positions | boost::adaptors::map_keys;
+  return this->positions_ | boost::adaptors::map_keys;
 }
 
 KeyRange<std::string> Frame::effector_names() const {
-  return this->effectors | boost::adaptors::map_keys;
+  return this->effectors_ | boost::adaptors::map_keys;
 }
 
 } // namespace flom

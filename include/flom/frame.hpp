@@ -85,17 +85,17 @@ private:
 
 public:
   Frame();
-  Frame(const PositonsMap&, const EffectorsMap&);
+  Frame(const PositionsMap &, const EffectorsMap &);
 
-  const PositionsMap& positions() const&;
+  const PositionsMap &positions() const &;
   PositionsMap positions() &&;
 
-  void set_positions(const PositionsMap&);
+  void set_positions(const PositionsMap &);
 
-  const EffectorsMap& effectors() const&;
+  const EffectorsMap &effectors() const &;
   EffectorsMap effectors() &&;
 
-  void set_effectors(const EffectorsMap&);
+  void set_effectors(const EffectorsMap &);
 
   KeyRange<std::string> joint_names() const;
   KeyRange<std::string> effector_names() const;
