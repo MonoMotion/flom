@@ -117,6 +117,17 @@ Frame Frame::new_compatible_frame() const {
   return copy;
 }
 
+bool Frame::is_compatible(const Frame &other) const {
+  for (auto const &[k, v] : this->effectors) {
+    auto const &o = other.effectors.at(k);
+    if (!v.is_compatible(o)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 bool operator==(const FrameDifference &d1, const FrameDifference &d2) {
   return d1.positions() == d2.positions() && d1.effectors() == d2.effectors();
 }

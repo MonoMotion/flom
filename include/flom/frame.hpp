@@ -80,8 +80,8 @@ struct Frame : boost::addable<Frame, FrameDifference> {
   KeyRange<std::string> joint_names() const;
   KeyRange<std::string> effector_names() const;
 
-  // TODO: Add is_compatible and test for this using is_compatible
   Frame new_compatible_frame() const;
+  bool is_compatible(const Frame &) const;
 
   Frame &operator+=(const FrameDifference &);
 };

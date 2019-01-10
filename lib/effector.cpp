@@ -161,6 +161,14 @@ Effector Effector::new_compatible_effector() const {
   return e;
 }
 
+bool Effector::is_compatible(const Effector &other) const {
+  bool loc_v = static_cast<bool>(other.location);
+  bool loc_t = static_cast<bool>(this->location);
+  bool rot_v = static_cast<bool>(other.rotation);
+  bool rot_t = static_cast<bool>(this->rotation);
+  return loc_v == loc_t && rot_v == rot_t;
+}
+
 bool operator==(const Rotation &r1, const Rotation &r2) {
   return r1.quat == r2.quat;
 }

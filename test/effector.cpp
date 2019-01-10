@@ -57,6 +57,12 @@ RC_BOOST_PROP(sub, (const flom::Effector &e1)) {
   RC_ASSERT(e2 + diff == e1);
 }
 
+RC_BOOST_PROP(new_compatible_effector, (const flom::Effector &e1)) {
+  auto const e2 = e1.new_compatible_effector();
+  RC_ASSERT(e1.is_compatible(e2));
+  RC_ASSERT(e2.is_compatible(e1));
+}
+
 RC_BOOST_PROP(interpolation_location,
               (const flom::Effector &e1, const flom::Effector &e2)) {
   RC_PRE(e1.location && e2.location);
