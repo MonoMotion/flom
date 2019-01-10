@@ -82,7 +82,7 @@ RC_BOOST_PROP(insert_keyframe_incompatible_effector, (flom::Motion m)) {
   auto frame = m.new_keyframe();
   auto &&e = frame.effectors.begin()->second;
   if (e.location()) {
-    e.set_location(std::nullopt);
+    e.clear_location();
   } else {
     e.set_location(flom::Location{});
   }

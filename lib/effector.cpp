@@ -226,6 +226,8 @@ void Effector::set_location(const std::optional<Location> &location) {
   this->location_ = location;
 }
 
+void Effector::clear_location() { this->set_location(std::nullopt); }
+
 const std::optional<Rotation> &Effector::rotation() const & {
   return this->rotation_;
 }
@@ -236,6 +238,8 @@ std::optional<Rotation> Effector::rotation() && {
 void Effector::set_rotation(const std::optional<Rotation> &rotation) {
   this->rotation_ = rotation;
 }
+
+void Effector::clear_rotation() { this->set_rotation(std::nullopt); }
 
 Effector Effector::new_compatible_effector() const {
   Effector e{std::nullopt, std::nullopt};

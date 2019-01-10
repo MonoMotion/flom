@@ -160,7 +160,7 @@ template <> struct Arbitrary<flom::FrameDifference> {
 flom::Effector convert_effector(const flom::EffectorType& type, flom::Effector e) {
   // Convert the effector to be compatible with the EffectorType
   if (!type.location()) {
-    e.set_location(std::nullopt);
+    e.clear_location();
   } else {
     if (!e.location()) {
       e.set_location(flom::Location{});
@@ -168,7 +168,7 @@ flom::Effector convert_effector(const flom::EffectorType& type, flom::Effector e
   }
 
   if (!type.rotation()) {
-    e.set_rotation(std::nullopt);
+    e.clear_rotation();
   } else {
     if (!e.rotation()) {
       e.set_rotation(flom::Rotation {});

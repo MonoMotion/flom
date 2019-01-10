@@ -16,9 +16,11 @@ std::optional<CoordinateSystem> EffectorType::rotation() const {
 void EffectorType::set_location(std::optional<CoordinateSystem> location) {
   this->location_ = location;
 }
+void EffectorType::clear_location() { this->set_location(std::nullopt); }
 void EffectorType::set_rotation(std::optional<CoordinateSystem> rotation) {
   this->rotation_ = rotation;
 }
+void EffectorType::clear_rotation() { this->set_rotation(std::nullopt); }
 
 Effector EffectorType::new_effector() const {
   Effector e{std::nullopt, std::nullopt};

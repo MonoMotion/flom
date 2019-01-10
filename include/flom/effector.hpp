@@ -140,11 +140,13 @@ public:
   std::optional<Location> location() &&;
 
   void set_location(const std::optional<Location> &);
+  void clear_location();
 
   const std::optional<Rotation> &rotation() const &;
   std::optional<Rotation> rotation() &&;
 
   void set_rotation(const std::optional<Rotation> &);
+  void clear_rotation();
 
   Effector new_compatible_effector() const;
   bool is_compatible(const Effector &) const;
