@@ -38,10 +38,10 @@ public:
   using value_type = qvm::vec<double, 3>;
 
 private;
-  value_type vec;
+  value_type vector_;
 
 public:
-  Location() = default;
+  Location();
   explicit Location(const value_type&);
 
   const value_type& vector() const;
@@ -58,7 +58,7 @@ public:
   using value_type = qvm::quat<double>;
 
 private:
-  value_type quat;
+  value_type quat_;
 
 public:
   Rotation();

@@ -33,6 +33,28 @@
 
 namespace flom {
 
+Location::Location() = default;
+explicit Location::Location(const value_type& vector) : vector_(vector) {}
+
+const value_type& Location::vector() const {
+  return this->vector_;
+}
+
+void set_vector(const value_type& vector) {
+  this->vector_ = vector;
+}
+
+Rotation::Rotation() : quat_({1, 0, 0, 0}) {}
+explicit Rotation(const value_type& quat) : quat_(boost::qvm::normalized(quat)) {}
+
+const value_type& Rotation::quaternion() const {
+  return this->quat_;
+}
+
+void set_quaternion(const value_type& quat) {
+  this->quat_ = boost::qvm::normalized(quat);
+}
+
 EffectorDifference operator-(const Effector &e1, const Effector &e2) {
   return EffectorDifference{e1, e2};
 }
