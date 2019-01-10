@@ -23,7 +23,7 @@ void EffectorType::set_rotation(std::optional<CoordinateSystem> rotation) {
 void EffectorType::clear_rotation() { this->set_rotation(std::nullopt); }
 
 Effector EffectorType::new_effector() const {
-  Effector e{std::nullopt, std::nullopt};
+  Effector e;
   if (this->location()) {
     e.set_location(Location{});
   }

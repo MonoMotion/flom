@@ -133,7 +133,7 @@ private:
   std::optional<Rotation> rotation_;
 
 public:
-  Effector() = delete;
+  Effector();
   Effector(const std::optional<Location> &, const std::optional<Rotation> &);
 
   const std::optional<Location> &location() const &;

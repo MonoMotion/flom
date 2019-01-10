@@ -201,7 +201,7 @@ Effector interpolate(double t, Effector const &a, Effector const &b) {
   assert(a.is_compatible(b) &&
          "Cannot perform the operation on Incompatible effectors");
 
-  Effector e{std::nullopt, std::nullopt};
+  Effector e;
   if (a.rotation() && b.rotation()) {
     e.set_rotation(interpolate(t, *a.rotation(), *b.rotation()));
   }
@@ -211,6 +211,7 @@ Effector interpolate(double t, Effector const &a, Effector const &b) {
   return e;
 }
 
+Effector::Effector() : location_(std::nullopt), rotation_(std::nullopt) {}
 Effector::Effector(const std::optional<Location> &location,
                    const std::optional<Rotation> &rotation)
     : location_(location), rotation_(rotation) {}
@@ -242,7 +243,7 @@ void Effector::set_rotation(const std::optional<Rotation> &rotation) {
 void Effector::clear_rotation() { this->set_rotation(std::nullopt); }
 
 Effector Effector::new_compatible_effector() const {
-  Effector e{std::nullopt, std::nullopt};
+  Effector e;
   if (this->location()) {
     e.set_location(Location{});
   }

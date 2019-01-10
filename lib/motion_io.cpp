@@ -96,7 +96,7 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
                    std::inserter(frame.effectors, std::end(frame.effectors)),
                    [](auto const &p) {
                      auto const &effect_proto = p.second;
-                     Effector e{std::nullopt, std::nullopt};
+                     Effector e;
                      if (effect_proto.has_location()) {
                        e.set_location(proto_util::unpack_location(
                            effect_proto.location().value()));
