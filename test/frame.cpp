@@ -61,6 +61,12 @@ RC_BOOST_PROP(sub, (const flom::Frame &f1)) {
   RC_ASSERT(f2 + diff == f1);
 }
 
+RC_BOOST_PROP(new_compatible_frame, (const flom::Frame &f1)) {
+  auto const f2 = f1.new_compatible_frame();
+  RC_ASSERT(f1.is_compatible(f2));
+  RC_ASSERT(f2.is_compatible(f1));
+}
+
 RC_BOOST_PROP(joint_list, (const flom::Frame &f)) {
   std::unordered_set<std::string> o1, o2;
   std::transform(std::cbegin(f.positions), std::cend(f.positions),

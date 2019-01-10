@@ -57,7 +57,8 @@ public:
 
   // keys of these two member must not be changed after construction
   const std::unordered_set<std::string> joint_names;
-  std::unordered_map<std::string, EffectorType> effector_types;
+  const std::unordered_map<std::string, EffectorType> effector_types;
+  std::unordered_map<std::string, EffectorWeight> effector_weights;
 
   // Hash of joint_names
   const std::size_t joints_hash;
@@ -70,18 +71,9 @@ public:
       : model_id(model), loop(LoopType::None), raw_frames(),
         joint_names(joints), effector_types(effectors),
         joints_hash(names_hash(joints)), effectors_hash(names_hash(effectors)) {
-    this->add_initial_frame();
-  }
-
-  Impl(const std::unordered_set<std::string> &joints,
-       const std::unordered_set<std::string> &effectors,
-       const std::string &model = "")
-      : model_id(model), loop(LoopType::None), raw_frames(),
-        joint_names(joints), effector_types(), joints_hash(names_hash(joints)),
-        effectors_hash(names_hash(effectors)) {
-    this->effector_types.reserve(effectors.size());
-    for (const auto &name : effectors) {
-      this->effector_types.emplace(name, EffectorType{});
+    this->effector_weights.reserve(effectors.size());
+    for (const auto &[name, e] : effectors) {
+      this->effector_weights.emplace(name, EffectorWeight{0.0, 0.0});
     }
     this->add_initial_frame();
   }

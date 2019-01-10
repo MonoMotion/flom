@@ -36,10 +36,9 @@ namespace qvm = boost::qvm;
 struct Location {
   using value_type = qvm::vec<double, 3>;
 
-  double weight;
   value_type vec;
 
-  Location() : weight(0) {}
+  Location() {}
 };
 
 bool operator==(const Location &, const Location &);
@@ -50,11 +49,10 @@ bool almost_equal(const Location &, const Location &);
 struct Rotation {
   using value_type = qvm::quat<double>;
 
-  double weight;
   value_type quat;
 
   // TODO: ensure stored quaternion is normalized
-  Rotation() : weight(0), quat({1, 0, 0, 0}) {}
+  Rotation() : quat({1, 0, 0, 0}) {}
 };
 
 bool operator==(const Rotation &, const Rotation &);
@@ -93,6 +91,8 @@ public:
 
   EffectorDifference &operator*=(std::size_t);
   EffectorDifference &operator+=(const EffectorDifference &);
+
+  bool is_compatible(const EffectorDifference &) const;
 };
 
 bool operator==(const EffectorDifference &, const EffectorDifference &);
@@ -102,8 +102,9 @@ struct Effector : boost::addable<Effector, EffectorDifference> {
   std::optional<Location> location;
   std::optional<Rotation> rotation;
 
-  // TODO: Add is_compatible and test for this using is_compatible
   Effector new_compatible_effector() const;
+  bool is_compatible(const Effector &) const;
+  bool is_compatible(const EffectorDifference &) const;
 
   Effector &operator+=(const EffectorDifference &);
 };

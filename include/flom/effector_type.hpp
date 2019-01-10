@@ -20,25 +20,32 @@
 #ifndef FLOM_EFFECTOR_TYPE_HPP
 #define FLOM_EFFECTOR_TYPE_HPP
 
+#include "flom/effector.hpp"
+
+#include <optional>
+
 namespace flom {
 
 enum class CoordinateSystem { World, Local };
 
 struct EffectorType {
-  CoordinateSystem location;
-  CoordinateSystem rotation;
+private:
+  std::optional<CoordinateSystem> location_;
+  std::optional<CoordinateSystem> rotation_;
 
-  static EffectorType all_world() {
-    EffectorType type;
-    type.location = type.rotation = CoordinateSystem::World;
-    return type;
-  }
+public:
+  EffectorType() = delete;
+  EffectorType(std::optional<CoordinateSystem> location,
+               std::optional<CoordinateSystem> rotation);
 
-  static EffectorType all_local() {
-    EffectorType type;
-    type.location = type.rotation = CoordinateSystem::Local;
-    return type;
-  }
+  std::optional<CoordinateSystem> location() const;
+  std::optional<CoordinateSystem> rotation() const;
+
+  void set_location(std::optional<CoordinateSystem>);
+  void set_rotation(std::optional<CoordinateSystem>);
+
+  Effector new_effector() const;
+  bool is_compatible(const Effector &) const;
 };
 
 } // namespace flom

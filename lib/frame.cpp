@@ -31,6 +31,10 @@ FrameDifference operator-(const Frame &f1, const Frame &f2) {
 }
 
 FrameDifference::FrameDifference(const Frame &f1, const Frame &f2) {
+  // Not throwing exception in favor of better performance
+  assert(f1.is_compatible(f2) &&
+         "Cannot perform the operation on Incompatible frames");
+
   for (auto const &[k, e] : f1.effectors) {
     auto const o = f2.effectors.at(k);
     this->effectors_.emplace(k, e - o);
@@ -69,6 +73,10 @@ FrameDifference &FrameDifference::operator*=(std::size_t n) {
 }
 
 FrameDifference &FrameDifference::operator+=(const FrameDifference &other) {
+  // Not throwing exception in favor of better performance
+  assert(this->is_compatible(other) &&
+         "Cannot use an incompatible FrameDifference instance");
+
   for (auto &&[k, p] : this->positions_) {
     auto const o = other.positions_.at(k);
     p += o;
@@ -81,6 +89,10 @@ FrameDifference &FrameDifference::operator+=(const FrameDifference &other) {
 }
 
 Frame &Frame::operator+=(const FrameDifference &other) {
+  // Not throwing exception in favor of better performance
+  assert(this->is_compatible(other) &&
+         "Cannot use an incompatible FrameDifference instance");
+
   for (auto &&[k, p] : this->positions) {
     auto const o = other.positions().at(k);
     p += o;
@@ -93,6 +105,10 @@ Frame &Frame::operator+=(const FrameDifference &other) {
 }
 
 Frame interpolate(double t, Frame const &a, Frame const &b) {
+  // Not throwing exception in favor of better performance
+  assert(a.is_compatible(b) &&
+         "Cannot perform the operation on Incompatible frames");
+
   Frame f;
   for (auto const &[k, v1] : a.positions) {
     auto const v2 = b.positions.at(k);
@@ -115,6 +131,37 @@ Frame Frame::new_compatible_frame() const {
     v = e;
   }
   return copy;
+}
+
+bool FrameDifference::is_compatible(const FrameDifference &other) const {
+  for (auto const &[k, v] : this->effectors()) {
+    auto const &o = other.effectors().at(k);
+    if (!v.is_compatible(o)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+bool Frame::is_compatible(const FrameDifference &other) const {
+  for (auto const &[k, v] : this->effectors) {
+    auto const &o = other.effectors().at(k);
+    if (!v.is_compatible(o)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+bool Frame::is_compatible(const Frame &other) const {
+  for (auto const &[k, v] : this->effectors) {
+    auto const &o = other.effectors.at(k);
+    if (!v.is_compatible(o)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 bool operator==(const FrameDifference &d1, const FrameDifference &d2) {

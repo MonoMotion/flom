@@ -22,14 +22,11 @@ syntax = "proto3";
 package flom.proto;
 
 import "frame.proto";
+import "effector_type.proto";
 
-message EffectorType {
-  enum Type {
-    World = 0;
-    Local = 1;
-  }
-  Type location = 1;
-  Type rotation = 2;
+message EffectorWeight {
+  double location = 1;
+  double rotation = 2;
 }
 
 message Motion {
@@ -41,4 +38,5 @@ message Motion {
   Loop loop = 2;
   map<string, EffectorType> effector_types = 3;
   repeated Frame frames = 4;
+  map<string, EffectorWeight> effector_weights = 5;
 }

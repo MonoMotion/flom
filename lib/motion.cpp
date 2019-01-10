@@ -32,11 +32,6 @@
 
 namespace flom {
 
-Motion::Motion(const std::unordered_set<std::string> &joint_names,
-               const std::unordered_set<std::string> &effector_names,
-               const std::string &model)
-    : impl(std::make_unique<Motion::Impl>(joint_names, effector_names, model)) {
-}
 Motion::Motion(
     const std::unordered_set<std::string> &joint_names,
     const std::unordered_map<std::string, EffectorType> &effector_types,
@@ -161,8 +156,13 @@ EffectorType Motion::effector_type(const std::string &name) const {
   return this->impl->effector_types.at(name);
 }
 
-void Motion::set_effector_type(const std::string &name, EffectorType type) {
-  this->impl->effector_types.at(name) = type;
+EffectorWeight Motion::effector_weight(const std::string &name) const {
+  return this->impl->effector_weights.at(name);
+}
+
+void Motion::set_effector_weight(const std::string &name,
+                                 EffectorWeight weight) {
+  this->impl->effector_weights.at(name) = weight;
 }
 
 double Motion::length() const {
@@ -181,7 +181,7 @@ Frame Motion::Impl::new_keyframe() const noexcept {
 
   frame.effectors.reserve(this->effector_types.size());
   for (const auto &[name, type] : this->effector_types) {
-    frame.effectors.emplace(name, Effector{});
+    frame.effectors.emplace(name, type.new_effector());
   }
 
   return frame;
@@ -217,6 +217,11 @@ bool Motion::Impl::is_valid_frame(const Frame &frame) const {
   if (names_hash(p) != this->joints_hash ||
       names_hash(e) != this->effectors_hash) {
     return false;
+  }
+  for (auto const &[name, type] : this->effector_types) {
+    if (!type.is_compatible(e.at(name))) {
+      return false;
+    }
   }
   return true;
 }

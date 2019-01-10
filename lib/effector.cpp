@@ -38,31 +38,34 @@ EffectorDifference operator-(const Effector &e1, const Effector &e2) {
 }
 
 EffectorDifference::EffectorDifference(const Effector &e1, const Effector &e2) {
-  // TODO: Check compatibility
+  // Not throwing exception in favor of better performance
+  assert(e1.is_compatible(e2) &&
+         "Cannot perform the operation on Incompatible effectors");
+
   if (e1.location && e2.location) {
     this->location_ = Location{};
     this->location_->vec = e1.location->vec - e2.location->vec;
-    this->location_->weight = e1.location->weight - e2.location->weight;
   }
   if (e1.rotation && e2.rotation) {
     this->rotation_ = Rotation{};
     this->rotation_->quat =
         e1.rotation->quat * boost::qvm::inverse(e2.rotation->quat);
-    this->rotation_->weight = e1.rotation->weight - e2.rotation->weight;
   }
 }
 
 EffectorDifference &EffectorDifference::
 operator+=(const EffectorDifference &other) {
+  // Not throwing exception in favor of better performance
+  assert(this->is_compatible(other) &&
+         "Cannot use incompatibe FrameDifference instance");
+
   if (this->location_ && other.location_) {
     this->location_->vec += other.location_->vec;
-    this->location_->weight += other.location_->weight;
   }
   if (this->rotation_ && other.rotation_) {
     // TODO: Don't call normalize here
     boost::qvm::normalize(this->rotation_->quat);
     this->rotation_->quat *= boost::qvm::normalized(other.rotation_->quat);
-    this->rotation_->weight += other.rotation_->weight;
   }
   return *this;
 }
@@ -70,7 +73,6 @@ operator+=(const EffectorDifference &other) {
 EffectorDifference &EffectorDifference::operator*=(std::size_t n) {
   if (this->location_) {
     this->location_->vec *= n;
-    this->location_->weight *= n;
   }
   if (this->rotation_) {
     if (n == 0) {
@@ -83,21 +85,22 @@ EffectorDifference &EffectorDifference::operator*=(std::size_t n) {
         this->rotation_->quat *= quat;
       }
     }
-    this->rotation_->weight *= n;
   }
   return *this;
 }
 
 Effector &Effector::operator+=(const EffectorDifference &other) {
+  // Not throwing exception in favor of better performance
+  assert(this->is_compatible(other) &&
+         "Cannot use incompatibe FrameDifference instance");
+
   if (this->location && other.location()) {
     this->location->vec += other.location()->vec;
-    this->location->weight += other.location()->weight;
   }
   if (this->rotation && other.rotation()) {
     // TODO: Don't call normalize here
     boost::qvm::normalize(this->rotation->quat);
     this->rotation->quat *= boost::qvm::normalized(other.rotation()->quat);
-    this->rotation->weight += other.rotation()->weight;
   }
   return *this;
 }
@@ -136,6 +139,10 @@ bool almost_equal(const EffectorDifference &d1, const EffectorDifference &d2) {
 }
 
 Effector interpolate(double t, Effector const &a, Effector const &b) {
+  // Not throwing exception in favor of better performance
+  assert(a.is_compatible(b) &&
+         "Cannot perform the operation on Incompatible effectors");
+
   Effector e;
   if (a.rotation && b.rotation) {
     e.rotation = interpolate(t, *a.rotation, *b.rotation);
@@ -155,7 +162,6 @@ Rotation interpolate(double t, Rotation const &a, Rotation const &b) {
     result.quat = a.quat;
   }
 
-  result.weight = lerp(t, a.weight, b.weight);
   return result;
 }
 
@@ -170,8 +176,32 @@ Effector Effector::new_compatible_effector() const {
   return e;
 }
 
+bool EffectorDifference::is_compatible(const EffectorDifference &other) const {
+  bool loc_v = static_cast<bool>(other.location());
+  bool loc_t = static_cast<bool>(this->location());
+  bool rot_v = static_cast<bool>(other.rotation());
+  bool rot_t = static_cast<bool>(this->rotation());
+  return loc_v == loc_t && rot_v == rot_t;
+}
+
+bool Effector::is_compatible(const EffectorDifference &other) const {
+  bool loc_v = static_cast<bool>(other.location());
+  bool loc_t = static_cast<bool>(this->location);
+  bool rot_v = static_cast<bool>(other.rotation());
+  bool rot_t = static_cast<bool>(this->rotation);
+  return loc_v == loc_t && rot_v == rot_t;
+}
+
+bool Effector::is_compatible(const Effector &other) const {
+  bool loc_v = static_cast<bool>(other.location);
+  bool loc_t = static_cast<bool>(this->location);
+  bool rot_v = static_cast<bool>(other.rotation);
+  bool rot_t = static_cast<bool>(this->rotation);
+  return loc_v == loc_t && rot_v == rot_t;
+}
+
 bool operator==(const Rotation &r1, const Rotation &r2) {
-  return r1.weight == r2.weight && r1.quat == r2.quat;
+  return r1.quat == r2.quat;
 }
 
 bool operator!=(const Rotation &r1, const Rotation &r2) { return !(r1 == r2); }
@@ -183,18 +213,17 @@ bool almost_equal(const Rotation::value_type &q1,
 }
 
 bool almost_equal(const Rotation &r1, const Rotation &r2) {
-  return almost_equal(r1.weight, r2.weight) && almost_equal(r1.quat, r2.quat);
+  return almost_equal(r1.quat, r2.quat);
 }
 
 Location interpolate(double t, Location const &a, Location const &b) {
   Location result;
   result.vec = lerp(t, a.vec, b.vec);
-  result.weight = lerp(t, a.weight, b.weight);
   return result;
 }
 
 bool operator==(const Location &l1, const Location &l2) {
-  return l1.weight == l2.weight && l1.vec == l2.vec;
+  return l1.vec == l2.vec;
 }
 
 bool operator!=(const Location &l1, const Location &l2) { return !(l1 == l2); }
@@ -206,7 +235,7 @@ bool almost_equal(const Location::value_type &v1,
 }
 
 bool almost_equal(const Location &l1, const Location &l2) {
-  return almost_equal(l1.weight, l2.weight) && almost_equal(l1.vec, l2.vec);
+  return almost_equal(l1.vec, l2.vec);
 }
 
 bool operator==(const Effector &e1, const Effector &e2) {
