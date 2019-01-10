@@ -67,15 +67,13 @@ template <> struct Arbitrary<boost::qvm::quat<double>> {
 
 template <> struct Arbitrary<flom::Location> {
   static auto arbitrary() -> decltype(auto) {
-    return gen::build(gen::construct<flom::Location>(),
-                      gen::set(&flom::Location::vec, gen::arbitrary<boost::qvm::vec<double, 3>>()));
+    return gen::construct<flom::Location>(gen::arbitrary<boost::qvm::vec<double, 3>>());
   }
 };
 
 template <> struct Arbitrary<flom::Rotation> {
   static auto arbitrary() -> decltype(auto) {
-    return gen::build(gen::construct<flom::Rotation>(),
-                      gen::set(&flom::Rotation::quat, gen::arbitrary<boost::qvm::quat<double>>()));
+    return gen::construct<flom::Rotation>(gen::arbitrary<boost::qvm::quat<double>>());
   }
 };
 

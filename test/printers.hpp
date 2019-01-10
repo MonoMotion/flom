@@ -50,12 +50,12 @@ std::ostream &operator<<(std::ostream &os, const vec<T, Dim> &v) {
 namespace flom {
 
 std::ostream &operator<<(std::ostream &os, const Rotation &v) {
-  os << "rotation(" << v.quat << ")";
+  os << "rotation(" << v.quaternion() << ")";
   return os;
 }
 
 std::ostream &operator<<(std::ostream &os, const Location &v) {
-  os << "location(" << v.vec << ")";
+  os << "location(" << v.vector() << ")";
   return os;
 }
 

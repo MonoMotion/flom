@@ -72,7 +72,7 @@ RC_BOOST_PROP(interpolation_location,
 
   auto e3 = flom::interpolate(t, e1, e2);
   auto l = flom::interpolate(t, *e1.location, *e2.location);
-  RC_ASSERT(e3.location->vec == l.vec);
+  RC_ASSERT(e3.location->vector() == l.vector());
 }
 
 RC_BOOST_PROP(interpolation_rotation,
@@ -84,7 +84,7 @@ RC_BOOST_PROP(interpolation_rotation,
 
   auto e3 = flom::interpolate(t, e1, e2);
   auto r = flom::interpolate(t, *e1.rotation, *e2.rotation);
-  RC_ASSERT(e3.rotation->quat == r.quat);
+  RC_ASSERT(e3.rotation->quaternion() == r.quaternion());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
