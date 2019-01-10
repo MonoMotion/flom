@@ -20,6 +20,8 @@
 #ifndef FLOM_EFFECTOR_TYPE_HPP
 #define FLOM_EFFECTOR_TYPE_HPP
 
+#include "flom/effector.hpp"
+
 #include <optional>
 
 namespace flom {
@@ -41,6 +43,9 @@ public:
 
   void set_location(std::optional<CoordinateSystem>);
   void set_rotation(std::optional<CoordinateSystem>);
+
+  Effector new_effector() const;
+  bool is_compatible(const Effector &) const;
 };
 
 } // namespace flom
