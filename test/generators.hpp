@@ -67,15 +67,13 @@ template <> struct Arbitrary<boost::qvm::quat<double>> {
 
 template <> struct Arbitrary<flom::Location> {
   static auto arbitrary() -> decltype(auto) {
-    return gen::build(gen::construct<flom::Location>(),
-                      gen::set(&flom::Location::vec, gen::arbitrary<boost::qvm::vec<double, 3>>()));
+    return gen::construct<flom::Location>(gen::arbitrary<boost::qvm::vec<double, 3>>());
   }
 };
 
 template <> struct Arbitrary<flom::Rotation> {
   static auto arbitrary() -> decltype(auto) {
-    return gen::build(gen::construct<flom::Rotation>(),
-                      gen::set(&flom::Rotation::quat, gen::arbitrary<boost::qvm::quat<double>>()));
+    return gen::construct<flom::Rotation>(gen::arbitrary<boost::qvm::quat<double>>());
   }
 };
 
@@ -83,12 +81,12 @@ template <> struct Arbitrary<flom::Effector> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
         [](Maybe<flom::Location> const &l, Maybe<flom::Rotation> const &r) {
-          flom::Effector e;
+          flom::Effector e { std::nullopt, std::nullopt};
           if (l) {
-            e.location = *l;
+            e.set_location(*l);
           }
           if (r) {
-            e.rotation = *r;
+            e.set_rotation(*r);
           }
           return e;
         },
@@ -123,23 +121,13 @@ template <> struct Arbitrary<flom::EffectorType> {
 
 template <> struct Arbitrary<flom::Frame> {
   static auto arbitrary() -> decltype(auto) {
-    return gen::build(
-        gen::construct<flom::Frame>(),
-        gen::set(&flom::Frame::positions,
-                 gen::arbitrary<std::unordered_map<std::string, double>>()),
-        gen::set(
-            &flom::Frame::effectors,
-            gen::arbitrary<std::unordered_map<std::string, flom::Effector>>()));
+    return gen::construct<flom::Frame>(gen::arbitrary<std::unordered_map<std::string, double>>(), gen::arbitrary<std::unordered_map<std::string, flom::Effector>>());
   }
 };
 
 template <> struct Arbitrary<flom::EffectorDifference> {
   static auto arbitrary() -> decltype(auto) {
-    auto effector_gen = gen::build(
-        gen::construct<flom::Effector>(),
-        gen::set(&flom::Effector::location, gen::arbitrary<flom::Location>()),
-        gen::set(&flom::Effector::rotation, gen::arbitrary<flom::Rotation>())
-      );
+    auto effector_gen = gen::construct<flom::Effector>(gen::arbitrary<flom::Location>(), gen::arbitrary<flom::Rotation>());
     return gen::apply(
         [](const auto& e1, const auto& e2) {
           return e1 - e2;
@@ -166,18 +154,18 @@ template <> struct Arbitrary<flom::FrameDifference> {
 flom::Effector convert_effector(const flom::EffectorType& type, flom::Effector e) {
   // Convert the effector to be compatible with the EffectorType
   if (!type.location()) {
-    e.location = std::nullopt;
+    e.clear_location();
   } else {
-    if (!e.location) {
-      e.location = flom::Location {};
+    if (!e.location()) {
+      e.set_location(flom::Location{});
     }
   }
 
   if (!type.rotation()) {
-    e.rotation = std::nullopt;
+    e.clear_rotation();
   } else {
-    if (!e.rotation) {
-      e.rotation = flom::Rotation {};
+    if (!e.rotation()) {
+      e.set_rotation(flom::Rotation {});
     }
   }
 
@@ -193,16 +181,17 @@ template <> struct Arbitrary<flom::Motion> {
           m.set_loop(loop);
           unsigned i = 0;
           for (auto const& [p, e] : frames) {
-            flom::Frame f;
+            std::unordered_map<std::string, double> positions;
+            std::unordered_map<std::string, flom::Effector> effectors;
             for(auto const& pair : boost::combine(joint_names, p)) {
-              f.positions.emplace(boost::get<0>(pair), boost::get<1>(pair));
+              positions.emplace(boost::get<0>(pair), boost::get<1>(pair));
             }
             for(auto const& pair : boost::combine(effector_types, e)) {
               auto const& [name, type] = boost::get<0>(pair);
               auto const& eff = boost::get<1>(pair);
-              f.effectors.emplace(name, convert_effector(type, eff));
+              effectors.emplace(name, convert_effector(type, eff));
             }
-            m.insert_keyframe(fps * i++, f);
+            m.insert_keyframe(fps * i++, flom::Frame{positions, effectors});
           }
           return m;
         },
@@ -227,11 +216,7 @@ template <> struct Arbitrary<flom::Motion> {
               );
             auto positions_gen = gen::container<std::vector<double>>(num_joints, position_gen);
 
-            auto effector_gen = gen::build(
-                gen::construct<flom::Effector>(),
-                gen::set(&flom::Effector::location, gen::arbitrary<flom::Location>()),
-                gen::set(&flom::Effector::rotation, gen::arbitrary<flom::Rotation>())
-              );
+            auto effector_gen = gen::construct<flom::Effector>(gen::arbitrary<flom::Location>(), gen::arbitrary<flom::Rotation>());
             auto effectors_gen = gen::container<std::vector<flom::Effector>>(num_effectors, effector_gen);
 
             auto frames_gen = gen::nonEmpty(gen::container<std::vector<std::pair<std::vector<double>, std::vector<flom::Effector>>>>(gen::pair(positions_gen, effectors_gen)));

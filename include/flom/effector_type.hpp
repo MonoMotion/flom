@@ -42,7 +42,9 @@ public:
   std::optional<CoordinateSystem> rotation() const;
 
   void set_location(std::optional<CoordinateSystem>);
+  void clear_location();
   void set_rotation(std::optional<CoordinateSystem>);
+  void clear_rotation();
 
   Effector new_effector() const;
   bool is_compatible(const Effector &) const;

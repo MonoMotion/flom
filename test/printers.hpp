@@ -50,22 +50,22 @@ std::ostream &operator<<(std::ostream &os, const vec<T, Dim> &v) {
 namespace flom {
 
 std::ostream &operator<<(std::ostream &os, const Rotation &v) {
-  os << "rotation(" << v.quat << ")";
+  os << "rotation(" << v.quaternion() << ")";
   return os;
 }
 
 std::ostream &operator<<(std::ostream &os, const Location &v) {
-  os << "location(" << v.vec << ")";
+  os << "location(" << v.vector() << ")";
   return os;
 }
 
 std::ostream &operator<<(std::ostream &os, const Effector &v) {
   os << "effector(";
-  if(v.location) {
-    os << *v.location << ",";
+  if(v.location()) {
+    os << *v.location() << ",";
   }
-  if(v.rotation) {
-    os << *v.rotation << ",";
+  if(v.rotation()) {
+    os << *v.rotation() << ",";
   }
   os << ")";
   return os;
@@ -100,11 +100,11 @@ std::ostream &operator<<(std::ostream &os, const FrameDifference &v) {
 std::ostream &operator<<(std::ostream &os, const Frame &v) {
   os << "frame(\n";
   os << "positions(";
-  for(auto const& [j, p] : v.positions) {
+  for(auto const& [j, p] : v.positions()) {
    os << j << ": " << p << ", ";
   }
   os << ")\neffectors(";
-  for(auto const& [l, e] : v.effectors) {
+  for(auto const& [l, e] : v.effectors()) {
    os << l << ": " << e << ", ";
   }
   os << "))";

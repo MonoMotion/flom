@@ -76,8 +76,28 @@ bool operator==(const FrameDifference &, const FrameDifference &);
 bool almost_equal(const FrameDifference &, const FrameDifference &);
 
 struct Frame : boost::addable<Frame, FrameDifference> {
-  std::unordered_map<std::string, double> positions;
-  std::unordered_map<std::string, Effector> effectors;
+private:
+  using PositionsMap = std::unordered_map<std::string, double>;
+  using EffectorsMap = std::unordered_map<std::string, Effector>;
+
+  PositionsMap positions_;
+  EffectorsMap effectors_;
+
+public:
+  Frame();
+  Frame(const PositionsMap &, const EffectorsMap &);
+
+  const PositionsMap &positions() const &;
+  PositionsMap positions() &&;
+
+  void set_positions(const PositionsMap &);
+  void set_position(const std::string &, double);
+
+  const EffectorsMap &effectors() const &;
+  EffectorsMap effectors() &&;
+
+  void set_effectors(const EffectorsMap &);
+  void set_effector(const std::string &, const Effector &);
 
   KeyRange<std::string> joint_names() const;
   KeyRange<std::string> effector_names() const;

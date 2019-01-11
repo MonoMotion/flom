@@ -87,28 +87,30 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
     m.impl->loop = LoopType::None;
   }
   for (auto const &frame_proto : motion_proto.frames()) {
-    Frame frame;
+    std::unordered_map<std::string, double> positions;
+    std::unordered_map<std::string, Effector> effectors;
+
     auto const &positions_proto = frame_proto.positions();
     std::copy(std::cbegin(positions_proto), std::cend(positions_proto),
-              std::inserter(frame.positions, std::end(frame.positions)));
+              std::inserter(positions, std::end(positions)));
     auto const &effectors_proto = frame_proto.effectors();
-    std::transform(std::cbegin(effectors_proto), std::cend(effectors_proto),
-                   std::inserter(frame.effectors, std::end(frame.effectors)),
-                   [](auto const &p) {
-                     auto const &effect_proto = p.second;
-                     Effector e;
-                     if (effect_proto.has_location()) {
-                       e.location = proto_util::unpack_location(
-                           effect_proto.location().value());
-                     }
-                     if (effect_proto.has_rotation()) {
-                       e.rotation = proto_util::unpack_rotation(
-                           effect_proto.rotation().value());
-                     }
-                     // TODO: Delete copy
-                     return std::make_pair(p.first, e);
-                   });
-    m.insert_keyframe(frame_proto.t(), frame);
+    std::transform(
+        std::cbegin(effectors_proto), std::cend(effectors_proto),
+        std::inserter(effectors, std::end(effectors)), [](auto const &p) {
+          auto const &effect_proto = p.second;
+          Effector e;
+          if (effect_proto.has_location()) {
+            e.set_location(
+                proto_util::unpack_location(effect_proto.location().value()));
+          }
+          if (effect_proto.has_rotation()) {
+            e.set_rotation(
+                proto_util::unpack_rotation(effect_proto.rotation().value()));
+          }
+          // TODO: Delete copy
+          return std::make_pair(p.first, e);
+        });
+    m.insert_keyframe(frame_proto.t(), Frame{positions, effectors});
   }
 
   if (!m.is_valid()) {
@@ -165,17 +167,17 @@ proto::Motion Motion::Impl::to_protobuf() const {
     auto *frame_proto = m.add_frames();
     frame_proto->set_t(t);
     // TODO: Use <algorithm> (e.g. std::copy)
-    for (auto const &[joint, change] : frame.positions) {
+    for (auto const &[joint, change] : frame.positions()) {
       (*frame_proto->mutable_positions())[joint] = change;
     }
-    for (auto const &[link, effect] : frame.effectors) {
+    for (auto const &[link, effect] : frame.effectors()) {
       proto::Effector e;
-      if (effect.location) {
-        proto_util::pack_location(*effect.location,
+      if (effect.location()) {
+        proto_util::pack_location(*effect.location(),
                                   e.mutable_location()->mutable_value());
       }
-      if (effect.rotation) {
-        proto_util::pack_rotation(*effect.rotation,
+      if (effect.rotation()) {
+        proto_util::pack_rotation(*effect.rotation(),
                                   e.mutable_rotation()->mutable_value());
       }
       (*frame_proto->mutable_effectors())[link] = e;
