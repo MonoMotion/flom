@@ -283,9 +283,9 @@ Location interpolate(double t, Location const &a, Location const &b) {
 
 Rotation interpolate(double t, Rotation const &a, Rotation const &b) {
   // TODO: Check possibility of NaNs before calling qvm::slerp
-  auto quat = qvm::slerp(a.quaternion(), b.quaternion(), t);
+  auto const quat = qvm::slerp(a.quaternion(), b.quaternion(), t);
   if (std::isnan(qvm::S(quat))) {
-    quat = a.quaternion();
+    return a;
   }
 
   return Rotation{quat};
