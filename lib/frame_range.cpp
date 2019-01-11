@@ -33,7 +33,8 @@ frame_iterator &frame_iterator::operator=(frame_iterator &&) = default;
 frame_iterator::~frame_iterator() = default;
 
 frame_iterator::value_type frame_iterator::operator*() const {
-  return this->impl->motion->frame_at(this->current_time());
+  auto const t = this->current_time();
+  return std::make_pair(t, this->impl->motion->frame_at(t));
 }
 
 frame_iterator &frame_iterator::operator++() noexcept {
