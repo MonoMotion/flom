@@ -22,6 +22,9 @@ cmake_minimum_required(VERSION 3.0.2)
 add_executable(test_effector effector.cpp)
 flom_add_test(test_effector)
 
+add_executable(test_location location.cpp)
+flom_add_test(test_location)
+
 add_executable(test_rotation rotation.cpp)
 flom_add_test(test_rotation)
 
