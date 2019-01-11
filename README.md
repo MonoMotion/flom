@@ -23,7 +23,7 @@ Or you can [build manually](#build-manually)
 
 - Boost (headers)
 - protobuf 3.0.0 or later
-- cmake 3.9.6 or later
+- cmake 3.13.2 or later
 - C++17 compiler
   - clang 5.0 or later
   - gcc 6.1 or later
