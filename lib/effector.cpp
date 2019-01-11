@@ -33,7 +33,7 @@
 
 namespace flom {
 
-Location::Location() = default;
+Location::Location() : vector_({0, 0, 0}) {}
 Location::Location(const Location::value_type &vector) : vector_(vector) {}
 
 const Location::value_type &Location::vector() const { return this->vector_; }
