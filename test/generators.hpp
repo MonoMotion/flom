@@ -101,6 +101,13 @@ template <> struct Arbitrary<flom::CoordinateSystem> {
   }
 };
 
+template <> struct Arbitrary<flom::EffectorWeight> {
+  static auto arbitrary() -> decltype(auto) {
+    auto const g = gen::map(gen::inRange(0, 100), [](int i) { return static_cast<double>(i) / 100; });
+    return gen::construct<flom::EffectorWeight>(g, g);
+  }
+};
+
 template <> struct Arbitrary<flom::EffectorType> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
@@ -176,22 +183,30 @@ template <> struct Arbitrary<flom::Motion> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
         [](std::string const &model_id, flom::LoopType loop, double fps, auto const& t) {
-          auto const& [joint_names, effector_types, frames] = t;
+          auto const& [joint_names, effector_types, frames, weights] = t;
           flom::Motion m(joint_names, effector_types, model_id);
           m.set_loop(loop);
-          unsigned i = 0;
-          for (auto const& [p, e] : frames) {
-            std::unordered_map<std::string, double> positions;
-            std::unordered_map<std::string, flom::Effector> effectors;
-            for(auto const& pair : boost::combine(joint_names, p)) {
-              positions.emplace(boost::get<0>(pair), boost::get<1>(pair));
+          {
+            unsigned i = 0;
+            for (auto const& [name, type] : effector_types) {
+              m.set_effector_weight(name, weights[i++]);
             }
-            for(auto const& pair : boost::combine(effector_types, e)) {
-              auto const& [name, type] = boost::get<0>(pair);
-              auto const& eff = boost::get<1>(pair);
-              effectors.emplace(name, convert_effector(type, eff));
+          }
+          {
+            unsigned i = 0;
+            for (auto const& [p, e] : frames) {
+              std::unordered_map<std::string, double> positions;
+              std::unordered_map<std::string, flom::Effector> effectors;
+              for(auto const& pair : boost::combine(joint_names, p)) {
+                positions.emplace(boost::get<0>(pair), boost::get<1>(pair));
+              }
+              for(auto const& pair : boost::combine(effector_types, e)) {
+                auto const& [name, type] = boost::get<0>(pair);
+                auto const& eff = boost::get<1>(pair);
+                effectors.emplace(name, convert_effector(type, eff));
+              }
+              m.insert_keyframe(fps * i++, flom::Frame{positions, effectors});
             }
-            m.insert_keyframe(fps * i++, flom::Frame{positions, effectors});
           }
           return m;
         },
@@ -218,9 +233,10 @@ template <> struct Arbitrary<flom::Motion> {
 
             auto effector_gen = gen::construct<flom::Effector>(gen::arbitrary<flom::Location>(), gen::arbitrary<flom::Rotation>());
             auto effectors_gen = gen::container<std::vector<flom::Effector>>(num_effectors, effector_gen);
+            auto weights_gen = gen::container<std::vector<flom::EffectorWeight>>(num_effectors, gen::arbitrary<flom::EffectorWeight>());
 
             auto frames_gen = gen::nonEmpty(gen::container<std::vector<std::pair<std::vector<double>, std::vector<flom::Effector>>>>(gen::pair(positions_gen, effectors_gen)));
-            return gen::tuple(joint_names_gen, effector_names_gen, frames_gen);
+            return gen::tuple(joint_names_gen, effector_names_gen, frames_gen, weights_gen);
         }));
   }
 };
