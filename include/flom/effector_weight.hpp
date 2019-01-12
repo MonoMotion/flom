@@ -20,9 +20,11 @@
 #ifndef FLOM_EFFECTOR_WEIGHT_HPP
 #define FLOM_EFFECTOR_WEIGHT_HPP
 
+#include <boost/operators.hpp>
+
 namespace flom {
 
-class EffectorWeight {
+class EffectorWeight : boost::operators<EffectorWeight> {
 private:
   double location_;
   double rotation_;
@@ -40,6 +42,8 @@ public:
   void set_location(double);
   void set_rotation(double);
 };
+
+bool operator==(const EffectorWeight &, const EffectorWeight &);
 
 } // namespace flom
 

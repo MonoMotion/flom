@@ -27,4 +27,8 @@ double EffectorWeight::validate_weight(double weight) {
   return weight;
 }
 
+bool operator==(const EffectorWeight &v1, const EffectorWeight &v2) {
+  return v1.location() == v2.location() && v1.rotation() == v2.rotation();
+}
+
 } // namespace flom
