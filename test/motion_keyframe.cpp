@@ -106,4 +106,16 @@ RC_BOOST_PROP(delete_keyframe, (flom::Motion m)) {
                       flom::errors::KeyframeNotFoundError);
 }
 
+RC_BOOST_PROP(clear_keyframe, (flom::Motion m)) {
+  RC_ASSERT(m.is_valid());
+
+  m.clear_keyframes();
+
+  RC_ASSERT(m.length() == 0);
+
+  // TODO: Use const (after #43)
+  auto range = m.keyframes();
+  RC_ASSERT(std::distance(range.begin(), range.end()) == 1);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

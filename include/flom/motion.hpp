@@ -76,6 +76,7 @@ public:
   void insert_keyframe(double t, const Frame &);
   void delete_keyframe(double t, bool loose = true);
   KeyframeRange keyframes();
+  void clear_keyframes();
 
   EffectorType effector_type(const std::string &) const;
 

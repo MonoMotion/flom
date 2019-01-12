@@ -142,6 +142,12 @@ KeyframeRange Motion::keyframes() {
           *this};
 }
 
+void Motion::clear_keyframes() {
+  auto const first = std::cbegin(this->impl->raw_frames);
+  auto const end = std::cend(this->impl->raw_frames);
+  this->impl->raw_frames.erase(std::next(first, 1), end);
+}
+
 LoopType Motion::loop() const { return this->impl->loop; }
 
 void Motion::set_loop(LoopType loop) { this->impl->loop = loop; }
