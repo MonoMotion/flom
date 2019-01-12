@@ -31,6 +31,23 @@
 
 BOOST_AUTO_TEST_SUITE(motion_frame_range)
 
+RC_BOOST_PROP(frames_range_t, (flom::Motion m)) {
+  auto const fps = *rc::gen::positive<double>();
+
+  RC_PRE(m.length() >= fps);
+  m.set_loop(flom::LoopType::None);
+
+  unsigned long count = 0;
+  for (auto const &[t, frame] : m.frames(fps)) {
+    RC_ASSERT(t == count * fps);
+    if (t > m.length()) {
+      RC_FAIL("Iteration does not over");
+      break;
+    }
+    count++;
+  }
+}
+
 RC_BOOST_PROP(frames_range_none, (const flom::Motion &m)) {
   auto const fps = *rc::gen::positive<double>();
 
@@ -39,9 +56,9 @@ RC_BOOST_PROP(frames_range_none, (const flom::Motion &m)) {
   RC_ASSERT(m.is_valid());
 
   unsigned long count = 0;
-  for (auto const &frame : m.frames(fps)) {
-    RC_ASSERT(frame == m.frame_at(count * fps));
-    if (count * fps > m.length()) {
+  for (auto const &[t, frame] : m.frames(fps)) {
+    RC_ASSERT(frame == m.frame_at(t));
+    if (t > m.length()) {
       RC_FAIL("Iteration does not over");
       break;
     }
@@ -56,9 +73,9 @@ RC_BOOST_PROP(frames_range_wrap, (const flom::Motion &m)) {
   RC_ASSERT(m.is_valid());
 
   unsigned long count = 0;
-  for (auto const &frame : m.frames(fps)) {
-    RC_ASSERT(frame == m.frame_at(count * fps));
-    if (count * fps > m.length() * 2) {
+  for (auto const &[t, frame] : m.frames(fps)) {
+    RC_ASSERT(frame == m.frame_at(t));
+    if (t > m.length() * 2) {
       break;
     }
     count++;

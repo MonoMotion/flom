@@ -45,15 +45,12 @@ void pack_vec3(boost::qvm::vec<double, 3> const &vec, proto::Vec3 *v_proto) {
 }
 
 Location unpack_location(proto::Location const &trans_proto) {
-  Location trans;
-  trans.vec = unpack_vec3(trans_proto.vector());
-  trans.weight = trans_proto.weight();
-  return trans;
+  auto const vec = unpack_vec3(trans_proto.vector());
+  return Location{vec};
 }
 
 void pack_location(Location const &trans, proto::Location *trans_proto) {
-  pack_vec3(trans.vec, trans_proto->mutable_vector());
-  trans_proto->set_weight(trans.weight);
+  pack_vec3(trans.vector(), trans_proto->mutable_vector());
 }
 
 boost::qvm::quat<double> unpack_quat(proto::Quaternion const &quat_proto) {
@@ -70,19 +67,20 @@ void pack_quat(boost::qvm::quat<double> const &quat,
 }
 
 Rotation unpack_rotation(proto::Rotation const &rot_proto) {
-  Rotation rot;
-  rot.quat = unpack_quat(rot_proto.quaternion());
-  rot.weight = rot_proto.weight();
-  return rot;
+  auto const quat = unpack_quat(rot_proto.quaternion());
+  return Rotation{quat};
 }
 
 void pack_rotation(Rotation const &rot, proto::Rotation *rot_proto) {
-  pack_quat(rot.quat, rot_proto->mutable_quaternion());
-  rot_proto->set_weight(rot.weight);
+  pack_quat(rot.quaternion(), rot_proto->mutable_quaternion());
 }
 
-proto::EffectorType::Type pack_coord_system(CoordinateSystem const &c) {
-  switch (c) {
+proto::EffectorType::Type
+pack_coord_system(std::optional<CoordinateSystem> const &c) {
+  if (!c) {
+    return proto::EffectorType::Type::EffectorType_Type_None;
+  }
+  switch (*c) {
   case CoordinateSystem::World:
     return proto::EffectorType::Type::EffectorType_Type_World;
   case CoordinateSystem::Local:
@@ -91,19 +89,20 @@ proto::EffectorType::Type pack_coord_system(CoordinateSystem const &c) {
 }
 
 void pack_effector_type(EffectorType const &e, proto::EffectorType *proto) {
-  proto->set_location(pack_coord_system(e.location));
-  proto->set_rotation(pack_coord_system(e.rotation));
+  proto->set_location(pack_coord_system(e.location()));
+  proto->set_rotation(pack_coord_system(e.rotation()));
 }
 
 EffectorType unpack_effector_type(proto::EffectorType const &proto) {
-  EffectorType e;
-  e.location = unpack_coord_system(proto.location());
-  e.rotation = unpack_coord_system(proto.rotation());
-  return e;
+  return {unpack_coord_system(proto.location()),
+          unpack_coord_system(proto.rotation())};
 }
 
-CoordinateSystem unpack_coord_system(proto::EffectorType::Type const &proto) {
-  if (proto == proto::EffectorType::Type::EffectorType_Type_World) {
+std::optional<CoordinateSystem>
+unpack_coord_system(proto::EffectorType::Type const &proto) {
+  if (proto == proto::EffectorType::Type::EffectorType_Type_None) {
+    return std::nullopt;
+  } else if (proto == proto::EffectorType::Type::EffectorType_Type_World) {
     return CoordinateSystem::World;
   } else if (proto == proto::EffectorType::Type::EffectorType_Type_Local) {
     return CoordinateSystem::Local;
@@ -111,6 +110,16 @@ CoordinateSystem unpack_coord_system(proto::EffectorType::Type const &proto) {
     assert(false); // unreachable
     return CoordinateSystem::World;
   }
+}
+
+void pack_effector_weight(EffectorWeight const &weight,
+                          proto::EffectorWeight *proto) {
+  proto->set_location(weight.location());
+  proto->set_rotation(weight.rotation());
+}
+
+EffectorWeight unpack_effector_weight(proto::EffectorWeight const &proto) {
+  return {proto.location(), proto.rotation()};
 }
 
 } // namespace proto_util

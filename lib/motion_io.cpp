@@ -66,9 +66,8 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
                  std::cend(motion_proto.effector_types()),
                  std::inserter(effector_types, std::end(effector_types)),
                  [](auto const &p) {
-                   auto const &[link, type_proto] = p;
                    return std::make_pair(
-                       link, proto_util::unpack_effector_type(type_proto));
+                       p.first, proto_util::unpack_effector_type(p.second));
                  });
   auto const &init_pos = motion_proto.frames(0).positions();
   std::transform(std::cbegin(init_pos), std::cend(init_pos),
@@ -76,34 +75,42 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
                  [](auto const &p) { return p.first; });
 
   Motion m(joint_names, effector_types, motion_proto.model_id());
+
+  for (auto const &p : motion_proto.effector_weights()) {
+    m.set_effector_weight(p.first,
+                          proto_util::unpack_effector_weight(p.second));
+  }
+
   if (motion_proto.loop() == proto::Motion::Loop::Motion_Loop_Wrap) {
     m.impl->loop = LoopType::Wrap;
   } else if (motion_proto.loop() == proto::Motion::Loop::Motion_Loop_None) {
     m.impl->loop = LoopType::None;
   }
   for (auto const &frame_proto : motion_proto.frames()) {
-    Frame frame;
+    std::unordered_map<std::string, double> positions;
+    std::unordered_map<std::string, Effector> effectors;
+
     auto const &positions_proto = frame_proto.positions();
     std::copy(std::cbegin(positions_proto), std::cend(positions_proto),
-              std::inserter(frame.positions, std::end(frame.positions)));
+              std::inserter(positions, std::end(positions)));
     auto const &effectors_proto = frame_proto.effectors();
-    std::transform(std::cbegin(effectors_proto), std::cend(effectors_proto),
-                   std::inserter(frame.effectors, std::end(frame.effectors)),
-                   [](auto const &p) {
-                     auto const &effect_proto = p.second;
-                     Effector e;
-                     if (effect_proto.has_location()) {
-                       e.location = proto_util::unpack_location(
-                           effect_proto.location().value());
-                     }
-                     if (effect_proto.has_rotation()) {
-                       e.rotation = proto_util::unpack_rotation(
-                           effect_proto.rotation().value());
-                     }
-                     // TODO: Delete copy
-                     return std::make_pair(p.first, e);
-                   });
-    m.insert_keyframe(frame_proto.t(), frame);
+    std::transform(
+        std::cbegin(effectors_proto), std::cend(effectors_proto),
+        std::inserter(effectors, std::end(effectors)), [](auto const &p) {
+          auto const &effect_proto = p.second;
+          Effector e;
+          if (effect_proto.has_location()) {
+            e.set_location(
+                proto_util::unpack_location(effect_proto.location().value()));
+          }
+          if (effect_proto.has_rotation()) {
+            e.set_rotation(
+                proto_util::unpack_rotation(effect_proto.rotation().value()));
+          }
+          // TODO: Delete copy
+          return std::make_pair(p.first, e);
+        });
+    m.insert_keyframe(frame_proto.t(), Frame{positions, effectors});
   }
 
   if (!m.is_valid()) {
@@ -149,6 +156,10 @@ proto::Motion Motion::Impl::to_protobuf() const {
   } else if (this->loop == LoopType::None) {
     m.set_loop(proto::Motion::Loop::Motion_Loop_None);
   }
+  for (auto const &[link, weight] : this->effector_weights) {
+    proto_util::pack_effector_weight(weight,
+                                     &(*m.mutable_effector_weights())[link]);
+  }
   for (auto const &[link, type] : this->effector_types) {
     proto_util::pack_effector_type(type, &(*m.mutable_effector_types())[link]);
   }
@@ -156,115 +167,23 @@ proto::Motion Motion::Impl::to_protobuf() const {
     auto *frame_proto = m.add_frames();
     frame_proto->set_t(t);
     // TODO: Use <algorithm> (e.g. std::copy)
-    for (auto const &[joint, change] : frame.positions) {
+    for (auto const &[joint, change] : frame.positions()) {
       (*frame_proto->mutable_positions())[joint] = change;
     }
-    for (auto const &[link, effect] : frame.effectors) {
+    for (auto const &[link, effect] : frame.effectors()) {
       proto::Effector e;
-      if (effect.location) {
-        proto_util::pack_location(*effect.location,
+      if (effect.location()) {
+        proto_util::pack_location(*effect.location(),
                                   e.mutable_location()->mutable_value());
       }
-      if (effect.rotation) {
-        proto_util::pack_rotation(*effect.rotation,
+      if (effect.rotation()) {
+        proto_util::pack_rotation(*effect.rotation(),
                                   e.mutable_rotation()->mutable_value());
       }
       (*frame_proto->mutable_effectors())[link] = e;
     }
   }
 
-  return m;
-}
-
-Motion Motion::load_legacy_json(std::ifstream &s) {
-  using json = nlohmann::json;
-
-  json json_data;
-  s >> json_data;
-
-  std::unordered_set<std::string> joint_names, effector_names;
-  {
-    auto const &init_frame = json_data["frames"][0];
-    auto const positions = init_frame["position"];
-    // TODO: Use <algorithm> (e.g. std::copy)
-    for (auto it = std::cbegin(positions); it != std::cend(positions); ++it) {
-      joint_names.insert(it.key());
-    }
-    auto const effectors = init_frame["effector"];
-    for (auto it = std::cbegin(effectors); it != std::cend(effectors); ++it) {
-      effector_names.insert(it.key());
-    }
-  }
-
-  Motion m(joint_names, effector_names, json_data["model"]);
-  {
-    auto loop_type = json_data["loop"];
-    if (loop_type == "wrap") {
-      m.impl->loop = LoopType::Wrap;
-    } else if (loop_type == "none") {
-      m.impl->loop = LoopType::None;
-    } else {
-      throw std::runtime_error("Unknown loop type");
-    }
-  }
-  {
-    auto const frames = json_data["frames"];
-    for (auto const &frame : frames) {
-      Frame f;
-      const double time = frame["timepoint"];
-      auto const positions = frame["position"];
-      // TODO: Use <algorithm> (e.g. std::copy)
-      for (auto it = std::cbegin(positions); it != std::cend(positions); ++it) {
-        f.positions[it.key()] = it.value();
-      }
-      auto const effectors = frame["effector"];
-      for (auto it = std::cbegin(effectors); it != std::cend(effectors); ++it) {
-        Effector e;
-        auto const effect_data = it.value();
-        if (effect_data.count("location") != 0) {
-          Location trans;
-          auto const trans_data = effect_data["location"];
-          auto const &value = trans_data["value"];
-          // Only last frame is used, so not good code, but this is for
-          // importing legacy format anyway (?)
-          if (trans_data["space"] == "world") {
-            m.impl->effector_types[it.key()].location = CoordinateSystem::World;
-          } else if (trans_data["space"] == "local") {
-            m.impl->effector_types[it.key()].location = CoordinateSystem::Local;
-          }
-          trans.vec = boost::qvm::vec<double, 3>{value[0], value[1], value[2]};
-          trans.weight = trans_data["weight"];
-          e.location = std::move(trans);
-        }
-
-        if (effect_data.count("rotation") != 0) {
-          Rotation rot;
-          auto const rot_data = effect_data["rotation"];
-          auto const &value = rot_data["value"];
-          // Only last frame is used, so not good code, but this is for
-          // importing legacy format anyway (?)
-          if (rot_data["space"] == "world") {
-            m.impl->effector_types[it.key()].rotation = CoordinateSystem::World;
-          } else if (rot_data["space"] == "local") {
-            m.impl->effector_types[it.key()].rotation = CoordinateSystem::Local;
-          }
-          rot.quat =
-              boost::qvm::quat<double>{value[0], value[1], value[2], value[3]};
-          rot.weight = rot_data["weight"];
-          e.rotation = std::move(rot);
-        }
-
-        f.effectors[it.key()] = e;
-      }
-      m.impl->raw_frames[time] = std::move(f);
-    }
-  }
-
-  if (!m.is_valid()) {
-    throw errors::InvalidFrameError{"while loading legacy motion data"};
-  }
-
-  // copy occurs...
   return m;
 }
 

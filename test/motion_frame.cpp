@@ -34,44 +34,98 @@
 
 BOOST_AUTO_TEST_SUITE(motion_frame)
 
-RC_BOOST_PROP(retrieve_frame_wrap, (const flom::Motion &m)) {
-  auto const t = *rc::gen::nonNegative<double>();
+RC_BOOST_PROP(retrieve_frame, (flom::Motion m)) {
+  auto t = *rc::gen::nonNegative<double>();
 
-  RC_PRE(m.loop() == flom::LoopType::Wrap);
-  RC_ASSERT(m.is_valid());
+  RC_PRE(m.length() != 0);
+  // RC_PRE(m.length() >= t);
+  while (m.length() < t) {
+    t -= m.length();
+  }
 
-  auto frame = m.frame_at(t);
+  auto const frame = m.frame_at(t);
 
   flom::Frame expected_frame;
-  if (m.length() == 0) {
-    expected_frame = m.frame_at(0);
-  } else {
-    auto len = m.length();
-    auto mul = static_cast<unsigned>(t / len);
-    expected_frame = m.frame_at(std::fmod(t, len)) + m.frame_at(len) * mul;
+  {
+    auto range = m.keyframes();
+    auto const it = std::find_if(range.begin(), range.end(),
+                                 [t](auto const &p) { return p.first == t; });
+    if (it == range.end()) {
+      struct Comp {
+        using value_type = decltype(it)::value_type;
+        bool operator()(const value_type &p, double t) const {
+          return p.first < t;
+        }
+        bool operator()(double t, const value_type &p) const {
+          return t < p.first;
+        }
+      };
+      auto [l, u] = std::equal_range(range.begin(), range.end(), t, Comp{});
+      // TODO: Use -> (after #43)
+      auto const t1 = (*std::next(l, -1)).first;
+      auto const t2 = (*u).first;
+      auto const &f1 = (*std::next(l, -1)).second;
+      auto const &f2 = (*u).second;
+      expected_frame = flom::interpolate((t - t1) / (t2 - t1), f1, f2);
+    } else {
+      expected_frame = (*it).second;
+    }
   }
 
   // Using non-strict version of operator== defined in operators.hpp
   RC_ASSERT(frame == expected_frame);
 }
 
-RC_BOOST_PROP(retrieve_frame_none, (const flom::Motion &m)) {
+RC_BOOST_PROP(retrieve_frame_zero, (flom::Motion m)) {
   auto const t = *rc::gen::nonNegative<double>();
 
-  RC_PRE(m.length() >= t);
-  RC_PRE(m.loop() == flom::LoopType::None);
+  RC_PRE(m.loop() == flom::LoopType::Wrap);
   RC_ASSERT(m.is_valid());
 
-  auto frame = m.frame_at(t);
-
-  flom::Frame expected_frame;
-  if (m.length() == 0) {
-    expected_frame = m.frame_at(0);
-  } else {
-    auto len = m.length();
-    auto mul = static_cast<unsigned>(t / len);
-    expected_frame = m.frame_at(std::fmod(t, len)) + m.frame_at(len) * mul;
+  {
+    // Clear keyframes
+    std::vector<double> t_list;
+    for (auto const &[t, f] : m.keyframes()) {
+      if (t != 0) {
+        t_list.push_back(t);
+      }
+    }
+    for (auto time : t_list) {
+      m.delete_keyframe(time);
+    }
+    RC_ASSERT(m.length() == 0);
   }
+
+  auto const frame = m.frame_at(t);
+
+  auto const expected_frame = m.frame_at(0);
+
+  // Using non-strict version of operator== defined in operators.hpp
+  RC_ASSERT(frame == expected_frame);
+}
+
+RC_BOOST_PROP(retrieve_frame_over, (const flom::Motion &m)) {
+  auto t = *rc::gen::nonNegative<double>();
+
+  auto const len = m.length();
+
+  RC_PRE(len != 0);
+
+  // RC_PRE(len < t);
+  if (len >= t) {
+    t += len;
+  }
+
+  RC_PRE(m.loop() == flom::LoopType::Wrap);
+  RC_ASSERT(m.is_valid());
+
+  auto const frame = m.frame_at(t);
+
+  auto const mul = static_cast<unsigned>(t / len);
+  auto const last = m.frame_at(len);
+  auto const init = m.frame_at(0);
+  auto const expected_frame =
+      m.frame_at(std::fmod(t, len)) + (last - init) * mul;
 
   // Using non-strict version of operator== defined in operators.hpp
   RC_ASSERT(frame == expected_frame);

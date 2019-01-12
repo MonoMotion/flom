@@ -36,34 +36,82 @@ using KeyRange =
     boost::any_range<K, boost::forward_traversal_tag,
                      std::add_lvalue_reference_t<K>, std::ptrdiff_t>;
 
-struct Frame : boost::operators<Frame> {
-  std::unordered_map<std::string, double> positions;
-  std::unordered_map<std::string, Effector> effectors;
+struct Frame;
+
+class FrameDifference
+    : boost::addable<FrameDifference,
+                     boost::equality_comparable<
+                         FrameDifference,
+                         boost::multipliable<FrameDifference, std::size_t>>> {
+
+private:
+  std::unordered_map<std::string, double> positions_;
+  std::unordered_map<std::string, EffectorDifference> effectors_;
+
+public:
+  FrameDifference(const Frame &, const Frame &);
+
+  FrameDifference() = delete;
+
+  FrameDifference(const FrameDifference &) = default;
+  FrameDifference(FrameDifference &&) = default;
+
+  FrameDifference &operator=(const FrameDifference &) = default;
+  FrameDifference &operator=(FrameDifference &&) = default;
+
+  const std::unordered_map<std::string, double> &positions() const &;
+  std::unordered_map<std::string, double> positions() &&;
+
+  const std::unordered_map<std::string, EffectorDifference> &
+  effectors() const &;
+  std::unordered_map<std::string, EffectorDifference> effectors() &&;
+
+  FrameDifference &operator*=(std::size_t);
+  FrameDifference &operator+=(const FrameDifference &);
+
+  bool is_compatible(const FrameDifference &) const;
+};
+
+bool operator==(const FrameDifference &, const FrameDifference &);
+bool almost_equal(const FrameDifference &, const FrameDifference &);
+
+struct Frame : boost::addable<Frame, FrameDifference> {
+private:
+  using PositionsMap = std::unordered_map<std::string, double>;
+  using EffectorsMap = std::unordered_map<std::string, Effector>;
+
+  PositionsMap positions_;
+  EffectorsMap effectors_;
+
+public:
+  Frame();
+  Frame(const PositionsMap &, const EffectorsMap &);
+
+  const PositionsMap &positions() const &;
+  PositionsMap positions() &&;
+
+  void set_positions(const PositionsMap &);
+  void set_position(const std::string &, double);
+
+  const EffectorsMap &effectors() const &;
+  EffectorsMap effectors() &&;
+
+  void set_effectors(const EffectorsMap &);
+  void set_effector(const std::string &, const Effector &);
 
   KeyRange<std::string> joint_names() const;
   KeyRange<std::string> effector_names() const;
 
-  Frame &operator+=(const Frame &x);
-  Frame &operator-=(const Frame &x);
+  Frame new_compatible_frame() const;
+  bool is_compatible(const Frame &) const;
+  bool is_compatible(const FrameDifference &) const;
 
-  template <typename T, std::enable_if_t<std::is_arithmetic_v<T>> * = nullptr>
-  Frame &operator*=(T x) {
-    for (auto &&[k, v] : this->positions) {
-      v *= x;
-    }
-    for (auto &&[k, v] : this->effectors) {
-      v *= x;
-    }
-    return *this;
-  }
+  Frame &operator+=(const FrameDifference &);
 };
 
-template <typename T, std::enable_if_t<std::is_arithmetic_v<T>> * = nullptr>
-Frame operator*(const Frame &t1, T t2) {
-  return Frame(t1) *= t2;
-}
-
+FrameDifference operator-(const Frame &, const Frame &);
 bool operator==(const Frame &, const Frame &);
+bool operator!=(const Frame &, const Frame &);
 bool almost_equal(const Frame &, const Frame &);
 
 } // namespace flom

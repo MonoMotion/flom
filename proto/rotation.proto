@@ -23,8 +23,6 @@ package flom.proto;
 
 message Rotation {
   Quaternion quaternion = 1;
-  /* coefficient of importance (0~1) */
-  double weight = 3;
 }
 
 message Quaternion {

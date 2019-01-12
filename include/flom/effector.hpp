@@ -33,52 +33,132 @@ namespace flom {
 
 namespace qvm = boost::qvm;
 
-struct Location : boost::operators<Location> {
-  double weight;
-  qvm::vec<double, 3> vec;
+class Location
+    : boost::addable<
+          Location,
+          boost::subtractable<
+              Location,
+              boost::equality_comparable<
+                  Location, boost::multipliable<Location, std::size_t>>>> {
+public:
+  using value_type = qvm::vec<double, 3>;
 
-  Location() : weight(0) {}
+private:
+  value_type vector_;
+
+public:
+  Location();
+  explicit Location(const value_type &);
+
+  const value_type &vector() const;
+  void set_vector(const value_type &);
+
+  Location &operator+=(const Location &);
+  Location &operator-=(const Location &);
+  Location &operator*=(std::size_t);
 };
 
 bool operator==(const Location &, const Location &);
 bool almost_equal(const Location &, const Location &);
 
-struct Rotation : boost::operators<Rotation> {
-  double weight;
-  qvm::quat<double> quat;
+struct Rotation
+    : boost::addable<
+          Rotation,
+          boost::subtractable<
+              Rotation,
+              boost::equality_comparable<
+                  Rotation, boost::multipliable<Rotation, std::size_t>>>> {
+public:
+  using value_type = qvm::quat<double>;
 
-  Rotation() : weight(0) {}
+private:
+  value_type quat_;
+
+public:
+  Rotation();
+  explicit Rotation(const value_type &);
+
+  const value_type &quaternion() const;
+  void set_quaternion(const value_type &);
+
+  Rotation &operator+=(const Rotation &);
+  Rotation &operator-=(const Rotation &);
+  Rotation &operator*=(std::size_t);
 };
 
 bool operator==(const Rotation &, const Rotation &);
 bool almost_equal(const Rotation &, const Rotation &);
 
-struct Effector : boost::operators<Effector> {
-  std::optional<Location> location;
-  std::optional<Rotation> rotation;
+struct Effector;
 
-  Effector &operator+=(const Effector &x);
-  Effector &operator-=(const Effector &x);
+class EffectorDifference
+    : boost::addable<
+          EffectorDifference,
+          boost::equality_comparable<
+              EffectorDifference,
+              boost::multipliable<EffectorDifference, std::size_t>>> {
+private:
+  std::optional<Location> location_;
+  std::optional<Rotation> rotation_;
 
-  template <typename T, std::enable_if_t<std::is_arithmetic_v<T>> * = nullptr>
-  Effector &operator*=(T x) {
-    if (this->location) {
-      this->location->vec *= x;
-    }
-    if (this->rotation) {
-      this->rotation->quat *= x;
-    }
-    return *this;
-  }
+public:
+  EffectorDifference(const Effector &, const Effector &);
+
+  EffectorDifference() = delete;
+
+  EffectorDifference(const EffectorDifference &) = default;
+  EffectorDifference(EffectorDifference &&) = default;
+
+  EffectorDifference &operator=(const EffectorDifference &) = default;
+  EffectorDifference &operator=(EffectorDifference &&) = default;
+
+  const std::optional<Location> &location() const &;
+  std::optional<Location> location() &&;
+
+  const std::optional<Rotation> &rotation() const &;
+  std::optional<Rotation> rotation() &&;
+
+  EffectorDifference &operator*=(std::size_t);
+  EffectorDifference &operator+=(const EffectorDifference &);
+
+  bool is_compatible(const EffectorDifference &) const;
 };
 
-template <typename T, std::enable_if_t<std::is_arithmetic_v<T>> * = nullptr>
-Effector operator*(const Effector &t1, T t2) {
-  return Effector(t1) *= t2;
-}
+bool operator==(const EffectorDifference &, const EffectorDifference &);
+bool almost_equal(const EffectorDifference &, const EffectorDifference &);
+
+struct Effector : boost::addable<Effector, EffectorDifference> {
+private:
+  std::optional<Location> location_;
+  std::optional<Rotation> rotation_;
+
+public:
+  Effector();
+  Effector(const std::optional<Location> &, const std::optional<Rotation> &);
+
+  const std::optional<Location> &location() const &;
+  std::optional<Location> location() &&;
+
+  void set_location(const std::optional<Location> &);
+  void clear_location();
+
+  const std::optional<Rotation> &rotation() const &;
+  std::optional<Rotation> rotation() &&;
+
+  void set_rotation(const std::optional<Rotation> &);
+  void clear_rotation();
+
+  Effector new_compatible_effector() const;
+  bool is_compatible(const Effector &) const;
+  bool is_compatible(const EffectorDifference &) const;
+
+  Effector &operator+=(const EffectorDifference &);
+};
 
 bool operator==(const Effector &, const Effector &);
+bool operator!=(const Effector &, const Effector &);
 bool almost_equal(const Effector &, const Effector &);
+EffectorDifference operator-(const Effector &, const Effector &);
 
 bool almost_equal(double, double);
 

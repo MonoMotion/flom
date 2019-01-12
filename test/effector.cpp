@@ -32,72 +32,59 @@
 
 BOOST_AUTO_TEST_SUITE(effector)
 
-RC_BOOST_PROP(mul_scalar_location, (const flom::Effector &e, double v)) {
-  RC_PRE(e.location);
+RC_BOOST_PROP(diff_mul_scalar,
+              (const flom::EffectorDifference &d, unsigned short v)) {
+  RC_PRE(v != 0);
 
-  auto e2 = e * v;
-  RC_ASSERT(e2.location->vec == e.location->vec * v);
+  auto const d1 = d * v;
+  auto d2 = d;
+  for (std::size_t i = 0; i < v - 1; i++) {
+    d2 += d;
+  }
+  RC_ASSERT(d1 == d2);
 }
 
-RC_BOOST_PROP(mul_scalar_rotation, (const flom::Effector &e, double v)) {
-  RC_PRE(e.rotation);
-
-  auto e2 = e * v;
-  RC_ASSERT(e2.rotation->quat == e.rotation->quat * v);
+RC_BOOST_PROP(diff_add, (const flom::Effector &e1, unsigned short mul)) {
+  auto e2 = e1.new_compatible_effector();
+  auto const diff1 = e1 - e2;
+  auto const diff2 = diff1 * mul;
+  RC_ASSERT((e1 + diff1) + diff2 == e1 + (diff1 + diff2));
 }
 
-RC_BOOST_PROP(add_location,
-              (const flom::Effector &e1, const flom::Effector &e2)) {
-  RC_PRE(e1.location && e2.location);
-
-  auto e3 = e1 + e2;
-  RC_ASSERT(e3.location->vec == e1.location->vec + e2.location->vec);
+RC_BOOST_PROP(sub, (const flom::Effector &e1)) {
+  auto e2 = e1.new_compatible_effector();
+  auto const diff = e1 - e2;
+  RC_ASSERT(e2 + diff == e1);
 }
 
-RC_BOOST_PROP(add_rotation,
-              (const flom::Effector &e1, const flom::Effector &e2)) {
-  RC_PRE(e1.rotation && e2.rotation);
-
-  auto e3 = e1 + e2;
-  RC_ASSERT(e3.rotation->quat == e1.rotation->quat + e2.rotation->quat);
-}
-
-RC_BOOST_PROP(sub_location,
-              (const flom::Effector &e1, const flom::Effector &e2)) {
-  RC_PRE(e1.location && e2.location);
-
-  auto e3 = e1 - e2;
-  RC_ASSERT(e3.location->vec == e1.location->vec - e2.location->vec);
-}
-
-RC_BOOST_PROP(sub_rotation,
-              (const flom::Effector &e1, const flom::Effector &e2)) {
-  RC_PRE(e1.rotation && e2.rotation);
-
-  auto e3 = e1 - e2;
-  RC_ASSERT(e3.rotation->quat == e1.rotation->quat - e2.rotation->quat);
+RC_BOOST_PROP(new_compatible_effector, (const flom::Effector &e1)) {
+  auto const e2 = e1.new_compatible_effector();
+  RC_ASSERT(e1.is_compatible(e2));
+  RC_ASSERT(e2.is_compatible(e1));
 }
 
 RC_BOOST_PROP(interpolation_location,
               (const flom::Effector &e1, const flom::Effector &e2)) {
-  RC_PRE(e1.location && e2.location);
+  RC_PRE(e1.location() && e2.location());
+  RC_PRE(e1.is_compatible(e2));
 
   const double t = static_cast<double>(*rc::gen::inRange(0, 100)) / 100;
 
   auto e3 = flom::interpolate(t, e1, e2);
-  auto l = flom::interpolate(t, *e1.location, *e2.location);
-  RC_ASSERT(e3.location->vec == l.vec);
+  auto l = flom::interpolate(t, *e1.location(), *e2.location());
+  RC_ASSERT(e3.location()->vector() == l.vector());
 }
 
 RC_BOOST_PROP(interpolation_rotation,
               (const flom::Effector &e1, const flom::Effector &e2)) {
-  RC_PRE(e1.rotation && e2.rotation);
+  RC_PRE(e1.rotation() && e2.rotation());
+  RC_PRE(e1.is_compatible(e2));
 
   const double t = static_cast<double>(*rc::gen::inRange(0, 100)) / 100;
 
   auto e3 = flom::interpolate(t, e1, e2);
-  auto r = flom::interpolate(t, *e1.rotation, *e2.rotation);
-  RC_ASSERT(e3.rotation->quat == r.quat);
+  auto r = flom::interpolate(t, *e1.rotation(), *e2.rotation());
+  RC_ASSERT(e3.rotation()->quaternion() == r.quaternion());
 }
 
 BOOST_AUTO_TEST_SUITE_END()

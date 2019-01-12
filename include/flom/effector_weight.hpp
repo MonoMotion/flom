@@ -17,17 +17,30 @@
 // along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-syntax = "proto3";
+#ifndef FLOM_EFFECTOR_WEIGHT_HPP
+#define FLOM_EFFECTOR_WEIGHT_HPP
 
-package flom.proto;
+namespace flom {
 
-message Location {
-  Vec3 vector = 1;
-}
+class EffectorWeight {
+private:
+  double location_;
+  double rotation_;
 
-message Vec3 {
-  double x = 1;
-  double y = 2;
-  double z = 3;
-}
+  static double validate_weight(double);
 
+public:
+  EffectorWeight() = delete;
+
+  EffectorWeight(double location, double rotation);
+
+  double location() const noexcept;
+  double rotation() const noexcept;
+
+  void set_location(double);
+  void set_rotation(double);
+};
+
+} // namespace flom
+
+#endif

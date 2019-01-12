@@ -61,8 +61,7 @@ RC_BOOST_PROP(insert_init_keyframe, (flom::Motion m)) {
 
   auto frame = m.new_keyframe();
   // Modify frame in some way
-  frame.positions.begin()->second = 1;
-  frame.effectors.begin()->second.location = flom::Location{};
+  frame.set_position(frame.positions().begin()->first, 1);
 
   m.insert_keyframe(0, frame);
   RC_ASSERT(m.frame_at(0) == frame);
@@ -73,6 +72,23 @@ RC_BOOST_PROP(insert_keyframe_invalid, (flom::Motion m, const flom::Frame &f)) {
 
   RC_PRE(!m.is_valid_frame(f));
   RC_ASSERT_THROWS_AS(m.insert_keyframe(t, f), flom::errors::InvalidFrameError);
+}
+
+RC_BOOST_PROP(insert_keyframe_incompatible_effector, (flom::Motion m)) {
+  auto const t = *rc::gen::nonNegative<double>();
+
+  RC_PRE(!boost::empty(m.effector_names()));
+
+  auto frame = m.new_keyframe();
+  auto [k, e] = *frame.effectors().begin();
+  if (e.location()) {
+    e.clear_location();
+  } else {
+    e.set_location(flom::Location{});
+  }
+  frame.set_effector(k, e);
+  RC_ASSERT_THROWS_AS(m.insert_keyframe(t, frame),
+                      flom::errors::InvalidFrameError);
 }
 
 RC_BOOST_PROP(delete_init_keyframe, (flom::Motion m)) {
@@ -88,6 +104,18 @@ RC_BOOST_PROP(delete_keyframe, (flom::Motion m)) {
 
   RC_ASSERT_THROWS_AS(m.delete_keyframe(t),
                       flom::errors::KeyframeNotFoundError);
+}
+
+RC_BOOST_PROP(clear_keyframe, (flom::Motion m)) {
+  RC_ASSERT(m.is_valid());
+
+  m.clear_keyframes();
+
+  RC_ASSERT(m.length() == 0);
+
+  // TODO: Use const (after #43)
+  auto range = m.keyframes();
+  RC_ASSERT(std::distance(range.begin(), range.end()) == 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

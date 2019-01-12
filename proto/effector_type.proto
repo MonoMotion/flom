@@ -21,13 +21,14 @@ syntax = "proto3";
 
 package flom.proto;
 
-message Location {
-  Vec3 vector = 1;
-}
 
-message Vec3 {
-  double x = 1;
-  double y = 2;
-  double z = 3;
+message EffectorType {
+  enum Type {
+    None = 0;
+    World = 1;
+    Local = 2;
+  }
+  Type location = 3;
+  Type rotation = 4;
 }
 

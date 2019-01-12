@@ -32,11 +32,6 @@
 
 namespace flom {
 
-Motion::Motion(const std::unordered_set<std::string> &joint_names,
-               const std::unordered_set<std::string> &effector_names,
-               const std::string &model)
-    : impl(std::make_unique<Motion::Impl>(joint_names, effector_names, model)) {
-}
 Motion::Motion(
     const std::unordered_set<std::string> &joint_names,
     const std::unordered_map<std::string, EffectorType> &effector_types,
@@ -73,7 +68,9 @@ Frame Motion::frame_at(double t) const {
 
       auto const skip_episode = static_cast<unsigned>(t / motion_length);
       auto const trailing_t = t - skip_episode * motion_length;
-      return this->frame_at(trailing_t) + last->second * skip_episode;
+      auto const init_frame = this->impl->raw_frames.begin()->second;
+      auto const diff = last->second - init_frame;
+      return this->frame_at(trailing_t) + diff * skip_episode;
     } else {
       throw errors::OutOfFramesError(t);
     }
@@ -145,6 +142,12 @@ KeyframeRange Motion::keyframes() {
           *this};
 }
 
+void Motion::clear_keyframes() {
+  auto const first = std::cbegin(this->impl->raw_frames);
+  auto const end = std::cend(this->impl->raw_frames);
+  this->impl->raw_frames.erase(std::next(first, 1), end);
+}
+
 LoopType Motion::loop() const { return this->impl->loop; }
 
 void Motion::set_loop(LoopType loop) { this->impl->loop = loop; }
@@ -159,8 +162,13 @@ EffectorType Motion::effector_type(const std::string &name) const {
   return this->impl->effector_types.at(name);
 }
 
-void Motion::set_effector_type(const std::string &name, EffectorType type) {
-  this->impl->effector_types.at(name) = type;
+EffectorWeight Motion::effector_weight(const std::string &name) const {
+  return this->impl->effector_weights.at(name);
+}
+
+void Motion::set_effector_weight(const std::string &name,
+                                 EffectorWeight weight) {
+  this->impl->effector_weights.at(name) = weight;
 }
 
 double Motion::length() const {
@@ -170,19 +178,20 @@ double Motion::length() const {
 Frame Motion::new_keyframe() const { return this->impl->new_keyframe(); }
 
 Frame Motion::Impl::new_keyframe() const noexcept {
-  Frame frame;
+  std::unordered_map<std::string, double> p;
+  std::unordered_map<std::string, Effector> e;
 
-  frame.positions.reserve(this->joint_names.size());
+  p.reserve(this->joint_names.size());
   for (const auto &name : this->joint_names) {
-    frame.positions.emplace(name, 0.0);
+    p.emplace(name, 0.0);
   }
 
-  frame.effectors.reserve(this->effector_types.size());
+  e.reserve(this->effector_types.size());
   for (const auto &[name, type] : this->effector_types) {
-    frame.effectors.emplace(name, Effector{});
+    e.emplace(name, type.new_effector());
   }
 
-  return frame;
+  return {p, e};
 }
 
 void Motion::Impl::add_initial_frame() {
@@ -211,10 +220,17 @@ bool Motion::Impl::is_valid() const {
 }
 
 bool Motion::Impl::is_valid_frame(const Frame &frame) const {
-  auto const &[p, e] = frame;
+  auto const &p = frame.positions();
+  auto const &e = frame.effectors();
+
   if (names_hash(p) != this->joints_hash ||
       names_hash(e) != this->effectors_hash) {
     return false;
+  }
+  for (auto const &[name, type] : this->effector_types) {
+    if (!type.is_compatible(e.at(name))) {
+      return false;
+    }
   }
   return true;
 }
@@ -232,5 +248,7 @@ bool operator==(const Motion &m1, const Motion &m2) {
          m1.impl->loop == m2.impl->loop &&
          m1.impl->raw_frames == m2.impl->raw_frames;
 }
+
+bool operator!=(const Motion &m1, const Motion &m2) { return !(m1 == m2); }
 
 } // namespace flom
