@@ -246,7 +246,9 @@ KeyRange<std::string> Motion::effector_names() const {
 bool operator==(const Motion &m1, const Motion &m2) {
   return m1.impl->model_id == m2.impl->model_id &&
          m1.impl->loop == m2.impl->loop &&
-         m1.impl->raw_frames == m2.impl->raw_frames;
+         m1.impl->raw_frames == m2.impl->raw_frames &&
+         m1.impl->effector_types == m2.impl->effector_types &&
+         m1.impl->effector_weights == m2.impl->effector_weights;
 }
 
 bool operator!=(const Motion &m1, const Motion &m2) { return !(m1 == m2); }

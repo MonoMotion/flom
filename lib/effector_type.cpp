@@ -41,4 +41,8 @@ bool EffectorType::is_compatible(const Effector &e) const {
   return loc_v == loc_t && rot_v == rot_t;
 }
 
+bool operator==(const EffectorType &v1, const EffectorType &v2) {
+  return v1.location() == v2.location() && v1.rotation() == v2.rotation();
+}
+
 } // namespace flom
