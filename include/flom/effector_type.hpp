@@ -22,13 +22,15 @@
 
 #include "flom/effector.hpp"
 
+#include <boost/operators.hpp>
+
 #include <optional>
 
 namespace flom {
 
 enum class CoordinateSystem { World, Local };
 
-struct EffectorType {
+struct EffectorType : boost::operators<EffectorType> {
 private:
   std::optional<CoordinateSystem> location_;
   std::optional<CoordinateSystem> rotation_;
@@ -49,6 +51,8 @@ public:
   Effector new_effector() const;
   bool is_compatible(const Effector &) const;
 };
+
+bool operator==(const EffectorType &, const EffectorType &);
 
 } // namespace flom
 
