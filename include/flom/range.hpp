@@ -27,6 +27,7 @@
 #include <iterator>
 #include <map>
 #include <memory>
+#include <utility>
 
 namespace flom {
 
@@ -37,7 +38,7 @@ class frame_iterator {
 
 public:
   using iterator_category = std::input_iterator_tag;
-  using value_type = Frame;
+  using value_type = std::pair<double, Frame>;
   using difference_type = double;
   using pointer = Frame *;
   using reference = Frame &;
