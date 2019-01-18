@@ -24,7 +24,9 @@ set(flom_lib_files motion.cpp motion_io.cpp frame.cpp effector.cpp proto_util.cp
 add_library(flom_lib SHARED ${flom_lib_files})
 add_dependencies(flom_lib flom_headers)
 flom_add_lib(flom_lib flom)
+install(TARGETS flom_lib LIBRARY DESTINATION lib)
 
 add_library(flom_lib_static STATIC ${flom_lib_files})
 add_dependencies(flom_lib_static flom_headers)
 flom_add_lib(flom_lib_static flom)
+install(TARGETS flom_lib_static ARCHIVE DESTINATION lib)
