@@ -20,7 +20,7 @@
 cmake_minimum_required(VERSION 2.7)
 
 option(BUILD_SHARED_LIB "Build a shared library" ON)
-option(BUILD_STATIC_LIB "Build a static library" OFF)
+option(BUILD_STATIC_LIB "Build a static library" ON)
 
 set(flom_lib_files motion.cpp motion_io.cpp frame.cpp effector.cpp proto_util.cpp errors.cpp frame_range.cpp keyframe_range.cpp effector_type.cpp effector_weight.cpp)
 
