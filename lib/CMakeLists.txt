@@ -19,13 +19,12 @@
 
 cmake_minimum_required(VERSION 2.7)
 
-add_library(flom_lib SHARED motion.cpp motion_io.cpp frame.cpp effector.cpp proto_util.cpp errors.cpp frame_range.cpp keyframe_range.cpp effector_type.cpp effector_weight.cpp)
-add_dependencies(flom_lib flom_headers)
-flom_set_compile_options(flom_lib)
-set_target_properties(flom_lib PROPERTIES OUTPUT_NAME "flom")
-set_target_properties(flom_lib PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-target_link_libraries(flom_lib PRIVATE flom_proto nlohmann_json::nlohmann_json ${PROTOBUF_LIBRARIES})
-enable_clang_format(flom_lib)
-enable_clang_tidy(flom_lib)
+set(flom_lib_files motion.cpp motion_io.cpp frame.cpp effector.cpp proto_util.cpp errors.cpp frame_range.cpp keyframe_range.cpp effector_type.cpp effector_weight.cpp)
 
-install(TARGETS flom_lib LIBRARY DESTINATION lib)
+add_library(flom_lib SHARED ${flom_lib_files})
+add_dependencies(flom_lib flom_headers)
+flom_add_lib(flom_lib flom)
+
+add_library(flom_lib_static STATIC ${flom_lib_files})
+add_dependencies(flom_lib_static flom_headers)
+flom_add_lib(flom_lib_static flom)
