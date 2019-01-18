@@ -17,16 +17,11 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 2.7)
-
-set(flom_lib_files motion.cpp motion_io.cpp frame.cpp effector.cpp proto_util.cpp errors.cpp frame_range.cpp keyframe_range.cpp effector_type.cpp effector_weight.cpp)
-
-add_library(flom_lib SHARED ${flom_lib_files})
-add_dependencies(flom_lib flom_headers)
-flom_add_lib(flom_lib flom)
-install(TARGETS flom_lib LIBRARY DESTINATION lib)
-
-add_library(flom_lib_static STATIC ${flom_lib_files})
-add_dependencies(flom_lib_static flom_headers)
-flom_add_lib(flom_lib_static flom)
-install(TARGETS flom_lib_static ARCHIVE DESTINATION lib)
+function(flom_add_lib target name)
+  flom_set_compile_options(${target})
+  set_target_properties(${target} PROPERTIES OUTPUT_NAME "${name}")
+  set_target_properties(${target} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+  target_link_libraries(${target} PRIVATE flom_proto nlohmann_json::nlohmann_json ${PROTOBUF_LIBRARIES})
+  enable_clang_format(${target})
+  enable_clang_tidy(${target})
+endfunction()
