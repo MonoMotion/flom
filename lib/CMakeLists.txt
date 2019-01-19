@@ -37,3 +37,6 @@ if(BUILD_STATIC_LIB)
   flom_add_lib(flom_lib_static flom)
   install(TARGETS flom_lib_static ARCHIVE DESTINATION lib)
 endif()
+
+enable_clang_format(flom_lib)
+enable_clang_tidy(flom_lib)
