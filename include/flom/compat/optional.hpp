@@ -28,6 +28,7 @@
 namespace flom::compat {
 template<typename T>
 using optional = std::optional<T>;
+inline constexpr auto nullopt = std::nullopt;
 }
 
 #elif __has_include(<experimental/optional>)
@@ -37,6 +38,7 @@ using optional = std::optional<T>;
 namespace flom::compat {
 template<typename T>
 using optional = std::experimental::optional<T>;
+inline constexpr auto nullopt = std::experimental::nullopt;
 }
 
 #else

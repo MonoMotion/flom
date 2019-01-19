@@ -210,7 +210,7 @@ Effector interpolate(double t, Effector const &a, Effector const &b) {
   return e;
 }
 
-Effector::Effector() : location_(std::nullopt), rotation_(std::nullopt) {}
+Effector::Effector() : location_(compat::nullopt), rotation_(compat::nullopt) {}
 Effector::Effector(const compat::optional<Location> &location,
                    const compat::optional<Rotation> &rotation)
     : location_(location), rotation_(rotation) {}
@@ -226,7 +226,7 @@ void Effector::set_location(const compat::optional<Location> &location) {
   this->location_ = location;
 }
 
-void Effector::clear_location() { this->set_location(std::nullopt); }
+void Effector::clear_location() { this->set_location(compat::nullopt); }
 
 const compat::optional<Rotation> &Effector::rotation() const & {
   return this->rotation_;
@@ -239,7 +239,7 @@ void Effector::set_rotation(const compat::optional<Rotation> &rotation) {
   this->rotation_ = rotation;
 }
 
-void Effector::clear_rotation() { this->set_rotation(std::nullopt); }
+void Effector::clear_rotation() { this->set_rotation(compat::nullopt); }
 
 Effector Effector::new_compatible_effector() const {
   Effector e;

@@ -101,7 +101,7 @@ EffectorType unpack_effector_type(proto::EffectorType const &proto) {
 compat::optional<CoordinateSystem>
 unpack_coord_system(proto::EffectorType::Type const &proto) {
   if (proto == proto::EffectorType::Type::EffectorType_Type_None) {
-    return std::nullopt;
+    return compat::nullopt;
   } else if (proto == proto::EffectorType::Type::EffectorType_Type_World) {
     return CoordinateSystem::World;
   } else if (proto == proto::EffectorType::Type::EffectorType_Type_Local) {

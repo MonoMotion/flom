@@ -81,7 +81,7 @@ template <> struct Arbitrary<flom::Effector> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
         [](Maybe<flom::Location> const &l, Maybe<flom::Rotation> const &r) {
-          flom::Effector e { std::nullopt, std::nullopt};
+          flom::Effector e { flom::compat::nullopt, flom::compat::nullopt};
           if (l) {
             e.set_location(*l);
           }

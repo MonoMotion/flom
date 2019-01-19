@@ -16,11 +16,11 @@ compat::optional<CoordinateSystem> EffectorType::rotation() const {
 void EffectorType::set_location(compat::optional<CoordinateSystem> location) {
   this->location_ = location;
 }
-void EffectorType::clear_location() { this->set_location(std::nullopt); }
+void EffectorType::clear_location() { this->set_location(compat::nullopt); }
 void EffectorType::set_rotation(compat::optional<CoordinateSystem> rotation) {
   this->rotation_ = rotation;
 }
-void EffectorType::clear_rotation() { this->set_rotation(std::nullopt); }
+void EffectorType::clear_rotation() { this->set_rotation(compat::nullopt); }
 
 Effector EffectorType::new_effector() const {
   Effector e;
