@@ -76,7 +76,7 @@ void pack_rotation(Rotation const &rot, proto::Rotation *rot_proto) {
 }
 
 proto::EffectorType::Type
-pack_coord_system(std::optional<CoordinateSystem> const &c) {
+pack_coord_system(compat::optional<CoordinateSystem> const &c) {
   if (!c) {
     return proto::EffectorType::Type::EffectorType_Type_None;
   }
@@ -98,7 +98,7 @@ EffectorType unpack_effector_type(proto::EffectorType const &proto) {
           unpack_coord_system(proto.rotation())};
 }
 
-std::optional<CoordinateSystem>
+compat::optional<CoordinateSystem>
 unpack_coord_system(proto::EffectorType::Type const &proto) {
   if (proto == proto::EffectorType::Type::EffectorType_Type_None) {
     return std::nullopt;

@@ -112,7 +112,7 @@ template <> struct Arbitrary<flom::EffectorType> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
         [](Maybe<flom::CoordinateSystem> l, Maybe<flom::CoordinateSystem> r) {
-          std::optional<flom::CoordinateSystem> loc, rot;
+          flom::compat::optional<flom::CoordinateSystem> loc, rot;
           if (l) {
             loc = *l;
           }
