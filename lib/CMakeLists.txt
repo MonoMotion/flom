@@ -19,14 +19,24 @@
 
 cmake_minimum_required(VERSION 2.7)
 
+option(BUILD_SHARED_LIB "Build a shared library" ON)
+option(BUILD_STATIC_LIB "Build a static library" ON)
+
 set(flom_lib_files motion.cpp motion_io.cpp frame.cpp effector.cpp proto_util.cpp errors.cpp frame_range.cpp keyframe_range.cpp effector_type.cpp effector_weight.cpp)
 
-add_library(flom_lib SHARED ${flom_lib_files})
-add_dependencies(flom_lib flom_headers)
-flom_add_lib(flom_lib flom)
-install(TARGETS flom_lib LIBRARY DESTINATION lib)
+if(BUILD_SHARED_LIB)
+  add_library(flom_lib SHARED ${flom_lib_files})
+  add_dependencies(flom_lib flom_headers)
+  flom_add_lib(flom_lib flom)
+  install(TARGETS flom_lib LIBRARY DESTINATION lib)
+endif()
 
-add_library(flom_lib_static STATIC ${flom_lib_files})
-add_dependencies(flom_lib_static flom_headers)
-flom_add_lib(flom_lib_static flom)
-install(TARGETS flom_lib_static ARCHIVE DESTINATION lib)
+if(BUILD_STATIC_LIB)
+  add_library(flom_lib_static STATIC ${flom_lib_files})
+  add_dependencies(flom_lib_static flom_headers)
+  flom_add_lib(flom_lib_static flom)
+  install(TARGETS flom_lib_static ARCHIVE DESTINATION lib)
+endif()
+
+enable_clang_format(flom_lib)
+enable_clang_tidy(flom_lib)
