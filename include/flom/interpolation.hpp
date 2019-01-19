@@ -26,7 +26,7 @@
 namespace flom {
 
 template <typename T, typename U,
-          std::enable_if_t<std::is_floating_point_v<U>> * = nullptr>
+          std::enable_if_t<std::is_floating_point<U>::value> * = nullptr>
 T lerp(U t, T a, T b) {
   return a + t * (b - a);
 }
