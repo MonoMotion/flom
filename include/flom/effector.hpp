@@ -59,7 +59,6 @@ public:
 };
 
 bool operator==(const Location &, const Location &);
-bool almost_equal(const Location &, const Location &);
 
 struct Rotation
     : boost::addable<
@@ -87,7 +86,6 @@ public:
 };
 
 bool operator==(const Rotation &, const Rotation &);
-bool almost_equal(const Rotation &, const Rotation &);
 
 struct Effector;
 
@@ -125,7 +123,6 @@ public:
 };
 
 bool operator==(const EffectorDifference &, const EffectorDifference &);
-bool almost_equal(const EffectorDifference &, const EffectorDifference &);
 
 struct Effector : boost::addable<Effector, EffectorDifference> {
 private:
@@ -158,10 +155,7 @@ public:
 
 bool operator==(const Effector &, const Effector &);
 bool operator!=(const Effector &, const Effector &);
-bool almost_equal(const Effector &, const Effector &);
 EffectorDifference operator-(const Effector &, const Effector &);
-
-bool almost_equal(double, double);
 
 } // namespace flom
 

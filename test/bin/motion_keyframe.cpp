@@ -28,8 +28,8 @@
 #include <flom/errors.hpp>
 #include <flom/motion.hpp>
 
+#include "comparison.hpp"
 #include "generators.hpp"
-#include "operators.hpp"
 #include "printers.hpp"
 
 BOOST_AUTO_TEST_SUITE(motion_keyframe)
@@ -47,7 +47,7 @@ RC_BOOST_PROP(insert_keyframe, (flom::Motion m)) {
   auto const frame = m.new_keyframe();
   m.insert_keyframe(t, frame);
 
-  RC_ASSERT(m.frame_at(t) == frame);
+  FLOM_ALMOST_EQUAL(m.frame_at(t), frame);
 }
 
 RC_BOOST_PROP(insert_init_keyframe, (flom::Motion m)) {
@@ -64,7 +64,7 @@ RC_BOOST_PROP(insert_init_keyframe, (flom::Motion m)) {
   frame.set_position(frame.positions().begin()->first, 1);
 
   m.insert_keyframe(0, frame);
-  RC_ASSERT(m.frame_at(0) == frame);
+  FLOM_ALMOST_EQUAL(m.frame_at(0), frame);
 }
 
 RC_BOOST_PROP(insert_keyframe_invalid, (flom::Motion m, const flom::Frame &f)) {
