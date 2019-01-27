@@ -25,8 +25,8 @@
 
 #include <flom/effector.hpp>
 
+#include "comparison.hpp"
 #include "generators.hpp"
-#include "operators.hpp"
 #include "printers.hpp"
 
 BOOST_AUTO_TEST_SUITE(rotation)

@@ -26,8 +26,8 @@
 #include <flom/effector.hpp>
 #include <flom/interpolation.hpp>
 
+#include "comparison.hpp"
 #include "generators.hpp"
-#include "operators.hpp"
 #include "printers.hpp"
 
 BOOST_AUTO_TEST_SUITE(effector)

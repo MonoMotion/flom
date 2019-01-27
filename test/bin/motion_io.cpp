@@ -38,8 +38,8 @@ namespace filesystem = std::experimental::filesystem;
 
 #include <flom/motion.hpp>
 
+#include "comparison.hpp"
 #include "generators.hpp"
-#include "operators.hpp"
 #include "printers.hpp"
 
 BOOST_AUTO_TEST_SUITE(motion_io)
