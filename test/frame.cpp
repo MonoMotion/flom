@@ -45,20 +45,20 @@ RC_BOOST_PROP(diff_mul_scalar,
   for (std::size_t i = 0; i < v - 1; i++) {
     d2 += d;
   }
-  RC_ASSERT(d1 == d2);
+  FLOM_ALMOST_EQUAL(d1, d2);
 }
 
 RC_BOOST_PROP(diff_add, (const flom::Frame &f1, unsigned short mul)) {
   auto f2 = f1.new_compatible_frame();
   auto const diff1 = f1 - f2;
   auto const diff2 = diff1 * mul;
-  RC_ASSERT((f1 + diff1) + diff2 == f1 + (diff1 + diff2));
+  FLOM_ALMOST_EQUAL((f1 + diff1) + diff2, f1 + (diff1 + diff2));
 }
 
 RC_BOOST_PROP(sub, (const flom::Frame &f1)) {
   auto f2 = f1.new_compatible_frame();
   auto const diff = f1 - f2;
-  RC_ASSERT(f2 + diff == f1);
+  FLOM_ALMOST_EQUAL(f2 + diff, f1);
 }
 
 RC_BOOST_PROP(new_compatible_frame, (const flom::Frame &f1)) {
@@ -93,12 +93,14 @@ RC_BOOST_PROP(interpolation, (const flom::Frame &f1)) {
   auto const f2 = f1.new_compatible_frame();
   auto const f3 = flom::interpolate(t, f1, f2);
   for (auto &&[key, val] : f3.positions()) {
-    RC_ASSERT(val == flom::interpolate(t, f1.positions().at(key),
-                                       f2.positions().at(key)));
+    auto const interp =
+        flom::interpolate(t, f1.positions().at(key), f2.positions().at(key));
+    FLOM_ALMOST_EQUAL(val, interp);
   }
   for (auto &&[key, val] : f3.effectors()) {
-    RC_ASSERT(val == flom::interpolate(t, f1.effectors().at(key),
-                                       f2.effectors().at(key)));
+    auto const interp =
+        flom::interpolate(t, f1.effectors().at(key), f2.effectors().at(key));
+    FLOM_ALMOST_EQUAL(val, interp);
   }
 }
 

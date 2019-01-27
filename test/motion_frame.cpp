@@ -72,8 +72,7 @@ RC_BOOST_PROP(retrieve_frame, (flom::Motion m)) {
     }
   }
 
-  // Using non-strict version of operator== defined in operators.hpp
-  RC_ASSERT(frame == expected_frame);
+  FLOM_ALMOST_EQUAL(frame, expected_frame);
 }
 
 RC_BOOST_PROP(retrieve_frame_zero, (flom::Motion m)) {
@@ -100,8 +99,7 @@ RC_BOOST_PROP(retrieve_frame_zero, (flom::Motion m)) {
 
   auto const expected_frame = m.frame_at(0);
 
-  // Using non-strict version of operator== defined in operators.hpp
-  RC_ASSERT(frame == expected_frame);
+  FLOM_ALMOST_EQUAL(frame, expected_frame);
 }
 
 RC_BOOST_PROP(retrieve_frame_over, (const flom::Motion &m)) {
@@ -127,8 +125,7 @@ RC_BOOST_PROP(retrieve_frame_over, (const flom::Motion &m)) {
   auto const expected_frame =
       m.frame_at(std::fmod(t, len)) + (last - init) * mul;
 
-  // Using non-strict version of operator== defined in operators.hpp
-  RC_ASSERT(frame == expected_frame);
+  FLOM_ALMOST_EQUAL(frame, expected_frame);
 }
 
 RC_BOOST_PROP(retrieve_frame_none_throw, (const flom::Motion &m)) {

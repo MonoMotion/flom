@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_SUITE(motion_keyframe_range)
 RC_BOOST_PROP(keyframe_range, (flom::Motion m)) {
   for (auto const &[t, keyframe] : m.keyframes()) {
     RC_ASSERT(m.is_valid_frame(keyframe));
-    RC_ASSERT(m.frame_at(t) == keyframe);
+    FLOM_ALMOST_EQUAL(m.frame_at(t), keyframe);
   }
 }
 
@@ -45,7 +45,7 @@ RC_BOOST_PROP(keyframe_range_assign, (flom::Motion m)) {
     keyframe = f;
   }
   for (auto const &[t, keyframe] : m.keyframes()) {
-    RC_ASSERT(keyframe == f);
+    FLOM_ALMOST_EQUAL(keyframe, f);
   }
 }
 

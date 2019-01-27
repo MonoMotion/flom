@@ -74,7 +74,7 @@ RC_BOOST_PROP(frames_range_wrap, (const flom::Motion &m)) {
 
   unsigned long count = 0;
   for (auto const &[t, frame] : m.frames(fps)) {
-    RC_ASSERT(frame == m.frame_at(t));
+    FLOM_ALMOST_EQUAL(frame, m.frame_at(t));
     if (t > m.length() * 2) {
       break;
     }

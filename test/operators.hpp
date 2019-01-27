@@ -92,18 +92,26 @@ static bool almost_equal(const Effector& v1, const Effector& v2) {
   return result;
 }
 
-static bool almost_equal(const Location& v1, const Location& v2) {
-  return boost::qvm::cmp(v1.vector(), v2.vector(),
-                         [](auto e1, auto e2) { return loose_compare(e1, e2); });
+static bool almost_equal(const FrameDifference& v1, const FrameDifference& v2) {
+  auto p = std::all_of(std::cbegin(v1.positions()), std::cend(v1.positions()),
+                       [&v2](auto const &pair) {
+                         auto const &[joint, pos1] = pair;
+                         auto const pos2 = v2.positions().at(joint);
+                         return almost_equal(pos1, pos2);
+                       });
+  auto e = std::all_of(std::cbegin(v1.effectors()), std::cend(v1.effectors()),
+                       [&v2](auto const &pair) {
+                         auto const &[link, e1] = pair;
+                         auto const e2 = v2.effectors().at(link);
+                         return almost_equal(e1, e2);
+                       });
+  return p && e;
 }
 
-static bool almost_equal(const Rotation& v1, const Rotation& v2) {
-  return boost::qvm::cmp(v1.quaternion(), v2.quaternion(),
-                         [](auto e1, auto e2) { return loose_compare(e1, e2); });
 }
 
 }
 
-}
+#define FLOM_ALMOST_EQUAL(a, b) RC_ASSERT(flom::testing::almost_equal(a, b))
 
 #endif
