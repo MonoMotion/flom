@@ -51,7 +51,7 @@ RC_BOOST_PROP(mul_scalar, (const flom::Rotation &rot, unsigned short v)) {
 RC_BOOST_PROP(sub, (const flom::Rotation &rot1, const flom::Rotation &rot2)) {
   auto const res = rot1 - rot2;
   auto const div_quat =
-      rot1.quaternion() * boost::qvm::inverse(rot2.quaternion());
+      rot1.quaternion() * boost::qvm::conjugate(rot2.quaternion());
   RC_ASSERT(res == flom::Rotation{div_quat});
 }
 
