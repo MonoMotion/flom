@@ -94,6 +94,7 @@ private:
 };
 
 bool operator==(const Motion &, const Motion &);
+bool operator!=(const Motion &, const Motion &);
 
 } // namespace flom
 

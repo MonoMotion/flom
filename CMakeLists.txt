@@ -22,8 +22,11 @@ cmake_policy(SET CMP0048 NEW)
 
 project(flom LANGUAGES CXX)
 
-execute_process(COMMAND ${PROJECT_SOURCE_DIR}/version.sh OUTPUT_VARIABLE FLOM_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-message(STATUS "Version: v${FLOM_VERSION}")
+execute_process(COMMAND ${PROJECT_SOURCE_DIR}/version.sh simple OUTPUT_VARIABLE flom_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+project(flom VERSION ${flom_VERSION})
+
+execute_process(COMMAND ${PROJECT_SOURCE_DIR}/version.sh OUTPUT_VARIABLE flom_DETAILED_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+message(STATUS "Version: v${flom_DETAILED_VERSION}")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -32,6 +35,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 if(NOT CONFIG)
   set(CONFIG Release)
 endif()
+
+set(INCLUDE_INSTALL_DIR include CACHE PATH "installation directory of header files, relative to ${CMAKE_INSTALL_PREFIX}")
+set(LIB_INSTALL_DIR lib CACHE PATH "installation directory of library files, relative to ${CMAKE_INSTALL_PREFIX}")
 
 message(STATUS "Build in ${CONFIG} mode")
 
@@ -69,7 +75,7 @@ include(cmake/clang-format.cmake)
 include(cmake/clang-tidy.cmake)
 include(cmake/compile-options.cmake)
 include(cmake/bin.cmake)
-include(cmake/test.cmake)
+include(cmake/lib.cmake)
 include(cmake/cpack.cmake)
 
 add_subdirectory(include/)
@@ -77,6 +83,8 @@ include_directories(include/)
 
 add_subdirectory(lib)
 add_subdirectory(bin)
+
+add_subdirectory(config/)
 
 enable_testing()
 add_subdirectory(test)

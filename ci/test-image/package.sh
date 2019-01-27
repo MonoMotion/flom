@@ -44,7 +44,7 @@ function build_package() {
   local version=${3:-$VERSION}
 
   cd $INPUT
-  fpm -s dir -t $type -n flom -v $version -m "coord.e <me@coord-e.com>" --url "https://github.com/DeepL2/flom" --description "Motion data exchange format" --prefix $PREFIX -p ../${OUTPUT}.$ext *
+  fpm -s dir -t $type -n flom -v $version -m "coord.e <me@coord-e.com>" --url "https://github.com/MonoMotion/flom" --description "Motion data exchange format" --prefix $PREFIX -p ../${OUTPUT}.$ext *
   cd ..
 }
 

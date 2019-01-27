@@ -20,7 +20,7 @@
 #ifndef FLOM_EFFECTOR_HPP
 #define FLOM_EFFECTOR_HPP
 
-#include <optional>
+#include "flom/compat/optional.hpp"
 #include <type_traits>
 
 #include <boost/operators.hpp>
@@ -59,7 +59,6 @@ public:
 };
 
 bool operator==(const Location &, const Location &);
-bool almost_equal(const Location &, const Location &);
 
 struct Rotation
     : boost::addable<
@@ -87,7 +86,6 @@ public:
 };
 
 bool operator==(const Rotation &, const Rotation &);
-bool almost_equal(const Rotation &, const Rotation &);
 
 struct Effector;
 
@@ -98,8 +96,8 @@ class EffectorDifference
               EffectorDifference,
               boost::multipliable<EffectorDifference, std::size_t>>> {
 private:
-  std::optional<Location> location_;
-  std::optional<Rotation> rotation_;
+  compat::optional<Location> location_;
+  compat::optional<Rotation> rotation_;
 
 public:
   EffectorDifference(const Effector &, const Effector &);
@@ -112,11 +110,11 @@ public:
   EffectorDifference &operator=(const EffectorDifference &) = default;
   EffectorDifference &operator=(EffectorDifference &&) = default;
 
-  const std::optional<Location> &location() const &;
-  std::optional<Location> location() &&;
+  const compat::optional<Location> &location() const &;
+  compat::optional<Location> location() &&;
 
-  const std::optional<Rotation> &rotation() const &;
-  std::optional<Rotation> rotation() &&;
+  const compat::optional<Rotation> &rotation() const &;
+  compat::optional<Rotation> rotation() &&;
 
   EffectorDifference &operator*=(std::size_t);
   EffectorDifference &operator+=(const EffectorDifference &);
@@ -125,27 +123,27 @@ public:
 };
 
 bool operator==(const EffectorDifference &, const EffectorDifference &);
-bool almost_equal(const EffectorDifference &, const EffectorDifference &);
 
 struct Effector : boost::addable<Effector, EffectorDifference> {
 private:
-  std::optional<Location> location_;
-  std::optional<Rotation> rotation_;
+  compat::optional<Location> location_;
+  compat::optional<Rotation> rotation_;
 
 public:
   Effector();
-  Effector(const std::optional<Location> &, const std::optional<Rotation> &);
+  Effector(const compat::optional<Location> &,
+           const compat::optional<Rotation> &);
 
-  const std::optional<Location> &location() const &;
-  std::optional<Location> location() &&;
+  const compat::optional<Location> &location() const &;
+  compat::optional<Location> location() &&;
 
-  void set_location(const std::optional<Location> &);
+  void set_location(const compat::optional<Location> &);
   void clear_location();
 
-  const std::optional<Rotation> &rotation() const &;
-  std::optional<Rotation> rotation() &&;
+  const compat::optional<Rotation> &rotation() const &;
+  compat::optional<Rotation> rotation() &&;
 
-  void set_rotation(const std::optional<Rotation> &);
+  void set_rotation(const compat::optional<Rotation> &);
   void clear_rotation();
 
   Effector new_compatible_effector() const;
@@ -157,10 +155,7 @@ public:
 
 bool operator==(const Effector &, const Effector &);
 bool operator!=(const Effector &, const Effector &);
-bool almost_equal(const Effector &, const Effector &);
 EffectorDifference operator-(const Effector &, const Effector &);
-
-bool almost_equal(double, double);
 
 } // namespace flom
 

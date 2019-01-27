@@ -17,20 +17,9 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-include_directories(include)
-add_subdirectory(include)
-
-add_subdirectory(lib)
-
-function(flom_add_test target)
-  target_link_libraries(${target} PRIVATE flom_lib flom_test_lib rapidcheck)
-  add_dependencies(${target} flom_test_headers)
-  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(${target} PUBLIC -Wno-global-constructors -Wno-disabled-macro-expansion)
-  endif()
-  add_test(NAME ${target} COMMAND ${target})
-  enable_clang_format(${target})
-  enable_clang_tidy(${target})
+function(flom_add_lib target name)
+  flom_set_compile_options(${target})
+  set_target_properties(${target} PROPERTIES OUTPUT_NAME "${name}")
+  set_target_properties(${target} PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+  target_link_libraries(${target} PRIVATE flom_proto nlohmann_json::nlohmann_json ${PROTOBUF_LIBRARIES})
 endfunction()
-
-add_subdirectory(bin)

@@ -2,25 +2,25 @@
 
 namespace flom {
 
-EffectorType::EffectorType(std::optional<CoordinateSystem> location,
-                           std::optional<CoordinateSystem> rotation)
+EffectorType::EffectorType(compat::optional<CoordinateSystem> location,
+                           compat::optional<CoordinateSystem> rotation)
     : location_(location), rotation_(rotation) {}
 
-std::optional<CoordinateSystem> EffectorType::location() const {
+compat::optional<CoordinateSystem> EffectorType::location() const {
   return this->location_;
 }
-std::optional<CoordinateSystem> EffectorType::rotation() const {
+compat::optional<CoordinateSystem> EffectorType::rotation() const {
   return this->rotation_;
 }
 
-void EffectorType::set_location(std::optional<CoordinateSystem> location) {
+void EffectorType::set_location(compat::optional<CoordinateSystem> location) {
   this->location_ = location;
 }
-void EffectorType::clear_location() { this->set_location(std::nullopt); }
-void EffectorType::set_rotation(std::optional<CoordinateSystem> rotation) {
+void EffectorType::clear_location() { this->set_location(compat::nullopt); }
+void EffectorType::set_rotation(compat::optional<CoordinateSystem> rotation) {
   this->rotation_ = rotation;
 }
-void EffectorType::clear_rotation() { this->set_rotation(std::nullopt); }
+void EffectorType::clear_rotation() { this->set_rotation(compat::nullopt); }
 
 Effector EffectorType::new_effector() const {
   Effector e;
@@ -39,6 +39,10 @@ bool EffectorType::is_compatible(const Effector &e) const {
   bool rot_v = static_cast<bool>(e.rotation());
   bool rot_t = static_cast<bool>(this->rotation());
   return loc_v == loc_t && rot_v == rot_t;
+}
+
+bool operator==(const EffectorType &v1, const EffectorType &v2) {
+  return v1.location() == v2.location() && v1.rotation() == v2.rotation();
 }
 
 } // namespace flom
