@@ -33,6 +33,9 @@ if(NOT CONFIG)
   set(CONFIG Release)
 endif()
 
+set(INCLUDE_INSTALL_DIR include CACHE PATH "installation directory of header files, relative to ${CMAKE_INSTALL_PREFIX}")
+set(LIB_INSTALL_DIR lib CACHE PATH "installation directory of library files, relative to ${CMAKE_INSTALL_PREFIX}")
+
 message(STATUS "Build in ${CONFIG} mode")
 
 if(APPLE)
