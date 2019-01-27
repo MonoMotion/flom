@@ -20,6 +20,7 @@
 #include <flom/effector.hpp>
 #include <flom/frame.hpp>
 #include <flom/loose_compare.hpp>
+#include <flom/range.hpp>
 
 #include <boost/qvm/quat.hpp>
 #include <boost/qvm/quat_access.hpp>
@@ -28,6 +29,8 @@
 #include <boost/qvm/vec_access.hpp>
 #include <boost/qvm/vec_operations.hpp>
 #include <boost/qvm/vec_traits_array.hpp>
+
+#include <boost/range/algorithm.hpp>
 
 #include "comparison.hpp"
 
@@ -121,6 +124,93 @@ bool almost_equal(const FrameDifference &v1, const FrameDifference &v2) {
                          return almost_equal(e1, e2);
                        });
   return p && e;
+}
+
+bool almost_equal(const EffectorWeight& a, const EffectorWeight& b) {
+  if(!almost_equal(a.location(), b.location())) {
+    return false;
+  }
+
+  if(!almost_equal(a.rotation(), b.rotation())) {
+    return false;
+  }
+
+  return true;
+}
+
+bool almost_equal(const Motion& a, const Motion& b) {
+  if(a.model_id() != b.model_id()) {
+    return false;
+  }
+
+  if(a.loop() != b.loop()) {
+    return false;
+  }
+
+  {
+    std::unordered_set<std::string> ja, jb;
+    boost::copy(a.joint_names(), std::inserter(ja, std::end(ja)));
+    boost::copy(b.joint_names(), std::inserter(jb, std::end(jb)));
+
+    if(ja != jb) {
+      return false;
+    }
+  }
+
+  {
+    std::unordered_set<std::string> ea, eb;
+    boost::copy(a.effector_names(), std::inserter(ea, std::end(ea)));
+    boost::copy(b.effector_names(), std::inserter(eb, std::end(eb)));
+
+    if(ea != eb) {
+      return false;
+    }
+
+    for (auto const& name : ea) {
+      if (a.effector_type(name) != b.effector_type(name)) {
+        return false;
+      }
+
+      if (!almost_equal(a.effector_weight(name), b.effector_weight(name))) {
+        return false;
+      }
+    }
+  }
+
+  // TODO: Call keyframes() directly after #43
+  Motion acopy (a);
+  Motion bcopy (b);
+
+  auto ait = acopy.keyframes().begin();
+  auto bit = bcopy.keyframes().begin();
+
+  // TODO: Use better way, seriously
+  while (true) {
+    auto [ta, fa] = *ait;
+    auto [tb, fb] = *bit;
+
+    if (!almost_equal(ta, tb)) {
+      return false;
+    }
+
+    if (!almost_equal(fa, fb)) {
+      return false;
+    }
+
+    ait++;
+    bit++;
+
+    bool ca = ait == acopy.keyframes().end();
+    bool cb = bit == bcopy.keyframes().end();
+
+    if(ca != cb) {
+      return false;
+    }
+
+    if (ca) break;
+  }
+
+  return true;
 }
 
 } // namespace testing

@@ -21,7 +21,9 @@
 #define FLOM_TEST_OPERATORS_HPP
 
 #include <flom/effector.hpp>
+#include <flom/effector_weight.hpp>
 #include <flom/frame.hpp>
+#include <flom/motion.hpp>
 
 #include <rapidcheck.h>
 
@@ -47,6 +49,9 @@ bool almost_equal(const Frame &, const Frame &);
 
 bool almost_equal(const EffectorDifference &, const EffectorDifference &);
 bool almost_equal(const FrameDifference &, const FrameDifference &);
+
+bool almost_equal(const EffectorWeight &, const EffectorWeight &);
+bool almost_equal(const Motion &, const Motion &);
 
 } // namespace testing
 

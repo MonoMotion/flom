@@ -63,7 +63,7 @@ RC_BOOST_PROP(dump_load, (const flom::Motion &m)) {
     auto const m2 = m.load(f);
     filesystem::remove(path);
 
-    RC_ASSERT(m == m2);
+    FLOM_ALMOST_EQUAL(m, m2);
   }
 }
 
@@ -86,7 +86,7 @@ RC_BOOST_PROP(dump_load_json, (const flom::Motion &m)) {
     auto const m2 = m.load_json(f);
     filesystem::remove(path);
 
-    RC_ASSERT(m == m2);
+    FLOM_ALMOST_EQUAL(m, m2);
   }
 }
 
