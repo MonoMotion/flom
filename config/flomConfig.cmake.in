@@ -13,6 +13,4 @@ set_and_check(flom_LIB_DIR "@PACKAGE_LIB_INSTALL_DIR@")
 
 set(flom_LIBRARIES flom)
 
-set(flom_DRIVER_LIBRARIES "")
-
 check_required_components(flom)
