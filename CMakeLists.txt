@@ -70,7 +70,6 @@ include(cmake/clang-tidy.cmake)
 include(cmake/compile-options.cmake)
 include(cmake/bin.cmake)
 include(cmake/lib.cmake)
-include(cmake/test.cmake)
 include(cmake/cpack.cmake)
 
 add_subdirectory(include/)
