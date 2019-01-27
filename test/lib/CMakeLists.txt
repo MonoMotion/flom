@@ -17,7 +17,9 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-include_directories(include)
-add_subdirectory(include)
-add_subdirectory(lib)
-add_subdirectory(bin)
+file(GLOB test_lib_files *.cpp)
+add_library(flom_test_lib SHARED ${test_lib_files})
+add_dependencies(flom_test_lib flom_test_headers)
+flom_set_compile_options(flom_test_lib)
+  set_target_properties(flom_test_lib PROPERTIES OUTPUT_NAME "flom_test")
+target_link_libraries(flom_test_lib PRIVATE flom_lib)
