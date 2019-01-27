@@ -13,7 +13,7 @@ Motion data exchange format
 
 Download and install suitable package from [releases](https://github.com/MonoMotion/flom/releases)
 
-Latest build artifacts can be found at [![bintray](https://img.shields.io/bintray/v/deepl2/flom/latest.svg?style=flat-square)](https://dl.bintray.com/deepl2/flom/)
+Latest build artifacts can be found at [![bintray](https://img.shields.io/bintray/v/monomotion/flom/latest.svg?style=flat-square)](https://dl.bintray.com/monomotion/flom/)
 
 Or you can [build manually](#build-manually)
 
