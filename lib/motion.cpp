@@ -20,6 +20,7 @@
 #include "flom/motion.hpp"
 #include "flom/errors.hpp"
 #include "flom/interpolation.hpp"
+#include "flom/loose_compare.hpp"
 #include "flom/motion.impl.hpp"
 #include "flom/range.hpp"
 
@@ -103,7 +104,7 @@ void Motion::insert_keyframe(double t, const Frame &frame) {
 }
 
 void Motion::delete_keyframe(double t, bool loose) {
-  if (t == 0 || (loose && almost_equal(t, 0))) {
+  if (t == 0 || (loose && loose_compare(t, 0))) {
     throw errors::InitKeyframeError{};
   }
 
@@ -130,7 +131,7 @@ void Motion::delete_keyframe(double t, bool loose) {
     it = lower;
   }
 
-  if (!almost_equal(t, it->first)) {
+  if (!loose_compare(t, it->first)) {
     throw errors::KeyframeNotFoundError{t};
   }
 
