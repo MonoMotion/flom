@@ -31,4 +31,9 @@ function main() {
   echo $semver
 }
 
-main
+function simple() {
+  local annotated=$(git describe --tags --abbrev=0 2> /dev/null)
+  echo ${annotated#v}
+}
+
+${1:-main}
