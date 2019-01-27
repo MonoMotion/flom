@@ -61,11 +61,6 @@ bool operator==(const Location &l1, const Location &l2) {
   return l1.vector() == l2.vector();
 }
 
-bool almost_equal(const Location &l1, const Location &l2) {
-  return boost::qvm::cmp(l1.vector(), l2.vector(),
-                         [](auto e1, auto e2) { return almost_equal(e1, e2); });
-}
-
 Rotation::Rotation() : quat_({1, 0, 0, 0}) {}
 Rotation::Rotation(const Rotation::value_type &quat)
     : quat_(boost::qvm::normalized(quat)) {}
@@ -102,10 +97,6 @@ bool operator==(const Rotation &r1, const Rotation &r2) {
   return r1.quaternion() == r2.quaternion();
 }
 
-bool almost_equal(const Rotation &r1, const Rotation &r2) {
-  return boost::qvm::cmp(r1.quaternion(), r2.quaternion(),
-                         [](auto e1, auto e2) { return almost_equal(e1, e2); });
-}
 EffectorDifference operator-(const Effector &e1, const Effector &e2) {
   return EffectorDifference{e1, e2};
 }
@@ -178,21 +169,6 @@ compat::optional<Rotation> EffectorDifference::rotation() && {
 
 bool operator==(const EffectorDifference &d1, const EffectorDifference &d2) {
   return d1.location() == d2.location() && d1.rotation() == d2.rotation();
-}
-
-bool almost_equal(const EffectorDifference &d1, const EffectorDifference &d2) {
-  const bool l =
-      static_cast<bool>(d1.location()) == static_cast<bool>(d2.location());
-  const bool r =
-      static_cast<bool>(d1.rotation()) == static_cast<bool>(d2.rotation());
-  if (!l || !r)
-    return false;
-  bool result = true;
-  if (d1.location())
-    result = result && almost_equal(*d1.location(), *d2.location());
-  if (d1.rotation())
-    result = result && almost_equal(*d1.rotation(), *d2.rotation());
-  return result;
 }
 
 Effector interpolate(double t, Effector const &a, Effector const &b) {
@@ -297,26 +273,6 @@ bool operator==(const Effector &e1, const Effector &e2) {
 
 bool operator!=(const Effector &e1, const Effector &e2) { return !(e1 == e2); }
 
-bool almost_equal(const Effector &e1, const Effector &e2) {
-  // TODO: Refactor: Remove mutable variable
-  const bool l =
-      static_cast<bool>(e1.location()) == static_cast<bool>(e2.location());
-  const bool r =
-      static_cast<bool>(e1.rotation()) == static_cast<bool>(e2.rotation());
-  if (!l || !r)
-    return false;
-  bool result = true;
-  if (e1.location())
-    result = result && almost_equal(*e1.location(), *e2.location());
-  if (e1.rotation())
-    result = result && almost_equal(*e1.rotation(), *e2.rotation());
-  return result;
-}
-
 double interpolate(double t, double a, double b) { return lerp(t, a, b); }
-bool almost_equal(double a, double b) {
-  return boost::math::fpc::close_at_tolerance<double>(
-      constants::float_point_tolerance)(a, b);
-}
 
 } // namespace flom
