@@ -17,39 +17,7 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 3.0.2)
-
-add_executable(test_effector effector.cpp)
-flom_add_test(test_effector)
-
-add_executable(test_location location.cpp)
-flom_add_test(test_location)
-
-add_executable(test_rotation rotation.cpp)
-flom_add_test(test_rotation)
-
-add_executable(test_frame frame.cpp)
-flom_add_test(test_frame)
-
-add_executable(test_motion_keyframe motion_keyframe.cpp)
-flom_add_test(test_motion_keyframe)
-
-add_executable(test_motion_keyframe_range motion_keyframe_range.cpp)
-flom_add_test(test_motion_keyframe_range)
-
-add_executable(test_motion_frame motion_frame.cpp)
-flom_add_test(test_motion_frame)
-
-add_executable(test_motion_frame_range motion_frame_range.cpp)
-flom_add_test(test_motion_frame_range)
-
-add_executable(test_motion_io motion_io.cpp)
-if(USE_LIBCXX)
-  target_link_libraries(test_motion_io PRIVATE c++fs)
-else()
-  target_link_libraries(test_motion_io PRIVATE stdc++fs)
-endif()
-flom_add_test(test_motion_io)
-
-add_executable(test_motion_misc motion_misc.cpp)
-flom_add_test(test_motion_misc)
+include_directories(include)
+add_subdirectory(include)
+# add_subdirectory(lib)
+add_subdirectory(bin)

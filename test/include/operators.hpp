@@ -20,19 +20,19 @@
 #ifndef FLOM_TEST_OPERATORS_HPP
 #define FLOM_TEST_OPERATORS_HPP
 
-#include <flom/frame.hpp>
 #include <flom/effector.hpp>
+#include <flom/frame.hpp>
 #include <flom/loose_compare.hpp>
 
 #include <rapidcheck.h>
 
-#include <boost/qvm/vec.hpp>
-#include <boost/qvm/vec_traits_array.hpp>
-#include <boost/qvm/vec_access.hpp>
-#include <boost/qvm/vec_operations.hpp>
 #include <boost/qvm/quat.hpp>
 #include <boost/qvm/quat_access.hpp>
 #include <boost/qvm/quat_operations.hpp>
+#include <boost/qvm/vec.hpp>
+#include <boost/qvm/vec_access.hpp>
+#include <boost/qvm/vec_operations.hpp>
+#include <boost/qvm/vec_traits_array.hpp>
 
 // loose comparison functions to use in tests.
 
@@ -40,29 +40,29 @@ namespace flom {
 
 namespace testing {
 
-static bool almost_equal(double a, double b) {
-  return loose_compare(a, b);
-}
+static bool almost_equal(double a, double b) { return loose_compare(a, b); }
 
-static bool almost_equal(const qvm::vec<double, 3>& a, const qvm::vec<double, 3>& b) {
+static bool almost_equal(const qvm::vec<double, 3> &a,
+                         const qvm::vec<double, 3> &b) {
   return boost::qvm::cmp(a, b,
                          [](auto e1, auto e2) { return almost_equal(e1, e2); });
 }
 
-static bool almost_equal(const qvm::quat<double>& a, const qvm::quat<double>& b) {
+static bool almost_equal(const qvm::quat<double> &a,
+                         const qvm::quat<double> &b) {
   return boost::qvm::cmp(a, b,
                          [](auto e1, auto e2) { return almost_equal(e1, e2); });
 }
 
-static bool almost_equal(const Location& v1, const Location& v2) {
+static bool almost_equal(const Location &v1, const Location &v2) {
   return almost_equal(v1.vector(), v2.vector());
 }
 
-static bool almost_equal(const Rotation& v1, const Rotation& v2) {
+static bool almost_equal(const Rotation &v1, const Rotation &v2) {
   return almost_equal(v1.quaternion(), v2.quaternion());
 }
 
-static bool almost_equal(const Effector& v1, const Effector& v2) {
+static bool almost_equal(const Effector &v1, const Effector &v2) {
   // TODO: Refactor: Remove mutable variable
   const bool l =
       static_cast<bool>(v1.location()) == static_cast<bool>(v2.location());
@@ -78,7 +78,7 @@ static bool almost_equal(const Effector& v1, const Effector& v2) {
   return result;
 }
 
-static bool almost_equal(const Frame& v1, const Frame& v2) {
+static bool almost_equal(const Frame &v1, const Frame &v2) {
   auto p = std::all_of(std::cbegin(v1.positions()), std::cend(v1.positions()),
                        [&v2](auto const &pair) {
                          auto const &[joint, pos1] = pair;
@@ -94,7 +94,8 @@ static bool almost_equal(const Frame& v1, const Frame& v2) {
   return p && e;
 }
 
-static bool almost_equal(const EffectorDifference& v1, const EffectorDifference& v2) {
+static bool almost_equal(const EffectorDifference &v1,
+                         const EffectorDifference &v2) {
   const bool l =
       static_cast<bool>(v1.location()) == static_cast<bool>(v2.location());
   const bool r =
@@ -109,7 +110,7 @@ static bool almost_equal(const EffectorDifference& v1, const EffectorDifference&
   return result;
 }
 
-static bool almost_equal(const FrameDifference& v1, const FrameDifference& v2) {
+static bool almost_equal(const FrameDifference &v1, const FrameDifference &v2) {
   auto p = std::all_of(std::cbegin(v1.positions()), std::cend(v1.positions()),
                        [&v2](auto const &pair) {
                          auto const &[joint, pos1] = pair;
@@ -125,9 +126,9 @@ static bool almost_equal(const FrameDifference& v1, const FrameDifference& v2) {
   return p && e;
 }
 
-}
+} // namespace testing
 
-}
+} // namespace flom
 
 #define FLOM_ALMOST_EQUAL(a, b) RC_ASSERT(flom::testing::almost_equal(a, b))
 
