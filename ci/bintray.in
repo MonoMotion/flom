@@ -2,7 +2,7 @@
   "package": {
     "name": "latest",
     "repo": "flom",
-    "subject": "deepl2"
+    "subject": "monomotion"
   },
   "version": {
     "name": "@VERSION@"
