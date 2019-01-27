@@ -1,0 +1,16 @@
+set(flom_VERSION @flom_VERSION@)
+set(flom_VERSION_MAJOR @flom_VERSION_MAJOR@)
+set(flom_VERSION_MINOR @flom_VERSION_MINOR@)
+set(flom_VERSION_PATCH @flom_VERSION_PATCH@)
+set(flom_VERSION_TWEAK @flom_VERSION_TWEAK@)
+
+@PACKAGE_INIT@
+
+set_and_check(flom_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
+set_and_check(flom_LIB_DIR "@PACKAGE_LIB_INSTALL_DIR@")
+
+set(flom_LIBRARIES flom)
+
+set(flom_DRIVER_LIBRARIES "")
+
+check_required_components(flom)

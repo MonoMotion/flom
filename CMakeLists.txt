@@ -79,5 +79,7 @@ include_directories(include/)
 add_subdirectory(lib)
 add_subdirectory(bin)
 
+add_subdirectory(config/)
+
 enable_testing()
 add_subdirectory(test)
