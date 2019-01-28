@@ -77,6 +77,7 @@ public:
   void insert_keyframe(double t, const Frame &);
   void delete_keyframe(double t, bool loose = true);
   KeyframeRange keyframes();
+  ConstKeyframeRange keyframes() const;
   ConstKeyframeRange const_keyframes() const;
   void clear_keyframes();
 

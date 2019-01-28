@@ -143,6 +143,8 @@ KeyframeRange Motion::keyframes() {
           *this};
 }
 
+ConstKeyframeRange Motion::keyframes() const { return this->const_keyframes(); }
+
 ConstKeyframeRange Motion::const_keyframes() const {
   return {std::cbegin(this->impl->raw_frames),
           std::cend(this->impl->raw_frames)};
