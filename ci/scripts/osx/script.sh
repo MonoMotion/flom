@@ -22,4 +22,4 @@ mkdir build && cd $_
 cmake .. -DCMAKE_CXX_COMPILER=${COMPILER} -DCONFIG=${BUILD_TYPE} -DUSE_LIBCXX=ON -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF
 make
 
-ctest -VV -j"$(sysctl -n hw.ncpu)"
+travis_wait ctest -VV -j"$(sysctl -n hw.ncpu)"
