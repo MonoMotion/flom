@@ -18,4 +18,4 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-docker run --rm -v $(pwd):/source -v $(pwd)/build:/build builder /package.sh
+docker run --rm -v $(pwd):/source -v $(pwd)/build:/build builder -c "bash /package.sh"
