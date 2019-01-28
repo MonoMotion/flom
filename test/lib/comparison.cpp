@@ -179,11 +179,8 @@ bool almost_equal(const Motion& a, const Motion& b) {
   }
 
   for(auto const& p : boost::combine(a.const_keyframes(), b.const_keyframes())) {
-    std::pair<double, Frame> pa, pb;
-    boost::tie(pa, pb) = p;
-
-    auto [ta, fa] = pa;
-    auto [tb, fb] = pb;
+    const auto& [ta, fa] = boost::get<0>(p);
+    const auto& [tb, fb] = boost::get<1>(p);
 
     if (!almost_equal(ta, tb)) {
       return false;
