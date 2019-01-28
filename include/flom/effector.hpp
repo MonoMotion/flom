@@ -102,14 +102,8 @@ public:
   double z() const;
 
   std::tuple<double, double, double, double> wxyz() const;
+
   void set_wxyz(double, double, double, double);
-
-  std::tuple<double, double, double> rpy() const;
-  void set_rpy(double, double, double);
-
-  void rotate_r(double);
-  void rotate_p(double);
-  void rotate_y(double);
 
   Rotation &operator+=(const Rotation &);
   Rotation &operator-=(const Rotation &);
