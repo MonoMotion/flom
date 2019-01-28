@@ -19,7 +19,6 @@
 
 FROM balenalib/armv7hf-debian:buster-build
 
-ENV RC_PARAMS="verbose_progress=1 verbose_shrinking=1"
 ENV CXX="g++"
 ENV CC="gcc"
 ENV BUILD_TYPE="Release"
