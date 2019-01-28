@@ -177,12 +177,8 @@ bool almost_equal(const Motion& a, const Motion& b) {
     }
   }
 
-  // TODO: Call keyframes() directly after #43
-  Motion acopy (a);
-  Motion bcopy (b);
-
-  auto ait = acopy.keyframes().begin();
-  auto bit = bcopy.keyframes().begin();
+  auto ait = a.const_keyframes().begin();
+  auto bit = b.const_keyframes().begin();
 
   // TODO: Use better way, seriously
   while (true) {
@@ -200,8 +196,8 @@ bool almost_equal(const Motion& a, const Motion& b) {
     ait++;
     bit++;
 
-    bool ca = ait == acopy.keyframes().end();
-    bool cb = bit == bcopy.keyframes().end();
+    bool ca = ait == a.const_keyframes().end();
+    bool cb = bit == b.const_keyframes().end();
 
     if(ca != cb) {
       return false;
