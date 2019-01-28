@@ -17,7 +17,8 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-FROM balenalib/armv7hf-debian:buster-build
+ARG ARCH=armv7hf
+FROM balenalib/${ARG}-debian:buster-build
 
 ENV CXX="g++"
 ENV CC="gcc"

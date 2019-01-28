@@ -18,4 +18,4 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-docker build ci/ -f ci/test-image-cross/Dockerfile -t builder
+docker build ci/ -f ci/test-image-cross/Dockerfile -t builder --build-arg ARCH=armv7hf
