@@ -40,6 +40,7 @@ set(INCLUDE_INSTALL_DIR include CACHE PATH "installation directory of header fil
 set(LIB_INSTALL_DIR lib CACHE PATH "installation directory of library files, relative to ${CMAKE_INSTALL_PREFIX}")
 option(ENABLE_TEST "Build and run test cases" ON)
 option(USE_STATIC_PROTOBUF "Link static version of protobuf library" ON)
+option(USE_PIC "Use -fPIC (Position independent code)" ON)
 
 message(STATUS "Build in ${CONFIG} mode")
 
@@ -59,7 +60,7 @@ include_directories(${PROTOBUF_INCLUDE_DIR})
 file(GLOB PROTO_FILES ${PROTO_DIR}/*.proto)
 protobuf_generate_cpp(PROTO_SRC PROTO_HEADER ${PROTO_FILES})
 add_library(flom_proto ${PROTO_HEADER} ${PROTO_SRC})
-set_target_properties(flom_proto PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+set_target_properties(flom_proto PROPERTIES POSITION_INDEPENDENT_CODE ${USE_PIC})
 target_link_libraries(flom_proto INTERFACE ${PROTOBUF_LIBRARIES})
 include_directories(SYSTEM ${PROTO_INCLUDE_DIR})
 
