@@ -61,4 +61,12 @@ RC_BOOST_PROP(add, (const flom::Rotation &rot1, const flom::Rotation &rot2)) {
   FLOM_ALMOST_EQUAL(res, flom::Rotation{mul_quat});
 }
 
+RC_BOOST_PROP(values, (const flom::Rotation &v)) {
+  const auto [w, x, y, z] = v.wxyz();
+  RC_ASSERT(w == v.w());
+  RC_ASSERT(x == v.x());
+  RC_ASSERT(y == v.y());
+  RC_ASSERT(z == v.z());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
