@@ -53,6 +53,12 @@ public:
   const value_type &vector() const;
   void set_vector(const value_type &);
 
+  double x() const;
+  double y() const;
+  double z() const;
+
+  std::tuple<double, double, double> xyz() const;
+
   Location &operator+=(const Location &);
   Location &operator-=(const Location &);
   Location &operator*=(std::size_t);
@@ -79,6 +85,13 @@ public:
 
   const value_type &quaternion() const;
   void set_quaternion(const value_type &);
+
+  double w() const;
+  double x() const;
+  double y() const;
+  double z() const;
+
+  std::tuple<double, double, double, double> wxyz() const;
 
   Rotation &operator+=(const Rotation &);
   Rotation &operator-=(const Rotation &);
