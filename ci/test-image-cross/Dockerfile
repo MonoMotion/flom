@@ -40,4 +40,4 @@ WORKDIR /source
 
 ENTRYPOINT ["/usr/bin/resin-xbuild"]
 
-CMD ["/build.sh"]
+CMD ["-c", "bash /build.sh"]
