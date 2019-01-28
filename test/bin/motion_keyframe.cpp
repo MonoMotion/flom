@@ -113,8 +113,7 @@ RC_BOOST_PROP(clear_keyframe, (flom::Motion m)) {
 
   RC_ASSERT(m.length() == 0);
 
-  // TODO: Use const (after #43)
-  auto range = m.keyframes();
+  auto range = m.const_keyframes();
   RC_ASSERT(std::distance(range.begin(), range.end()) == 1);
 }
 
