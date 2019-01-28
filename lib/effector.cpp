@@ -102,11 +102,6 @@ std::tuple<double, double, double, double> Rotation::wxyz() const {
   return std::make_tuple(this->w(), this->x(), this->y(), this->z());
 }
 
-void Rotation::set_w(double w) { boost::qvm::S(this->quat_) = w; }
-void Rotation::set_x(double x) { boost::qvm::X(this->quat_) = x; }
-void Rotation::set_y(double y) { boost::qvm::Y(this->quat_) = y; }
-void Rotation::set_z(double z) { boost::qvm::Z(this->quat_) = z; }
-
 void Rotation::set_wxyz(double w, double x, double y, double z) {
   this->set_w(w);
   this->set_x(x);
