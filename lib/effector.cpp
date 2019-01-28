@@ -85,7 +85,9 @@ Rotation::Rotation() : quat_({1, 0, 0, 0}) {}
 Rotation::Rotation(const Rotation::value_type &quat)
     : quat_(boost::qvm::normalized(quat)) {}
 Rotation::Rotation(double w, double x, double y, double z)
-    : quat_({w, x, y, z}) {}
+    : quat_({w, x, y, z}) {
+  boost::qvm::normalize(this->quat_);
+}
 
 const Rotation::value_type &Rotation::quaternion() const { return this->quat_; }
 
@@ -103,10 +105,11 @@ std::tuple<double, double, double, double> Rotation::wxyz() const {
 }
 
 void Rotation::set_wxyz(double w, double x, double y, double z) {
-  this->set_w(w);
-  this->set_x(x);
-  this->set_y(y);
-  this->set_z(z);
+  boost::qvm::S(this->quat_) = w;
+  boost::qvm::X(this->quat_) = x;
+  boost::qvm::Y(this->quat_) = y;
+  boost::qvm::Z(this->quat_) = z;
+  boost::qvm::normalize(this->quat_);
 }
 
 Rotation &Rotation::operator+=(const Rotation &other) {
