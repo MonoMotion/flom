@@ -61,6 +61,12 @@ public:
 
   std::tuple<double, double, double> xyz() const;
 
+  void set_x(double);
+  void set_y(double);
+  void set_z(double);
+
+  void set_xyz(double, double, double);
+
   Location &operator+=(const Location &);
   Location &operator-=(const Location &);
   Location &operator*=(std::size_t);
@@ -96,6 +102,13 @@ public:
   double z() const;
 
   std::tuple<double, double, double, double> wxyz() const;
+
+  void set_w(double);
+  void set_x(double);
+  void set_y(double);
+  void set_z(double);
+
+  void set_wxyz(double, double, double, double);
 
   Rotation &operator+=(const Rotation &);
   Rotation &operator-=(const Rotation &);
