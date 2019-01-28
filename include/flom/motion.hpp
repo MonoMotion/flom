@@ -37,6 +37,7 @@ enum class LoopType { None, Wrap };
 
 class FrameRange;
 class KeyframeRange;
+class ConstKeyframeRange;
 
 class Motion {
   friend bool operator==(const Motion &, const Motion &);
@@ -76,6 +77,7 @@ public:
   void insert_keyframe(double t, const Frame &);
   void delete_keyframe(double t, bool loose = true);
   KeyframeRange keyframes();
+  ConstKeyframeRange const_keyframes() const;
   void clear_keyframes();
 
   EffectorType effector_type(const std::string &) const;

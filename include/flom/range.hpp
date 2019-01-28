@@ -192,6 +192,30 @@ public:
   iterator end() noexcept { return iterator{this->end_it, this->motion}; }
 };
 
+class ConstKeyframeRange {
+public:
+  using value_type = Frame;
+  using const_iterator = typename std::map<double, Frame>::const_iterator;
+
+private:
+  const_iterator begin_;
+  const_iterator end_;
+
+public:
+  ConstKeyframeRange() = delete;
+  ConstKeyframeRange(const_iterator begin, const_iterator end)
+      : begin_(begin), end_(end) {}
+  ConstKeyframeRange(const ConstKeyframeRange &) = default;
+  ConstKeyframeRange(ConstKeyframeRange &&) = default;
+  ConstKeyframeRange &operator=(const ConstKeyframeRange &) = default;
+  ConstKeyframeRange &operator=(ConstKeyframeRange &&) = default;
+
+  const_iterator begin() const noexcept { return this->begin_; }
+  const_iterator end() const noexcept { return this->end_; }
+
+  const_iterator cbegin() const noexcept { return this->begin_; }
+  const_iterator cend() const noexcept { return this->end_; }
+};
 } // namespace flom
 
 #endif
