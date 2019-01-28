@@ -18,6 +18,8 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+brew upgrade
+
 brew upgrade cmake || brew install cmake
 brew upgrade boost || brew install boost
 brew upgrade protobuf || brew install protobuf
