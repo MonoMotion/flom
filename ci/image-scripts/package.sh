@@ -40,14 +40,15 @@ cd ..
 
 function build_package() {
   local type=$1
-  local ext=${2:-$type}
-  local version=${3:-$VERSION}
+  local ext=$2
+  local version=$3
+  shift 3
 
   cd $INPUT
-  fpm -s dir -t $type -n flom -v $version -m "coord.e <me@coord-e.com>" --url "https://github.com/MonoMotion/flom" --description "Motion data exchange format" --prefix $PREFIX -p ../${OUTPUT}.$ext *
+  fpm -s dir -t $type -n flom -v $version -m "coord.e <me@coord-e.com>" --url "https://github.com/MonoMotion/flom" --description "Motion data exchange format" "$@" --prefix $PREFIX -p ../${OUTPUT}.$ext *
   cd ..
 }
 
-build_package deb
-build_package rpm
-build_package pacman pkg.tar.xz ${VERSION//[^[:alnum:].]/}
+build_package deb deb ${VERSION} -d "libprotobuf10 >= 3.0.0 | libprotobuf17 >= 3.0.0"
+build_package rpm rpm ${VERSION} -d "protobuf-devel >= 3.0.0"
+build_package pacman pkg.tar.xz ${VERSION//[^[:alnum:].]/} -d "protobuf >= 3.0.0"
