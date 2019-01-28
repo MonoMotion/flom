@@ -94,8 +94,11 @@ public:
   FrameRange &operator=(const FrameRange &) = default;
   FrameRange &operator=(FrameRange &&) = default;
 
-  iterator begin() noexcept { return {this->motion, this->fps}; }
-  iterator end() noexcept { return {}; }
+  iterator begin() const noexcept { return {this->motion, this->fps}; }
+  iterator end() const noexcept { return {}; }
+
+  iterator cbegin() const noexcept { return this->begin(); }
+  iterator cend() const noexcept { return this->end(); }
 };
 
 class CheckedFrameRef {
