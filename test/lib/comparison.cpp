@@ -31,6 +31,7 @@
 #include <boost/qvm/vec_traits_array.hpp>
 
 #include <boost/range/algorithm.hpp>
+#include <boost/range/combine.hpp>
 
 #include "comparison.hpp"
 
@@ -177,13 +178,12 @@ bool almost_equal(const Motion& a, const Motion& b) {
     }
   }
 
-  auto ait = a.const_keyframes().begin();
-  auto bit = b.const_keyframes().begin();
+  for(auto const& p : boost::combine(a.const_keyframes(), b.const_keyframes())) {
+    std::pair<double, Frame> pa, pb;
+    boost::tie(pa, pb) = p;
 
-  // TODO: Use better way, seriously
-  while (true) {
-    auto [ta, fa] = *ait;
-    auto [tb, fb] = *bit;
+    auto [ta, fa] = pa;
+    auto [tb, fb] = pb;
 
     if (!almost_equal(ta, tb)) {
       return false;
@@ -192,18 +192,6 @@ bool almost_equal(const Motion& a, const Motion& b) {
     if (!almost_equal(fa, fb)) {
       return false;
     }
-
-    ait++;
-    bit++;
-
-    bool ca = ait == a.const_keyframes().end();
-    bool cb = bit == b.const_keyframes().end();
-
-    if(ca != cb) {
-      return false;
-    }
-
-    if (ca) break;
   }
 
   return true;
