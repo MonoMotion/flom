@@ -39,7 +39,7 @@ endif()
 set(INCLUDE_INSTALL_DIR include CACHE PATH "installation directory of header files, relative to ${CMAKE_INSTALL_PREFIX}")
 set(LIB_INSTALL_DIR lib CACHE PATH "installation directory of library files, relative to ${CMAKE_INSTALL_PREFIX}")
 option(ENABLE_TEST "Build and run test cases" ON)
-option(USE_STATIC_PROTOBUF "Link static version of protobuf library" ON)
+option(USE_STATIC_PROTOBUF "Link against static version of protobuf library" OFF)
 option(USE_PIC "Use -fPIC (Position independent code)" ON)
 
 message(STATUS "Build in ${CONFIG} mode")
