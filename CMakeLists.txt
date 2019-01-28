@@ -39,6 +39,7 @@ endif()
 set(INCLUDE_INSTALL_DIR include CACHE PATH "installation directory of header files, relative to ${CMAKE_INSTALL_PREFIX}")
 set(LIB_INSTALL_DIR lib CACHE PATH "installation directory of library files, relative to ${CMAKE_INSTALL_PREFIX}")
 option(ENABLE_TEST "Build and run test cases" ON)
+option(USE_STATIC_PROTOBUF "Link static version of protobuf library" ON)
 
 message(STATUS "Build in ${CONFIG} mode")
 
@@ -49,7 +50,7 @@ endif()
 
 set(PROTO_DIR ./proto)
 set(PROTO_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR})
-set(Protobuf_USE_STATIC_LIBS ON)
+set(Protobuf_USE_STATIC_LIBS ${USE_STATIC_PROTOBUF})
 
 include(FindProtobuf)
 set(Protobuf_IMPORT_DIRS ${PROTO_DIR})
