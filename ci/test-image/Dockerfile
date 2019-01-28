@@ -57,8 +57,8 @@ RUN mkdir protobuf && cd $_ \
     && ldconfig \
     && cd ..
 
-COPY build.sh /
-COPY package.sh /
+COPY image-scripts/build.sh /
+COPY image-scripts/package.sh /
 
 VOLUME ["/source", "/build"]
 WORKDIR /source

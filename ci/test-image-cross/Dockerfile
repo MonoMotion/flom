@@ -1,4 +1,3 @@
-#!/bin/bash
 #
 # Copyright 2018 coord.e
 #
@@ -18,4 +17,27 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-docker build ci/ -f test-image/Dockerfile -t test
+FROM balenalib/armv7hf-debian:buster-build
+
+ENV RC_PARAMS="verbose_progress=1 verbose_shrinking=1"
+ENV CXX="g++"
+ENV CC="gcc"
+ENV BUILD_TYPE="Release"
+
+RUN ["cross-build-start"]
+
+RUN DEBIAN_FRONTEND=noninteractive \
+    && apt-get update -y \
+    && apt-get install -y --no-install-recommends build-essential wget bash git ruby ruby-dev rpm bsdtar libboost-dev cmake libprotobuf-dev protobuf-compiler \
+    && gem install --no-document fpm
+
+RUN ["cross-build-end"]
+
+COPY image-scripts/build.sh /
+COPY image-scripts/package.sh /
+
+WORKDIR /source
+
+ENTRYPOINT ["/usr/bin/resin-xbuild"]
+
+CMD ["/build.sh"]
