@@ -17,13 +17,13 @@ env:
 matrix:
   include:
   - os: linux
-    env: COMPILER='clang++' BUILD_TYPE='Release'
+    env: COMPILER='clang++' BUILD_TYPE='Release' ENABLE_TEST='ON'
   - os: linux
-    env: COMPILER='clang++' BUILD_TYPE='Debug'
+    env: COMPILER='clang++' BUILD_TYPE='Debug' ENABLE_TEST='ON'
   - os: osx
-    env: COMPILER='clang++' BUILD_TYPE='Release'
+    env: COMPILER='clang++' BUILD_TYPE='Release' ENABLE_TEST='ON'
   - os: osx
-    env: COMPILER='clang++' BUILD_TYPE='Debug'
+    env: COMPILER='clang++' BUILD_TYPE='Debug' ENABLE_TEST='ON'
 
 before_cache:
 - |
