@@ -69,4 +69,13 @@ RC_BOOST_PROP(values, (const flom::Rotation &v)) {
   RC_ASSERT(z == v.z());
 }
 
+RC_BOOST_PROP(set_values_normalized,
+              (flom::Rotation v, double w, double x, double y, double z)) {
+  RC_PRE(boost::qvm::mag(boost::qvm::quat<double>{w, x, y, z}) != 0);
+
+  v.set_wxyz(w, x, y, z);
+
+  FLOM_ALMOST_EQUAL(boost::qvm::mag(v.quaternion()), 1);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
