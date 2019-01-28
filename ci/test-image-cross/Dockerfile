@@ -18,7 +18,7 @@
 #
 
 ARG ARCH=armv7hf
-FROM balenalib/${ARG}-debian:buster-build
+FROM balenalib/${ARCH}-debian:buster-build
 
 ENV CXX="g++"
 ENV CC="gcc"
