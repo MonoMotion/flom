@@ -48,6 +48,8 @@ private:
 
 public:
   Location();
+  Location(double x, double y, double z);
+
   explicit Location(const value_type &);
 
   const value_type &vector() const;
@@ -81,6 +83,8 @@ private:
 
 public:
   Rotation();
+  Rotation(double w, double x, double y, double z);
+
   explicit Rotation(const value_type &);
 
   const value_type &quaternion() const;
