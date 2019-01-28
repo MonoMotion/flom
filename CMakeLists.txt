@@ -38,6 +38,7 @@ endif()
 
 set(INCLUDE_INSTALL_DIR include CACHE PATH "installation directory of header files, relative to ${CMAKE_INSTALL_PREFIX}")
 set(LIB_INSTALL_DIR lib CACHE PATH "installation directory of library files, relative to ${CMAKE_INSTALL_PREFIX}")
+option(ENABLE_TEST "Build and run test cases" ON)
 
 message(STATUS "Build in ${CONFIG} mode")
 
@@ -86,5 +87,7 @@ add_subdirectory(bin)
 
 add_subdirectory(config/)
 
-enable_testing()
-add_subdirectory(test)
+if(${ENABLE_TEST})
+  enable_testing()
+  add_subdirectory(test)
+endif()
