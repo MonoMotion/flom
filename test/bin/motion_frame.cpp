@@ -47,7 +47,7 @@ RC_BOOST_PROP(retrieve_frame, (flom::Motion m)) {
 
   flom::Frame expected_frame;
   {
-    auto range = m.keyframes();
+    auto range = m.const_keyframes();
     auto const it = std::find_if(range.begin(), range.end(),
                                  [t](auto const &p) { return p.first == t; });
     if (it == range.end()) {
@@ -61,14 +61,13 @@ RC_BOOST_PROP(retrieve_frame, (flom::Motion m)) {
         }
       };
       auto [l, u] = std::equal_range(range.begin(), range.end(), t, Comp{});
-      // TODO: Use -> (after #43)
-      auto const t1 = (*std::next(l, -1)).first;
-      auto const t2 = (*u).first;
-      auto const &f1 = (*std::next(l, -1)).second;
-      auto const &f2 = (*u).second;
+      auto const t1 = std::next(l, -1)->first;
+      auto const t2 = u->first;
+      auto const &f1 = std::next(l, -1)->second;
+      auto const &f2 = u->second;
       expected_frame = flom::interpolate((t - t1) / (t2 - t1), f1, f2);
     } else {
-      expected_frame = (*it).second;
+      expected_frame = it->second;
     }
   }
 
