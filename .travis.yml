@@ -25,9 +25,7 @@ matrix:
   - os: osx
     env: COMPILER='clang++' BUILD_TYPE='Debug'
   - os: linux
-    env: CROSS=-armv7hf COMPILER='g++' BUILD_TYPE='Release'
-  - os: linux
-    env: CROSS=-armv7hf COMPILER='g++' BUILD_TYPE='Debug'
+    env: CROSS=-armv7hf COMPILER='g++' BUILD_TYPE='Release' ENABLE_TEST=OFF
 
 before_cache:
 - |
