@@ -18,4 +18,4 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-travis_wait docker build ci/ -f ci/test-image-cross/Dockerfile -t builder --build-arg BASE_IMAGE=${BASE_IMAGE}
+travis_wait 30 docker build ci/ -f ci/test-image-cross/Dockerfile -t builder --build-arg BASE_IMAGE=${BASE_IMAGE}
