@@ -25,7 +25,11 @@ matrix:
   - os: osx
     env: COMPILER='clang++' BUILD_TYPE='Debug'
   - os: linux
-    env: CROSS=-armv7hf COMPILER='g++' BUILD_TYPE='Release' ENABLE_TEST=OFF
+    env: CROSS=-cross BASE_IMAGE=raspberry-pi COMPILER='g++' BUILD_TYPE='Release' ENABLE_TEST=OFF
+  - os: linux
+    env: CROSS=-cross BASE_IMAGE=raspberry-pi2 COMPILER='g++' BUILD_TYPE='Release' ENABLE_TEST=OFF
+  - os: linux
+    env: CROSS=-cross BASE_IMAGE=raspberrypi3 COMPILER='g++' BUILD_TYPE='Release' ENABLE_TEST=OFF
 
 before_cache:
 - |

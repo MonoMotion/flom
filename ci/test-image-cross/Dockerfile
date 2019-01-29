@@ -17,8 +17,8 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-ARG ARCH=armv7hf
-FROM balenalib/${ARCH}-debian:buster-build
+ARG BASE_IMAGE=raspberry-pi
+FROM balenalib/${BASE_IMAGE}:buster-build
 
 ENV CXX="g++"
 ENV CC="gcc"
