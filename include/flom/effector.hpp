@@ -48,10 +48,24 @@ private:
 
 public:
   Location();
+  Location(double x, double y, double z);
+
   explicit Location(const value_type &);
 
   const value_type &vector() const;
   void set_vector(const value_type &);
+
+  double x() const;
+  double y() const;
+  double z() const;
+
+  std::tuple<double, double, double> xyz() const;
+
+  void set_x(double);
+  void set_y(double);
+  void set_z(double);
+
+  void set_xyz(double, double, double);
 
   Location &operator+=(const Location &);
   Location &operator-=(const Location &);
@@ -75,10 +89,21 @@ private:
 
 public:
   Rotation();
+  Rotation(double w, double x, double y, double z);
+
   explicit Rotation(const value_type &);
 
   const value_type &quaternion() const;
   void set_quaternion(const value_type &);
+
+  double w() const;
+  double x() const;
+  double y() const;
+  double z() const;
+
+  std::tuple<double, double, double, double> wxyz() const;
+
+  void set_wxyz(double, double, double, double);
 
   Rotation &operator+=(const Rotation &);
   Rotation &operator-=(const Rotation &);

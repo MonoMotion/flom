@@ -27,6 +27,7 @@
 
 #include <boost/qvm/quat_access.hpp>
 #include <boost/qvm/quat_operations.hpp>
+#include <boost/qvm/vec_access.hpp>
 #include <boost/qvm/vec_operations.hpp>
 #include <boost/qvm/vec_traits_array.hpp>
 #include <boost/test/floating_point_comparison.hpp>
@@ -35,11 +36,30 @@ namespace flom {
 
 Location::Location() : vector_({0, 0, 0}) {}
 Location::Location(const Location::value_type &vector) : vector_(vector) {}
+Location::Location(double x, double y, double z) : vector_({x, y, z}) {}
 
 const Location::value_type &Location::vector() const { return this->vector_; }
 
 void Location::set_vector(const Location::value_type &vector) {
   this->vector_ = vector;
+}
+
+double Location::x() const { return boost::qvm::X(this->vector_); }
+double Location::y() const { return boost::qvm::Y(this->vector_); }
+double Location::z() const { return boost::qvm::Z(this->vector_); }
+
+std::tuple<double, double, double> Location::xyz() const {
+  return std::make_tuple(this->x(), this->y(), this->z());
+}
+
+void Location::set_x(double x) { boost::qvm::X(this->vector_) = x; }
+void Location::set_y(double y) { boost::qvm::Y(this->vector_) = y; }
+void Location::set_z(double z) { boost::qvm::Z(this->vector_) = z; }
+
+void Location::set_xyz(double x, double y, double z) {
+  this->set_x(x);
+  this->set_y(y);
+  this->set_z(z);
 }
 
 Location &Location::operator+=(const Location &other) {
@@ -64,11 +84,32 @@ bool operator==(const Location &l1, const Location &l2) {
 Rotation::Rotation() : quat_({1, 0, 0, 0}) {}
 Rotation::Rotation(const Rotation::value_type &quat)
     : quat_(boost::qvm::normalized(quat)) {}
+Rotation::Rotation(double w, double x, double y, double z)
+    : quat_({w, x, y, z}) {
+  boost::qvm::normalize(this->quat_);
+}
 
 const Rotation::value_type &Rotation::quaternion() const { return this->quat_; }
 
 void Rotation::set_quaternion(const Rotation::value_type &quat) {
   this->quat_ = boost::qvm::normalized(quat);
+}
+
+double Rotation::w() const { return boost::qvm::S(this->quat_); }
+double Rotation::x() const { return boost::qvm::X(this->quat_); }
+double Rotation::y() const { return boost::qvm::Y(this->quat_); }
+double Rotation::z() const { return boost::qvm::Z(this->quat_); }
+
+std::tuple<double, double, double, double> Rotation::wxyz() const {
+  return std::make_tuple(this->w(), this->x(), this->y(), this->z());
+}
+
+void Rotation::set_wxyz(double w, double x, double y, double z) {
+  boost::qvm::S(this->quat_) = w;
+  boost::qvm::X(this->quat_) = x;
+  boost::qvm::Y(this->quat_) = y;
+  boost::qvm::Z(this->quat_) = z;
+  boost::qvm::normalize(this->quat_);
 }
 
 Rotation &Rotation::operator+=(const Rotation &other) {

@@ -54,4 +54,18 @@ RC_BOOST_PROP(add, (const flom::Location &loc1, const flom::Location &loc2)) {
   FLOM_ALMOST_EQUAL(res, flom::Location{add_vec});
 }
 
+RC_BOOST_PROP(values, (const flom::Location &v)) {
+  const auto [x, y, z] = v.xyz();
+  RC_ASSERT(x == v.x());
+  RC_ASSERT(y == v.y());
+  RC_ASSERT(z == v.z());
+}
+
+RC_BOOST_PROP(set_values, (flom::Location v, double x, double y, double z)) {
+  v.set_xyz(x, y, z);
+  RC_ASSERT(x == v.x());
+  RC_ASSERT(y == v.y());
+  RC_ASSERT(z == v.z());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
