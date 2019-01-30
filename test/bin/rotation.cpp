@@ -32,8 +32,7 @@
 BOOST_AUTO_TEST_SUITE(rotation)
 
 RC_BOOST_PROP(normalized, (const flom::Rotation &rot)) {
-  auto const normalized =
-      flom::Rotation{boost::qvm::normalized(rot.quaternion())};
+  auto const normalized = flom::Rotation{rot.quaternion().normalized()};
   FLOM_ALMOST_EQUAL(normalized, rot);
 }
 
@@ -50,8 +49,7 @@ RC_BOOST_PROP(mul_scalar, (const flom::Rotation &rot, unsigned short v)) {
 
 RC_BOOST_PROP(sub, (const flom::Rotation &rot1, const flom::Rotation &rot2)) {
   auto const res = rot1 - rot2;
-  auto const div_quat =
-      rot1.quaternion() * boost::qvm::conjugate(rot2.quaternion());
+  auto const div_quat = rot1.quaternion() * rot2.quaternion().conjugate();
   FLOM_ALMOST_EQUAL(res, flom::Rotation{div_quat});
 }
 
@@ -71,11 +69,11 @@ RC_BOOST_PROP(values, (const flom::Rotation &v)) {
 
 RC_BOOST_PROP(set_values_normalized,
               (flom::Rotation v, double w, double x, double y, double z)) {
-  RC_PRE(boost::qvm::mag(boost::qvm::quat<double>{w, x, y, z}) != 0);
+  RC_PRE(flom::Rotation::value_type(w, x, y, z).norm() != 0);
 
   v.set_wxyz(w, x, y, z);
 
-  FLOM_ALMOST_EQUAL(boost::qvm::mag(v.quaternion()), 1);
+  FLOM_ALMOST_EQUAL(v.quaternion().norm(), 1);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -27,9 +27,6 @@
 
 #include <rapidcheck.h>
 
-#include <boost/qvm/quat.hpp>
-#include <boost/qvm/vec.hpp>
-
 // loose comparison functions to use in tests.
 
 namespace flom {
@@ -38,8 +35,8 @@ namespace testing {
 
 bool almost_equal(double, double);
 
-bool almost_equal(const qvm::vec<double, 3> &, const qvm::vec<double, 3> &);
-bool almost_equal(const qvm::quat<double> &, const qvm::quat<double> &);
+bool almost_equal(const Location::value_type &, const Location::value_type &);
+bool almost_equal(const Rotation::value_type &, const Rotation::value_type &);
 
 bool almost_equal(const Location &, const Location &);
 bool almost_equal(const Rotation &, const Rotation &);
