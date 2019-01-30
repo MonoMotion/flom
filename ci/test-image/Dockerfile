@@ -26,7 +26,7 @@ ENV BUILD_TYPE="Release"
 
 RUN DEBIAN_FRONTEND=noninteractive \
     && apt-get update -y \
-    && apt-get install -y --no-install-recommends build-essential clang libc++-dev libc++abi-dev wget bash git ruby ruby-dev rpm bsdtar libprotobuf-dev protobuf-compiler cmake libboost-dev \
+    && apt-get install -y --no-install-recommends build-essential clang libc++-dev libc++abi-dev wget bash git ruby ruby-dev rpm bsdtar libprotobuf-dev protobuf-compiler cmake libboost-dev libeigen-dev \
     && gem install --no-document fpm
 
 COPY image-scripts/build.sh /
