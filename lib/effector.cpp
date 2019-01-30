@@ -73,7 +73,7 @@ Location &Location::operator*=(std::size_t n) {
 }
 
 bool operator==(const Location &l1, const Location &l2) {
-  return l1.vector() == l2.vector();
+  return l1.vector().isApprox(l2.vector(), 0);
 }
 
 Rotation::Rotation() : quat_(1, 0, 0, 0) {}
@@ -130,7 +130,7 @@ Rotation &Rotation::operator*=(std::size_t n) {
 }
 
 bool operator==(const Rotation &r1, const Rotation &r2) {
-  return r1.quaternion() == r2.quaternion();
+  return r1.quaternion().isApprox(r2.quaternion(), 0);
 }
 
 EffectorDifference operator-(const Effector &e1, const Effector &e2) {
