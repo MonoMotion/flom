@@ -24,14 +24,11 @@
 #include <type_traits>
 
 #include <boost/operators.hpp>
-#include <boost/qvm/quat.hpp>
-#include <boost/qvm/quat_operations.hpp>
-#include <boost/qvm/vec.hpp>
-#include <boost/qvm/vec_operations.hpp>
+
+#include <Eigen/Dense>
+#include <Eigen/Geometry>
 
 namespace flom {
-
-namespace qvm = boost::qvm;
 
 class Location
     : boost::addable<
@@ -41,7 +38,7 @@ class Location
               boost::equality_comparable<
                   Location, boost::multipliable<Location, std::size_t>>>> {
 public:
-  using value_type = qvm::vec<double, 3>;
+  using value_type = Eigen::Matrix<double, 3, 1>;
 
 private:
   value_type vector_;
@@ -82,7 +79,7 @@ struct Rotation
               boost::equality_comparable<
                   Rotation, boost::multipliable<Rotation, std::size_t>>>> {
 public:
-  using value_type = qvm::quat<double>;
+  using value_type = Eigen::Quaternion<double>;
 
 private:
   value_type quat_;

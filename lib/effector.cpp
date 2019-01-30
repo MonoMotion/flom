@@ -25,18 +25,13 @@
 #include <limits>
 #include <utility>
 
-#include <boost/qvm/quat_access.hpp>
-#include <boost/qvm/quat_operations.hpp>
-#include <boost/qvm/vec_access.hpp>
-#include <boost/qvm/vec_operations.hpp>
-#include <boost/qvm/vec_traits_array.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 
 namespace flom {
 
-Location::Location() : vector_({0, 0, 0}) {}
+Location::Location() : vector_(0, 0, 0) {}
 Location::Location(const Location::value_type &vector) : vector_(vector) {}
-Location::Location(double x, double y, double z) : vector_({x, y, z}) {}
+Location::Location(double x, double y, double z) : vector_(x, y, z) {}
 
 const Location::value_type &Location::vector() const { return this->vector_; }
 
@@ -44,17 +39,17 @@ void Location::set_vector(const Location::value_type &vector) {
   this->vector_ = vector;
 }
 
-double Location::x() const { return boost::qvm::X(this->vector_); }
-double Location::y() const { return boost::qvm::Y(this->vector_); }
-double Location::z() const { return boost::qvm::Z(this->vector_); }
+double Location::x() const { return this->vector_.x(); }
+double Location::y() const { return this->vector_.y(); }
+double Location::z() const { return this->vector_.z(); }
 
 std::tuple<double, double, double> Location::xyz() const {
   return std::make_tuple(this->x(), this->y(), this->z());
 }
 
-void Location::set_x(double x) { boost::qvm::X(this->vector_) = x; }
-void Location::set_y(double y) { boost::qvm::Y(this->vector_) = y; }
-void Location::set_z(double z) { boost::qvm::Z(this->vector_) = z; }
+void Location::set_x(double x) { this->vector_.x() = x; }
+void Location::set_y(double y) { this->vector_.y() = y; }
+void Location::set_z(double z) { this->vector_.z() = z; }
 
 void Location::set_xyz(double x, double y, double z) {
   this->set_x(x);
@@ -78,38 +73,37 @@ Location &Location::operator*=(std::size_t n) {
 }
 
 bool operator==(const Location &l1, const Location &l2) {
-  return l1.vector() == l2.vector();
+  return l1.vector().isApprox(l2.vector(), 0);
 }
 
-Rotation::Rotation() : quat_({1, 0, 0, 0}) {}
+Rotation::Rotation() : quat_(1, 0, 0, 0) {}
 Rotation::Rotation(const Rotation::value_type &quat)
-    : quat_(boost::qvm::normalized(quat)) {}
-Rotation::Rotation(double w, double x, double y, double z)
-    : quat_({w, x, y, z}) {
-  boost::qvm::normalize(this->quat_);
+    : quat_(quat.normalized()) {}
+Rotation::Rotation(double w, double x, double y, double z) : quat_(w, x, y, z) {
+  this->quat_.normalize();
 }
 
 const Rotation::value_type &Rotation::quaternion() const { return this->quat_; }
 
 void Rotation::set_quaternion(const Rotation::value_type &quat) {
-  this->quat_ = boost::qvm::normalized(quat);
+  this->quat_ = quat.normalized();
 }
 
-double Rotation::w() const { return boost::qvm::S(this->quat_); }
-double Rotation::x() const { return boost::qvm::X(this->quat_); }
-double Rotation::y() const { return boost::qvm::Y(this->quat_); }
-double Rotation::z() const { return boost::qvm::Z(this->quat_); }
+double Rotation::w() const { return this->quat_.w(); }
+double Rotation::x() const { return this->quat_.x(); }
+double Rotation::y() const { return this->quat_.y(); }
+double Rotation::z() const { return this->quat_.z(); }
 
 std::tuple<double, double, double, double> Rotation::wxyz() const {
   return std::make_tuple(this->w(), this->x(), this->y(), this->z());
 }
 
 void Rotation::set_wxyz(double w, double x, double y, double z) {
-  boost::qvm::S(this->quat_) = w;
-  boost::qvm::X(this->quat_) = x;
-  boost::qvm::Y(this->quat_) = y;
-  boost::qvm::Z(this->quat_) = z;
-  boost::qvm::normalize(this->quat_);
+  this->quat_.w() = w;
+  this->quat_.x() = x;
+  this->quat_.y() = y;
+  this->quat_.z() = z;
+  this->quat_.normalize();
 }
 
 Rotation &Rotation::operator+=(const Rotation &other) {
@@ -118,13 +112,14 @@ Rotation &Rotation::operator+=(const Rotation &other) {
 }
 
 Rotation &Rotation::operator-=(const Rotation &other) {
-  this->set_quaternion(this->quat_ * boost::qvm::conjugate(other.quat_));
+  this->set_quaternion(this->quat_ * other.quat_.conjugate());
   return *this;
 }
 
 Rotation &Rotation::operator*=(std::size_t n) {
   if (n == 0) {
-    this->set_quaternion(boost::qvm::identity_quat<double>());
+    this->set_quaternion(
+        Eigen::QuaternionBase<Rotation::value_type>::Identity());
   } else {
     auto const quat = this->quat_;
     for (std::size_t i = 0; i < n - 1; i++) {
@@ -135,7 +130,7 @@ Rotation &Rotation::operator*=(std::size_t n) {
 }
 
 bool operator==(const Rotation &r1, const Rotation &r2) {
-  return r1.quaternion() == r2.quaternion();
+  return r1.quaternion().isApprox(r2.quaternion(), 0);
 }
 
 EffectorDifference operator-(const Effector &e1, const Effector &e2) {
@@ -299,9 +294,9 @@ Location interpolate(double t, Location const &a, Location const &b) {
 }
 
 Rotation interpolate(double t, Rotation const &a, Rotation const &b) {
-  // TODO: Check possibility of NaNs before calling qvm::slerp
-  auto const quat = qvm::slerp(a.quaternion(), b.quaternion(), t);
-  if (std::isnan(qvm::S(quat))) {
+  // TODO: Check possibility of NaNs before calling slerp
+  auto const quat = a.quaternion().slerp(t, b.quaternion());
+  if (std::isnan(quat.w())) {
     return a;
   }
 

@@ -22,14 +22,6 @@
 #include <flom/loose_compare.hpp>
 #include <flom/range.hpp>
 
-#include <boost/qvm/quat.hpp>
-#include <boost/qvm/quat_access.hpp>
-#include <boost/qvm/quat_operations.hpp>
-#include <boost/qvm/vec.hpp>
-#include <boost/qvm/vec_access.hpp>
-#include <boost/qvm/vec_operations.hpp>
-#include <boost/qvm/vec_traits_array.hpp>
-
 #include <boost/range/algorithm.hpp>
 #include <boost/range/combine.hpp>
 
@@ -43,16 +35,14 @@ namespace testing {
 
 bool almost_equal(double a, double b) { return loose_compare(a, b); }
 
-bool almost_equal(const qvm::vec<double, 3> &a,
-                         const qvm::vec<double, 3> &b) {
-  return boost::qvm::cmp(a, b,
-                         [](auto e1, auto e2) { return almost_equal(e1, e2); });
+bool almost_equal(const Location::value_type &a,
+                         const Location::value_type &b) {
+  return a.isApprox(b, constants::float_point_tolerance);
 }
 
-bool almost_equal(const qvm::quat<double> &a,
-                         const qvm::quat<double> &b) {
-  return boost::qvm::cmp(a, b,
-                         [](auto e1, auto e2) { return almost_equal(e1, e2); });
+bool almost_equal(const Rotation::value_type &a,
+                         const Rotation::value_type &b) {
+  return a.isApprox(b, constants::float_point_tolerance);
 }
 
 bool almost_equal(const Location &v1, const Location &v2) {

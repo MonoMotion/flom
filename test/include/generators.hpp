@@ -20,10 +20,6 @@
 #ifndef FLOM_TEST_GENERATORS_HPP
 #define FLOM_TEST_GENERATORS_HPP
 
-#include <boost/qvm/quat.hpp>
-#include <boost/qvm/quat_operations.hpp>
-#include <boost/qvm/vec.hpp>
-
 #include <boost/range/algorithm.hpp>
 #include <boost/range/combine.hpp>
 
@@ -42,42 +38,31 @@ namespace rc {
 static constexpr int half_pi_100 =
     static_cast<int>(flom::constants::pi<double> / 2 * 100);
 
-template <> struct Arbitrary<boost::qvm::vec<double, 3>> {
+template <> struct Arbitrary<flom::Location::value_type> {
   static auto arbitrary() -> decltype(auto) {
-    return gen::construct<boost::qvm::vec<double, 3>>(gen::arbitrary<double>(),
+    return gen::construct<flom::Location::value_type>(gen::arbitrary<double>(),
                                                       gen::arbitrary<double>(),
                                                       gen::arbitrary<double>());
   }
 };
 
-template <> struct Arbitrary<boost::qvm::quat<double>> {
+template <> struct Arbitrary<flom::Rotation::value_type> {
   static auto arbitrary() -> decltype(auto) {
-    return gen::apply(
-        [](int x, int y, int z) {
-          auto q = boost::qvm::quat<double>();
-          boost::qvm::set_identity(q);
-          boost::qvm::rotate_x(q, static_cast<double>(x) / 100);
-          boost::qvm::rotate_y(q, static_cast<double>(y) / 100);
-          boost::qvm::rotate_z(q, static_cast<double>(z) / 100);
-          return q;
-        },
-        gen::inRange(-half_pi_100, half_pi_100),
-        gen::inRange(-half_pi_100, half_pi_100),
-        gen::inRange(-half_pi_100, half_pi_100));
+    return gen::just(flom::Rotation::value_type::UnitRandom());
   }
 };
 
 template <> struct Arbitrary<flom::Location> {
   static auto arbitrary() -> decltype(auto) {
     return gen::construct<flom::Location>(
-        gen::arbitrary<boost::qvm::vec<double, 3>>());
+        gen::arbitrary<flom::Location::value_type>());
   }
 };
 
 template <> struct Arbitrary<flom::Rotation> {
   static auto arbitrary() -> decltype(auto) {
     return gen::construct<flom::Rotation>(
-        gen::arbitrary<boost::qvm::quat<double>>());
+        gen::arbitrary<flom::Rotation::value_type>());
   }
 };
 

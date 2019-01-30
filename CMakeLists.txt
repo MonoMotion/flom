@@ -67,6 +67,8 @@ include_directories(SYSTEM ${PROTO_INCLUDE_DIR})
 find_package(Boost 1.65 REQUIRED)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
+find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(third_party/nlohmann_json EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/rapidcheck EXCLUDE_FROM_ALL)
