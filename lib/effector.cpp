@@ -79,8 +79,7 @@ bool operator==(const Location &l1, const Location &l2) {
 Rotation::Rotation() : quat_(1, 0, 0, 0) {}
 Rotation::Rotation(const Rotation::value_type &quat)
     : quat_(quat.normalized()) {}
-Rotation::Rotation(double w, double x, double y, double z)
-    : quat_(w, x, y, z) {
+Rotation::Rotation(double w, double x, double y, double z) : quat_(w, x, y, z) {
   this->quat_.normalize();
 }
 
@@ -119,7 +118,8 @@ Rotation &Rotation::operator-=(const Rotation &other) {
 
 Rotation &Rotation::operator*=(std::size_t n) {
   if (n == 0) {
-    this->set_quaternion(Eigen::QuaternionBase<Rotation::value_type>::Identity());
+    this->set_quaternion(
+        Eigen::QuaternionBase<Rotation::value_type>::Identity());
   } else {
     auto const quat = this->quat_;
     for (std::size_t i = 0; i < n - 1; i++) {
