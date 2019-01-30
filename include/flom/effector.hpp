@@ -28,7 +28,6 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-
 namespace flom {
 
 class Location
