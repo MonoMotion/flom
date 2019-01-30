@@ -24,12 +24,12 @@
 
 #include <boost/optional/optional_io.hpp>
 
-
 namespace flom {
 
 std::ostream &operator<<(std::ostream &os, const Rotation &v) {
-  auto const& q = v.quaternion();
-  os << "rotation(" << q.w() << ", " << q.x() << ", " << q.y() << ", " << q.z() << ")";
+  auto const &q = v.quaternion();
+  os << "rotation(" << q.w() << ", " << q.x() << ", " << q.y() << ", " << q.z()
+     << ")";
   return os;
 }
 
