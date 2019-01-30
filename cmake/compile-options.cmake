@@ -47,4 +47,6 @@ function(flom_set_compile_options target)
     target_link_options(${target} PUBLIC -stdlib=libstdc++)
     target_link_libraries(${target} PUBLIC stdc++)
   endif()
+
+  target_link_libraries(${target} PRIVATE Eigen3::Eigen)
 endfunction()
