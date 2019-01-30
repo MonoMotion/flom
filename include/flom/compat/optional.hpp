@@ -21,7 +21,17 @@
 #define FLOM_COMPAT_OPTIONAL_HPP
 
 
-#if __has_include(<optional>)
+#if 1
+
+#include <boost/optional.hpp>
+
+namespace flom::compat {
+template<typename T>
+using optional = boost::optional<T>;
+static inline auto nullopt = boost::none;
+}
+
+#elif __has_include(<optional>)
 
 #include <optional>
 
