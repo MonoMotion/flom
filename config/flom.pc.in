@@ -6,6 +6,7 @@ includedir=${prefix}/@INCLUDE_INSTALL_DIR@
 Name: flom
 Description: robot motion exchange format
 Version: @flom_VERSION@
+Requires: eigen3
 
 Libs: -L${libdir} -lflom
 Cflags: -I${includedir}
