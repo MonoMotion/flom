@@ -18,13 +18,4 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-set -euo pipefail
-
-SOURCE_DIR=/source
-BUILD_DIR=/build
-
-mkdir -p $BUILD_DIR && cd $BUILD_DIR
-cmake -S $SOURCE_DIR -B $BUILD_DIR -DCMAKE_CXX_COMPILER=${CXX} -DCONFIG=${BUILD_TYPE} -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF
-make -j"$(nproc)"
-
-ctest -VV -j"$(nproc)"
+travis_wait 30 docker build ci/ -f ci/test-image-cross/Dockerfile -t builder --build-arg BASE_IMAGE=${BASE_IMAGE}

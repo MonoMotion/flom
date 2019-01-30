@@ -18,7 +18,7 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-brew upgrade
+travis_wait brew upgrade
 
 brew upgrade cmake || brew install cmake
 brew upgrade boost || brew install boost

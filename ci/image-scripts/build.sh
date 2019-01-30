@@ -22,32 +22,11 @@ set -euo pipefail
 
 SOURCE_DIR=/source
 BUILD_DIR=/build
-DIST_DIR=./dist
 
-cd $BUILD_DIR
-cpack -D CPACK_OUTPUT_FILE_PREFIX=$DIST_DIR
+mkdir -p $BUILD_DIR && cd $BUILD_DIR
+cmake -S $SOURCE_DIR -B $BUILD_DIR -DCMAKE_CXX_COMPILER=${CXX} -DCONFIG=${BUILD_TYPE} -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF -DENABLE_TEST=${ENABLE_TEST:=ON}
+make -j"$(nproc)"
 
-PREFIX=/usr
-VERSION=$(${SOURCE_DIR}/version.sh)
-ARCHIVE=$(find $DIST_DIR -name '*.tar.gz')
-OUTPUT=${ARCHIVE%.tar.gz}
-INPUT=./artifact
-
-# TODO: This is not cool
-mkdir -p $INPUT && cd $INPUT
-tar --strip-components=1 -xf ../$ARCHIVE
-cd ..
-
-function build_package() {
-  local type=$1
-  local ext=${2:-$type}
-  local version=${3:-$VERSION}
-
-  cd $INPUT
-  fpm -s dir -t $type -n flom -v $version -m "coord.e <me@coord-e.com>" --url "https://github.com/MonoMotion/flom" --description "Motion data exchange format" --prefix $PREFIX -p ../${OUTPUT}.$ext *
-  cd ..
-}
-
-build_package deb
-build_package rpm
-build_package pacman pkg.tar.xz ${VERSION//[^[:alnum:].]/}
+if [ "$ENABLE_TEST" == "ON" ]; then
+  ctest -VV -j"$(nproc)"
+fi
