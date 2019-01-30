@@ -39,7 +39,7 @@ class Location
               boost::equality_comparable<
                   Location, boost::multipliable<Location, std::size_t>>>> {
 public:
-  using value_type = Eigen::Vector3d;
+  using value_type = Eigen::Matrix<double, 3, 1>;
 
 private:
   value_type vector_;
@@ -80,7 +80,7 @@ struct Rotation
               boost::equality_comparable<
                   Rotation, boost::multipliable<Rotation, std::size_t>>>> {
 public:
-  using value_type = Eigen::Quaternion;
+  using value_type = Eigen::Quaternion<double>;
 
 private:
   value_type quat_;
