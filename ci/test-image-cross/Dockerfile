@@ -29,7 +29,7 @@ RUN ["cross-build-start"]
 RUN DEBIAN_FRONTEND=noninteractive \
     && apt-get update -y \
     && apt-get install -y --no-install-recommends build-essential wget bash git ruby ruby-dev rpm bsdtar libboost-dev cmake libprotobuf-dev protobuf-compiler libeigen-dev \
-    && gem install --no-document fpm
+    && gem install --no-document rake fpm
 
 RUN ["cross-build-end"]
 

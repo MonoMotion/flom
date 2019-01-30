@@ -18,4 +18,4 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-travis_wait docker run --rm -v $(pwd):/source -v $(pwd)/build:/build -e BUILD_TYPE=${BUILD_TYPE} -e CXX=${COMPILER} -e ENABLE_TEST=${ENABLE_TEST} -e RC_PARAMS="${RC_PARAMS}" test
+travis_wait 30 docker run --rm -v $(pwd):/source -v $(pwd)/build:/build -e BUILD_TYPE=${BUILD_TYPE} -e CXX=${COMPILER} -e ENABLE_TEST=${ENABLE_TEST} -e RC_PARAMS="${RC_PARAMS}" test
