@@ -1,3 +1,5 @@
+.. figure:: logo.svg
+
 ##################
 About this project
 ##################
