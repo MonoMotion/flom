@@ -18,4 +18,4 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-docker build ci/ -f ci/test-image/Dockerfile -t test
+docker build ci/ -f ci/test-image/Dockerfile -t test --build-arg DEBIAN_VERSION=${DEBIAN_VERSION}
