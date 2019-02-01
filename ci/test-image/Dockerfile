@@ -17,7 +17,8 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-FROM debian:buster-slim
+ARG DEBIAN_VERSION=buster
+FROM debian:${DEBIAN_VERSION}-slim
 
 ENV RC_PARAMS="verbose_progress=1 verbose_shrinking=1"
 ENV CXX="clang++"

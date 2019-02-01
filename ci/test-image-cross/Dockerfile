@@ -18,7 +18,8 @@
 #
 
 ARG BASE_IMAGE=raspberry-pi
-FROM balenalib/${BASE_IMAGE}:buster-build
+ARG DEBIAN_VERSION=buster
+FROM balenalib/${BASE_IMAGE}:${DEBIAN_VERSION}-build
 
 ENV CXX="g++"
 ENV CC="gcc"
