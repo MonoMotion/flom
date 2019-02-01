@@ -20,7 +20,9 @@
 
 # install c++17 compiler
 
-if [ "${DEBIAN_VERSION}" == "stretch" ]; then
+. /etc/os-release
+
+if [[ "${VERSION}" == *stretch* ]]; then
   apt-get install -y --no-install-recommends clang-4.0
 else
   apt-get install -y --no-install-recommends clang
