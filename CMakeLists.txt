@@ -69,10 +69,7 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory(third_party/nlohmann_json EXCLUDE_FROM_ALL)
 add_subdirectory(third_party/rapidcheck EXCLUDE_FROM_ALL)
-include_directories(SYSTEM third_party/nlohmann_json/single_include)
 include_directories(SYSTEM third_party/rapidcheck/include)
 include_directories(SYSTEM third_party/rapidcheck/extras/boost_test/include)
 

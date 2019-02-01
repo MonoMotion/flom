@@ -31,8 +31,6 @@
 
 #include <google/protobuf/util/json_util.h>
 
-#include "nlohmann/json.hpp"
-
 namespace flom {
 
 Motion Motion::load(std::ifstream &f) {
