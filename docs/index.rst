@@ -8,4 +8,5 @@ flom - library to handle keyframed motion data
    about.rst
    install.rst
    build.rst
+   usage.rst
    api/library_root.rst
