@@ -18,8 +18,14 @@
 #
 
 ARG BASE_IMAGE=raspberry-pi
-ARG DEBIAN_VERSION=buster
+ARG DEBIAN_VERSION=stretch
 FROM balenalib/${BASE_IMAGE}:${DEBIAN_VERSION}-build
+
+# in stretch, clang-4.0 is required to build C++17 sources,
+# However in buster there is no package named "clang-4.0"
+# So this is left as build arg to be configured later
+# when using base image other than stretch
+ARG ADDITIONAL_BUILD_DEPS=clang-4.0
 
 ENV CXX="g++"
 ENV CC="gcc"
@@ -29,7 +35,7 @@ RUN ["cross-build-start"]
 
 RUN DEBIAN_FRONTEND=noninteractive \
     && apt-get update -y \
-    && apt-get install -y --no-install-recommends build-essential wget bash git ruby ruby-dev rpm bsdtar libboost-dev cmake libprotobuf-dev protobuf-compiler libeigen3-dev \
+    && apt-get install -y --no-install-recommends build-essential wget bash git ruby ruby-dev rpm bsdtar libboost-dev cmake libprotobuf-dev protobuf-compiler libeigen3-dev ${ADDITIONAL_BUILD_DEPS} \
     && gem install --no-document rake fpm
 
 RUN ["cross-build-end"]
