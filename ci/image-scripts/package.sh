@@ -49,6 +49,6 @@ function build_package() {
   cd ..
 }
 
-build_package deb deb ${VERSION} -d "libprotobuf10 >= 3.0.0 | libprotobuf17 >= 3.0.0"
+build_package deb deb ${VERSION} -d "libprotobuf10 (>= 3.0.0) | libprotobuf17 (>= 3.0.0)"
 build_package rpm rpm ${VERSION} -d "protobuf-devel >= 3.0.0"
 build_package pacman pkg.tar.xz ${VERSION//[^[:alnum:].]/} -d "protobuf >= 3.0.0"
