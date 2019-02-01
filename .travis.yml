@@ -17,9 +17,7 @@ env:
 matrix:
   include:
   - os: linux
-    env: COMPILER='clang++-4.0' DEBIAN_VERSION=stretch BUILD_TYPE='Release'
-  - os: linux
-    env: COMPILER='clang++' BUILD_TYPE='Release' PACKAGE=false
+    env: COMPILER='clang++' BUILD_TYPE='Release'
   - os: linux
     env: COMPILER='clang++' BUILD_TYPE='Debug' PACKAGE=false
   - os: osx
