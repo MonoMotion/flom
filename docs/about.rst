@@ -31,7 +31,7 @@ Currently, these bindings are available:
 
 
 Relationship to MonoMotion
---------------------------
+**************************
 
 In the development of `MonoMotion <https://github.com/MonoMotion>`_, we needed common representation of robot motion.
 flom is created for that purpose, but flom can be used for anything.

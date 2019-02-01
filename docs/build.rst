@@ -3,7 +3,7 @@ How to build flom manually
 ##########################
 
 
-build requirements
+Build requirements
 ******************
 
 - boost (headers)
@@ -20,7 +20,7 @@ build requirements
   - libstdc++ 6 or later
 
 
-procedure
+Procedure
 *********
 
 .. code-block:: bash
