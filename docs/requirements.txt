@@ -1,2 +1,2 @@
 exhale
-sphinx_rtfd_theme
+sphinx_rtd_theme
