@@ -2,6 +2,10 @@ project = 'flom'
 copyright = '2019 coord.e'
 author = 'coord.e <me@coord-e.com>'
 
+import subprocess
+release = subprocess.run(["../version.sh"], stdout=subprocess.PIPE).stdout.decode()
+version = subprocess.run(["../version.sh", "simple"], stdout=subprocess.PIPE).stdout.decode()
+
 extensions = [
     'breathe',
     'exhale'
