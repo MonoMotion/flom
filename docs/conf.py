@@ -12,6 +12,8 @@ breathe_projects = {
 }
 breathe_default_project = "flom"
 
+master_doc = 'index'
+
 exhale_args = {
     "containmentFolder":     "./api",
     "rootFileName":          "library_root.rst",
