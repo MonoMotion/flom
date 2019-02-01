@@ -75,7 +75,7 @@ set_target_properties(flom_proto PROPERTIES POSITION_INDEPENDENT_CODE ${USE_PIC}
 target_link_libraries(flom_proto INTERFACE ${PROTOBUF_LIBRARIES})
 include_directories(SYSTEM ${PROTO_INCLUDE_DIR})
 
-find_package(Boost 1.65 REQUIRED)
+find_package(Boost 1.62 REQUIRED)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
