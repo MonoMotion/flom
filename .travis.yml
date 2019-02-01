@@ -17,7 +17,7 @@ env:
 matrix:
   include:
   - os: linux
-    env: COMPILER='clang++-4' DEBIAN_VERSION=stretch BUILD_TYPE='Release'
+    env: COMPILER='clang++-4.0' DEBIAN_VERSION=stretch BUILD_TYPE='Release'
   - os: linux
     env: COMPILER='clang++' BUILD_TYPE='Release' PACKAGE=false
   - os: linux
@@ -27,9 +27,9 @@ matrix:
   - os: osx
     env: COMPILER='clang++' BUILD_TYPE='Debug' PACKAGE=false
   - os: linux
-    env: CROSS=-cross BASE_IMAGE=raspberry-pi DEBIAN_VERSION=stretch COMPILER='clang++-4' BUILD_TYPE='Release' ENABLE_TEST=OFF
+    env: CROSS=-cross BASE_IMAGE=raspberry-pi DEBIAN_VERSION=stretch COMPILER='clang++-4.0' BUILD_TYPE='Release' ENABLE_TEST=OFF
   - os: linux
-    env: CROSS=-cross BASE_IMAGE=raspberrypi3 DEBIAN_VERSION=stretch COMPILER='clang++-4' BUILD_TYPE='Release' ENABLE_TEST=OFF
+    env: CROSS=-cross BASE_IMAGE=raspberrypi3 DEBIAN_VERSION=stretch COMPILER='clang++-4.0' BUILD_TYPE='Release' ENABLE_TEST=OFF
 
 before_cache:
 - |
