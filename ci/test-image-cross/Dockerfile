@@ -31,12 +31,11 @@ ENV CXX="g++"
 ENV CC="gcc"
 ENV BUILD_TYPE="Release"
 
+COPY image-scripts/install_common.sh /
+
 RUN ["cross-build-start"]
 
-RUN DEBIAN_FRONTEND=noninteractive \
-    && apt-get update -y \
-    && apt-get install -y --no-install-recommends build-essential wget bash git ruby ruby-dev rpm bsdtar libboost-dev cmake libprotobuf-dev protobuf-compiler libeigen3-dev ${ADDITIONAL_BUILD_DEPS} \
-    && gem install --no-document rake fpm
+RUN /install_common.sh
 
 RUN ["cross-build-end"]
 
