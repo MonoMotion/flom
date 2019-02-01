@@ -1,3 +1,7 @@
+project = 'flom'
+copyright = '2019 coord.e'
+author = 'coord.e <me@coord-e.com>'
+
 extensions = [
     'breathe',
     'exhale'
