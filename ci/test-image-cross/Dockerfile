@@ -32,10 +32,12 @@ ENV CC="gcc"
 ENV BUILD_TYPE="Release"
 
 COPY image-scripts/install_common.sh /
+COPY image-scripts/install_specific.sh /
 
 RUN ["cross-build-start"]
 
 RUN /install_common.sh
+RUN /install_specific.sh
 
 RUN ["cross-build-end"]
 

@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright 2018 coord.e
 #
@@ -17,24 +18,11 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-ARG DEBIAN_VERSION=buster
-FROM debian:${DEBIAN_VERSION}-slim
+# install c++17 compiler
 
-ENV RC_PARAMS="verbose_progress=1 verbose_shrinking=1"
-ENV CXX="clang++"
-ENV CC="clang"
-ENV BUILD_TYPE="Release"
+if [ "${DEBIAN_VERSION}" == "stretch" ]; then
+  apt-get install -y --no-install-recommends clang-4.0
+else
+  apt-get install -y --no-install-recommends clang
+fi
 
-COPY image-scripts/install_common.sh /
-COPY image-scripts/install_specific.sh /
-
-RUN /install_common.sh
-RUN /install_specific.sh
-
-COPY image-scripts/build.sh /
-COPY image-scripts/package.sh /
-
-VOLUME ["/source", "/build"]
-WORKDIR /source
-
-CMD ["/build.sh"]

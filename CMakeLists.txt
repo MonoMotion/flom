@@ -17,7 +17,7 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 3.13.2)
+cmake_minimum_required(VERSION 3.7.2)
 cmake_policy(SET CMP0048 NEW)
 
 project(flom LANGUAGES CXX)
@@ -28,8 +28,19 @@ project(flom VERSION ${flom_VERSION})
 execute_process(COMMAND ${PROJECT_SOURCE_DIR}/version.sh OUTPUT_VARIABLE flom_DETAILED_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
 message(STATUS "Version: v${flom_DETAILED_VERSION}")
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.8.2")
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+else()
+  include(CheckCXXCompilerFlag)
+  CHECK_CXX_COMPILER_FLAG(-std=c++17 HAS_STD_CXX17)
+  if(${HAS_STD_CXX17})
+    set(CMAKE_CXX_FLAGS -std=c++17)
+  else()
+    set(CMAKE_CXX_FLAGS -std=c++1z)
+  endif()
+endif()
+
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(NOT CONFIG)
