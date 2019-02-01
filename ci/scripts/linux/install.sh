@@ -18,4 +18,10 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-docker build ci/ -f ci/test-image/Dockerfile -t test --build-arg DEBIAN_VERSION=${DEBIAN_VERSION}
+if [ -v DEBIAN_VERSION ]; then
+  DEBIAN_VERSION_ARG="--build-arg DEBIAN_VERSION=${DEBIAN_VERSION}"
+else
+  DEBIAN_VERSION_ARG=
+fi
+
+travis_wait 30 docker build ci/ -f ci/test-image/Dockerfile -t test ${DEBIAN_VERSION_ARG}
