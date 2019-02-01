@@ -21,12 +21,6 @@ ARG BASE_IMAGE=raspberry-pi
 ARG DEBIAN_VERSION=stretch
 FROM balenalib/${BASE_IMAGE}:${DEBIAN_VERSION}-build
 
-# in stretch, clang-4.0 is required to build C++17 sources,
-# However in buster there is no package named "clang-4.0"
-# So this is left as build arg to be configured later
-# when using base image other than stretch
-ARG ADDITIONAL_BUILD_DEPS=clang-4.0
-
 ENV CXX="g++"
 ENV CC="gcc"
 ENV BUILD_TYPE="Release"
