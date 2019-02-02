@@ -43,8 +43,8 @@ class Motion {
   friend bool operator==(const Motion &, const Motion &);
 
 public:
-  static Motion load(std::ifstream &);
-  static Motion load_json(std::ifstream &);
+  static Motion load(std::istream &);
+  static Motion load_json(std::istream &);
   static Motion load_json_string(std::string const &);
 
   Motion(const std::unordered_set<std::string> &joint_names,

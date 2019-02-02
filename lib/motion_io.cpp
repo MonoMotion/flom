@@ -33,7 +33,7 @@
 
 namespace flom {
 
-Motion Motion::load(std::ifstream &f) {
+Motion Motion::load(std::istream &f) {
   proto::Motion m;
   if (!m.ParseFromIstream(&f)) {
     throw errors::ParseError{};
@@ -42,7 +42,7 @@ Motion Motion::load(std::ifstream &f) {
   return Motion::Impl::from_protobuf(m);
 }
 
-Motion Motion::load_json(std::ifstream &f) {
+Motion Motion::load_json(std::istream &f) {
   std::string s;
   f >> s;
   return Motion::load_json_string(s);
