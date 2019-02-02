@@ -24,7 +24,7 @@
 
 #include "motion.pb.h"
 
-#include <fstream>
+#include <iostream>
 #include <map>
 #include <string>
 #include <unordered_set>
@@ -125,9 +125,7 @@ void Motion::dump(std::ostream &f) const {
   }
 }
 
-void Motion::dump_json(std::ostream &f) const {
-  f << this->dump_json_string();
-}
+void Motion::dump_json(std::ostream &f) const { f << this->dump_json_string(); }
 
 std::string Motion::dump_json_string() const {
   std::string s;

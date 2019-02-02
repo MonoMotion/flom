@@ -24,7 +24,7 @@
 #include "flom/effector_weight.hpp"
 #include "flom/frame.hpp"
 
-#include <fstream>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
