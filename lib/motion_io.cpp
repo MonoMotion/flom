@@ -24,18 +24,16 @@
 
 #include "motion.pb.h"
 
-#include <fstream>
+#include <iostream>
 #include <map>
 #include <string>
 #include <unordered_set>
 
 #include <google/protobuf/util/json_util.h>
 
-#include "nlohmann/json.hpp"
-
 namespace flom {
 
-Motion Motion::load(std::ifstream &f) {
+Motion Motion::load(std::istream &f) {
   proto::Motion m;
   if (!m.ParseFromIstream(&f)) {
     throw errors::ParseError{};
@@ -44,7 +42,7 @@ Motion Motion::load(std::ifstream &f) {
   return Motion::Impl::from_protobuf(m);
 }
 
-Motion Motion::load_json(std::ifstream &f) {
+Motion Motion::load_json(std::istream &f) {
   std::string s;
   f >> s;
   return Motion::load_json_string(s);
@@ -120,16 +118,14 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
   // copy occurs...
   return m;
 }
-void Motion::dump(std::ofstream &f) const {
+void Motion::dump(std::ostream &f) const {
   auto const m = this->impl->to_protobuf();
   if (!m.SerializeToOstream(&f)) {
     throw errors::SerializationError{};
   }
 }
 
-void Motion::dump_json(std::ofstream &f) const {
-  f << this->dump_json_string();
-}
+void Motion::dump_json(std::ostream &f) const { f << this->dump_json_string(); }
 
 std::string Motion::dump_json_string() const {
   std::string s;

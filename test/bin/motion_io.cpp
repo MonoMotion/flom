@@ -23,14 +23,23 @@
 #include <rapidcheck.h>
 #include <rapidcheck/boost_test.h>
 
+#if __has_include(<filesystem>)
 #include <filesystem>
+namespace filesystem = std::filesystem;
+#elif __has_include(<experimental/filesystem>)
+#include <experimental/filesystem>
+namespace filesystem = std::experimental::filesystem;
+#else
+#error Could not find filesystem header
+#endif
+
 #include <fstream>
 #include <iomanip>
 
 #include <flom/motion.hpp>
 
+#include "comparison.hpp"
 #include "generators.hpp"
-#include "operators.hpp"
 #include "printers.hpp"
 
 BOOST_AUTO_TEST_SUITE(motion_io)
@@ -38,7 +47,7 @@ BOOST_AUTO_TEST_SUITE(motion_io)
 RC_BOOST_PROP(dump_load, (const flom::Motion &m)) {
   RC_ASSERT(m.is_valid());
 
-  auto const path = std::filesystem::temp_directory_path() / "out.fom";
+  auto const path = filesystem::temp_directory_path() / "out.fom";
 
   {
     std::ofstream f(path, std::ios::binary);
@@ -52,16 +61,16 @@ RC_BOOST_PROP(dump_load, (const flom::Motion &m)) {
 
     // no throws
     auto const m2 = m.load(f);
-    std::filesystem::remove(path);
+    filesystem::remove(path);
 
-    RC_ASSERT(m == m2);
+    FLOM_ALMOST_EQUAL(m, m2);
   }
 }
 
 RC_BOOST_PROP(dump_load_json, (const flom::Motion &m)) {
   RC_ASSERT(m.is_valid());
 
-  auto const path = std::filesystem::temp_directory_path() / "out.json";
+  auto const path = filesystem::temp_directory_path() / "out.json";
 
   {
     std::ofstream f(path);
@@ -75,9 +84,9 @@ RC_BOOST_PROP(dump_load_json, (const flom::Motion &m)) {
 
     // no throws
     auto const m2 = m.load_json(f);
-    std::filesystem::remove(path);
+    filesystem::remove(path);
 
-    RC_ASSERT(m == m2);
+    FLOM_ALMOST_EQUAL(m, m2);
   }
 }
 

@@ -1,4 +1,3 @@
-#!/bin/bash
 #
 # Copyright 2018 coord.e
 #
@@ -18,8 +17,9 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-mkdir build && cd $_
-cmake .. -DCMAKE_CXX_COMPILER=${COMPILER} -DCONFIG=${BUILD_TYPE} -DUSE_LIBCXX=ON -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF -DENABLE_TEST=${ENABLE_TEST}
-make
-
-travis_wait ctest -VV -j"$(sysctl -n hw.ncpu)"
+file(GLOB test_lib_files *.cpp)
+add_library(flom_test_lib SHARED ${test_lib_files})
+add_dependencies(flom_test_lib flom_test_headers)
+flom_set_compile_options(flom_test_lib)
+  set_target_properties(flom_test_lib PROPERTIES OUTPUT_NAME "flom_test")
+target_link_libraries(flom_test_lib PRIVATE flom_lib)

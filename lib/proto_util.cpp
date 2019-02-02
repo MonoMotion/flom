@@ -24,24 +24,19 @@
 #include "location.pb.h"
 #include "rotation.pb.h"
 
-#include <boost/qvm/quat_access.hpp>
-#include <boost/qvm/quat_operations.hpp>
-#include <boost/qvm/vec_access.hpp>
-#include <boost/qvm/vec_operations.hpp>
-
 namespace flom {
 
 namespace proto_util {
 
-boost::qvm::vec<double, 3> unpack_vec3(proto::Vec3 const &vec_proto) {
-  return boost::qvm::vec<double, 3>{vec_proto.x(), vec_proto.y(),
-                                    vec_proto.z()};
+Location::value_type unpack_vec3(proto::Vec3 const &vec_proto) {
+  return typename Location::value_type(vec_proto.x(), vec_proto.y(),
+                                       vec_proto.z());
 }
 
-void pack_vec3(boost::qvm::vec<double, 3> const &vec, proto::Vec3 *v_proto) {
-  v_proto->set_x(boost::qvm::X(vec));
-  v_proto->set_y(boost::qvm::Y(vec));
-  v_proto->set_z(boost::qvm::Z(vec));
+void pack_vec3(Location::value_type const &vec, proto::Vec3 *v_proto) {
+  v_proto->set_x(vec.x());
+  v_proto->set_y(vec.y());
+  v_proto->set_z(vec.z());
 }
 
 Location unpack_location(proto::Location const &trans_proto) {
@@ -53,17 +48,16 @@ void pack_location(Location const &trans, proto::Location *trans_proto) {
   pack_vec3(trans.vector(), trans_proto->mutable_vector());
 }
 
-boost::qvm::quat<double> unpack_quat(proto::Quaternion const &quat_proto) {
-  return boost::qvm::quat<double>{quat_proto.w(), quat_proto.x(),
-                                  quat_proto.y(), quat_proto.z()};
+Rotation::value_type unpack_quat(proto::Quaternion const &quat_proto) {
+  return typename Rotation::value_type(quat_proto.w(), quat_proto.x(),
+                                       quat_proto.y(), quat_proto.z());
 }
 
-void pack_quat(boost::qvm::quat<double> const &quat,
-               proto::Quaternion *q_proto) {
-  q_proto->set_w(boost::qvm::S(quat));
-  q_proto->set_x(boost::qvm::X(quat));
-  q_proto->set_y(boost::qvm::Y(quat));
-  q_proto->set_z(boost::qvm::Z(quat));
+void pack_quat(Rotation::value_type const &quat, proto::Quaternion *q_proto) {
+  q_proto->set_w(quat.w());
+  q_proto->set_x(quat.x());
+  q_proto->set_y(quat.y());
+  q_proto->set_z(quat.z());
 }
 
 Rotation unpack_rotation(proto::Rotation const &rot_proto) {
@@ -76,7 +70,7 @@ void pack_rotation(Rotation const &rot, proto::Rotation *rot_proto) {
 }
 
 proto::EffectorType::Type
-pack_coord_system(std::optional<CoordinateSystem> const &c) {
+pack_coord_system(compat::optional<CoordinateSystem> const &c) {
   if (!c) {
     return proto::EffectorType::Type::EffectorType_Type_None;
   }
@@ -98,10 +92,10 @@ EffectorType unpack_effector_type(proto::EffectorType const &proto) {
           unpack_coord_system(proto.rotation())};
 }
 
-std::optional<CoordinateSystem>
+compat::optional<CoordinateSystem>
 unpack_coord_system(proto::EffectorType::Type const &proto) {
   if (proto == proto::EffectorType::Type::EffectorType_Type_None) {
-    return std::nullopt;
+    return compat::nullopt;
   } else if (proto == proto::EffectorType::Type::EffectorType_Type_World) {
     return CoordinateSystem::World;
   } else if (proto == proto::EffectorType::Type::EffectorType_Type_Local) {

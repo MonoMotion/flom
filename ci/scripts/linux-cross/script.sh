@@ -18,8 +18,4 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-mkdir build && cd $_
-cmake .. -DCMAKE_CXX_COMPILER=${COMPILER} -DCONFIG=${BUILD_TYPE} -DUSE_LIBCXX=ON -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF -DENABLE_TEST=${ENABLE_TEST}
-make
-
-travis_wait ctest -VV -j"$(sysctl -n hw.ncpu)"
+travis_wait docker run --rm -v $(pwd):/source -v $(pwd)/build:/build -e BUILD_TYPE=${BUILD_TYPE} -e CXX=${COMPILER} -e ENABLE_TEST=${ENABLE_TEST} builder

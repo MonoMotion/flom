@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright 2018 coord.e
 #
@@ -17,14 +18,10 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 3.0.2)
+set -euo pipefail
 
-function(flom_add_test target)
-  target_link_libraries(${target} PRIVATE flom_lib rapidcheck)
-  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(${target} PUBLIC -Wno-global-constructors -Wno-disabled-macro-expansion)
-  endif()
-  add_test(NAME ${target} COMMAND ${target})
-  enable_clang_format(${target})
-  enable_clang_tidy(${target})
-endfunction()
+DEBIAN_FRONTEND=noninteractive
+
+apt-get update -y
+apt-get install -y --no-install-recommends build-essential wget clang libc++-dev libc++abi-dev bash git ruby ruby-dev rpm bsdtar libboost-dev cmake libprotobuf-dev protobuf-compiler libeigen3-dev
+gem install --no-document rake fpm

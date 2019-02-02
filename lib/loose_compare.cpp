@@ -17,26 +17,15 @@
 // along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef FLOM_INTERPOLATION_HPP
-#define FLOM_INTERPOLATION_HPP
+#include "flom/loose_compare.hpp"
 
-#include "flom/effector.hpp"
-#include "flom/frame.hpp"
+#include <boost/test/floating_point_comparison.hpp>
 
 namespace flom {
 
-template <typename T, typename U,
-          std::enable_if_t<std::is_floating_point<U>::value> * = nullptr>
-T lerp(U t, T a, T b) {
-  return a + t * (b - a);
+bool loose_compare(double a, double b) {
+  return boost::math::fpc::close_at_tolerance<double>(
+      constants::float_point_tolerance)(a, b);
 }
 
-Location interpolate(double t, Location const &a, Location const &b);
-Rotation interpolate(double t, Rotation const &a, Rotation const &b);
-Effector interpolate(double t, Effector const &a, Effector const &b);
-Frame interpolate(double t, Frame const &a, Frame const &b);
-double interpolate(double t, double a, double b);
-
 } // namespace flom
-
-#endif

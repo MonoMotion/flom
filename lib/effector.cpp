@@ -25,21 +25,36 @@
 #include <limits>
 #include <utility>
 
-#include <boost/qvm/quat_access.hpp>
-#include <boost/qvm/quat_operations.hpp>
-#include <boost/qvm/vec_operations.hpp>
-#include <boost/qvm/vec_traits_array.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 
 namespace flom {
 
-Location::Location() : vector_({0, 0, 0}) {}
+Location::Location() : vector_(0, 0, 0) {}
 Location::Location(const Location::value_type &vector) : vector_(vector) {}
+Location::Location(double x, double y, double z) : vector_(x, y, z) {}
 
 const Location::value_type &Location::vector() const { return this->vector_; }
 
 void Location::set_vector(const Location::value_type &vector) {
   this->vector_ = vector;
+}
+
+double Location::x() const { return this->vector_.x(); }
+double Location::y() const { return this->vector_.y(); }
+double Location::z() const { return this->vector_.z(); }
+
+std::tuple<double, double, double> Location::xyz() const {
+  return std::make_tuple(this->x(), this->y(), this->z());
+}
+
+void Location::set_x(double x) { this->vector_.x() = x; }
+void Location::set_y(double y) { this->vector_.y() = y; }
+void Location::set_z(double z) { this->vector_.z() = z; }
+
+void Location::set_xyz(double x, double y, double z) {
+  this->set_x(x);
+  this->set_y(y);
+  this->set_z(z);
 }
 
 Location &Location::operator+=(const Location &other) {
@@ -58,22 +73,37 @@ Location &Location::operator*=(std::size_t n) {
 }
 
 bool operator==(const Location &l1, const Location &l2) {
-  return l1.vector() == l2.vector();
+  return l1.vector().isApprox(l2.vector(), 0);
 }
 
-bool almost_equal(const Location &l1, const Location &l2) {
-  return boost::qvm::cmp(l1.vector(), l2.vector(),
-                         [](auto e1, auto e2) { return almost_equal(e1, e2); });
-}
-
-Rotation::Rotation() : quat_({1, 0, 0, 0}) {}
+Rotation::Rotation() : quat_(1, 0, 0, 0) {}
 Rotation::Rotation(const Rotation::value_type &quat)
-    : quat_(boost::qvm::normalized(quat)) {}
+    : quat_(quat.normalized()) {}
+Rotation::Rotation(double w, double x, double y, double z) : quat_(w, x, y, z) {
+  this->quat_.normalize();
+}
 
 const Rotation::value_type &Rotation::quaternion() const { return this->quat_; }
 
 void Rotation::set_quaternion(const Rotation::value_type &quat) {
-  this->quat_ = boost::qvm::normalized(quat);
+  this->quat_ = quat.normalized();
+}
+
+double Rotation::w() const { return this->quat_.w(); }
+double Rotation::x() const { return this->quat_.x(); }
+double Rotation::y() const { return this->quat_.y(); }
+double Rotation::z() const { return this->quat_.z(); }
+
+std::tuple<double, double, double, double> Rotation::wxyz() const {
+  return std::make_tuple(this->w(), this->x(), this->y(), this->z());
+}
+
+void Rotation::set_wxyz(double w, double x, double y, double z) {
+  this->quat_.w() = w;
+  this->quat_.x() = x;
+  this->quat_.y() = y;
+  this->quat_.z() = z;
+  this->quat_.normalize();
 }
 
 Rotation &Rotation::operator+=(const Rotation &other) {
@@ -82,13 +112,14 @@ Rotation &Rotation::operator+=(const Rotation &other) {
 }
 
 Rotation &Rotation::operator-=(const Rotation &other) {
-  this->set_quaternion(this->quat_ * boost::qvm::conjugate(other.quat_));
+  this->set_quaternion(this->quat_ * other.quat_.conjugate());
   return *this;
 }
 
 Rotation &Rotation::operator*=(std::size_t n) {
   if (n == 0) {
-    this->set_quaternion(boost::qvm::identity_quat<double>());
+    this->set_quaternion(
+        Eigen::QuaternionBase<Rotation::value_type>::Identity());
   } else {
     auto const quat = this->quat_;
     for (std::size_t i = 0; i < n - 1; i++) {
@@ -99,13 +130,9 @@ Rotation &Rotation::operator*=(std::size_t n) {
 }
 
 bool operator==(const Rotation &r1, const Rotation &r2) {
-  return r1.quaternion() == r2.quaternion();
+  return r1.quaternion().isApprox(r2.quaternion(), 0);
 }
 
-bool almost_equal(const Rotation &r1, const Rotation &r2) {
-  return boost::qvm::cmp(r1.quaternion(), r2.quaternion(),
-                         [](auto e1, auto e2) { return almost_equal(e1, e2); });
-}
 EffectorDifference operator-(const Effector &e1, const Effector &e2) {
   return EffectorDifference{e1, e2};
 }
@@ -162,37 +189,22 @@ Effector &Effector::operator+=(const EffectorDifference &other) {
   return *this;
 }
 
-const std::optional<Location> &EffectorDifference::location() const & {
+const compat::optional<Location> &EffectorDifference::location() const & {
   return this->location_;
 }
-std::optional<Location> EffectorDifference::location() && {
+compat::optional<Location> EffectorDifference::location() && {
   return std::move(this->location_);
 }
 
-const std::optional<Rotation> &EffectorDifference::rotation() const & {
+const compat::optional<Rotation> &EffectorDifference::rotation() const & {
   return this->rotation_;
 }
-std::optional<Rotation> EffectorDifference::rotation() && {
+compat::optional<Rotation> EffectorDifference::rotation() && {
   return std::move(this->rotation_);
 }
 
 bool operator==(const EffectorDifference &d1, const EffectorDifference &d2) {
   return d1.location() == d2.location() && d1.rotation() == d2.rotation();
-}
-
-bool almost_equal(const EffectorDifference &d1, const EffectorDifference &d2) {
-  const bool l =
-      static_cast<bool>(d1.location()) == static_cast<bool>(d2.location());
-  const bool r =
-      static_cast<bool>(d1.rotation()) == static_cast<bool>(d2.rotation());
-  if (!l || !r)
-    return false;
-  bool result = true;
-  if (d1.location())
-    result = result && almost_equal(*d1.location(), *d2.location());
-  if (d1.rotation())
-    result = result && almost_equal(*d1.rotation(), *d2.rotation());
-  return result;
 }
 
 Effector interpolate(double t, Effector const &a, Effector const &b) {
@@ -210,36 +222,36 @@ Effector interpolate(double t, Effector const &a, Effector const &b) {
   return e;
 }
 
-Effector::Effector() : location_(std::nullopt), rotation_(std::nullopt) {}
-Effector::Effector(const std::optional<Location> &location,
-                   const std::optional<Rotation> &rotation)
+Effector::Effector() : location_(compat::nullopt), rotation_(compat::nullopt) {}
+Effector::Effector(const compat::optional<Location> &location,
+                   const compat::optional<Rotation> &rotation)
     : location_(location), rotation_(rotation) {}
 
-const std::optional<Location> &Effector::location() const & {
+const compat::optional<Location> &Effector::location() const & {
   return this->location_;
 }
-std::optional<Location> Effector::location() && {
+compat::optional<Location> Effector::location() && {
   return std::move(this->location_);
 }
 
-void Effector::set_location(const std::optional<Location> &location) {
+void Effector::set_location(const compat::optional<Location> &location) {
   this->location_ = location;
 }
 
-void Effector::clear_location() { this->set_location(std::nullopt); }
+void Effector::clear_location() { this->set_location(compat::nullopt); }
 
-const std::optional<Rotation> &Effector::rotation() const & {
+const compat::optional<Rotation> &Effector::rotation() const & {
   return this->rotation_;
 }
-std::optional<Rotation> Effector::rotation() && {
+compat::optional<Rotation> Effector::rotation() && {
   return std::move(this->rotation_);
 }
 
-void Effector::set_rotation(const std::optional<Rotation> &rotation) {
+void Effector::set_rotation(const compat::optional<Rotation> &rotation) {
   this->rotation_ = rotation;
 }
 
-void Effector::clear_rotation() { this->set_rotation(std::nullopt); }
+void Effector::clear_rotation() { this->set_rotation(compat::nullopt); }
 
 Effector Effector::new_compatible_effector() const {
   Effector e;
@@ -282,9 +294,9 @@ Location interpolate(double t, Location const &a, Location const &b) {
 }
 
 Rotation interpolate(double t, Rotation const &a, Rotation const &b) {
-  // TODO: Check possibility of NaNs before calling qvm::slerp
-  auto const quat = qvm::slerp(a.quaternion(), b.quaternion(), t);
-  if (std::isnan(qvm::S(quat))) {
+  // TODO: Check possibility of NaNs before calling slerp
+  auto const quat = a.quaternion().slerp(t, b.quaternion());
+  if (std::isnan(quat.w())) {
     return a;
   }
 
@@ -297,26 +309,6 @@ bool operator==(const Effector &e1, const Effector &e2) {
 
 bool operator!=(const Effector &e1, const Effector &e2) { return !(e1 == e2); }
 
-bool almost_equal(const Effector &e1, const Effector &e2) {
-  // TODO: Refactor: Remove mutable variable
-  const bool l =
-      static_cast<bool>(e1.location()) == static_cast<bool>(e2.location());
-  const bool r =
-      static_cast<bool>(e1.rotation()) == static_cast<bool>(e2.rotation());
-  if (!l || !r)
-    return false;
-  bool result = true;
-  if (e1.location())
-    result = result && almost_equal(*e1.location(), *e2.location());
-  if (e1.rotation())
-    result = result && almost_equal(*e1.rotation(), *e2.rotation());
-  return result;
-}
-
 double interpolate(double t, double a, double b) { return lerp(t, a, b); }
-bool almost_equal(double a, double b) {
-  return boost::math::fpc::close_at_tolerance<double>(
-      constants::float_point_tolerance)(a, b);
-}
 
 } // namespace flom

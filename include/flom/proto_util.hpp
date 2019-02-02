@@ -28,31 +28,28 @@
 #include "motion.pb.h"
 #include "rotation.pb.h"
 
-#include <boost/qvm/quat.hpp>
-#include <boost/qvm/vec.hpp>
-
-#include <optional>
+#include "flom/compat/optional.hpp"
 
 namespace flom::proto_util {
 
-void pack_vec3(boost::qvm::vec<double, 3> const &, proto::Vec3 *);
+void pack_vec3(Location::value_type const &, proto::Vec3 *);
 void pack_location(Location const &, proto::Location *);
 
-boost::qvm::vec<double, 3> unpack_vec3(proto::Vec3 const &);
+Location::value_type unpack_vec3(proto::Vec3 const &);
 Location unpack_location(proto::Location const &);
 
-void pack_quat(boost::qvm::quat<double> const &, proto::Quaternion *);
+void pack_quat(Rotation::value_type const &, proto::Quaternion *);
 void pack_rotation(Rotation const &, proto::Rotation *);
 
-boost::qvm::quat<double> unpack_quat(proto::Quaternion const &);
+Rotation::value_type unpack_quat(proto::Quaternion const &);
 Rotation unpack_rotation(proto::Rotation const &);
 
 void pack_effector_type(EffectorType const &, proto::EffectorType *);
 proto::EffectorType::Type
-pack_coord_system(std::optional<CoordinateSystem> const &);
+pack_coord_system(compat::optional<CoordinateSystem> const &);
 
 EffectorType unpack_effector_type(proto::EffectorType const &);
-std::optional<CoordinateSystem>
+compat::optional<CoordinateSystem>
 unpack_coord_system(proto::EffectorType::Type const &);
 
 void pack_effector_weight(EffectorWeight const &, proto::EffectorWeight *);

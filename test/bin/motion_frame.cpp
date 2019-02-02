@@ -28,8 +28,8 @@
 #include <flom/errors.hpp>
 #include <flom/motion.hpp>
 
+#include "comparison.hpp"
 #include "generators.hpp"
-#include "operators.hpp"
 #include "printers.hpp"
 
 BOOST_AUTO_TEST_SUITE(motion_frame)
@@ -47,7 +47,7 @@ RC_BOOST_PROP(retrieve_frame, (flom::Motion m)) {
 
   flom::Frame expected_frame;
   {
-    auto range = m.keyframes();
+    auto range = m.const_keyframes();
     auto const it = std::find_if(range.begin(), range.end(),
                                  [t](auto const &p) { return p.first == t; });
     if (it == range.end()) {
@@ -61,19 +61,17 @@ RC_BOOST_PROP(retrieve_frame, (flom::Motion m)) {
         }
       };
       auto [l, u] = std::equal_range(range.begin(), range.end(), t, Comp{});
-      // TODO: Use -> (after #43)
-      auto const t1 = (*std::next(l, -1)).first;
-      auto const t2 = (*u).first;
-      auto const &f1 = (*std::next(l, -1)).second;
-      auto const &f2 = (*u).second;
+      auto const t1 = std::next(l, -1)->first;
+      auto const t2 = u->first;
+      auto const &f1 = std::next(l, -1)->second;
+      auto const &f2 = u->second;
       expected_frame = flom::interpolate((t - t1) / (t2 - t1), f1, f2);
     } else {
-      expected_frame = (*it).second;
+      expected_frame = it->second;
     }
   }
 
-  // Using non-strict version of operator== defined in operators.hpp
-  RC_ASSERT(frame == expected_frame);
+  FLOM_ALMOST_EQUAL(frame, expected_frame);
 }
 
 RC_BOOST_PROP(retrieve_frame_zero, (flom::Motion m)) {
@@ -100,8 +98,7 @@ RC_BOOST_PROP(retrieve_frame_zero, (flom::Motion m)) {
 
   auto const expected_frame = m.frame_at(0);
 
-  // Using non-strict version of operator== defined in operators.hpp
-  RC_ASSERT(frame == expected_frame);
+  FLOM_ALMOST_EQUAL(frame, expected_frame);
 }
 
 RC_BOOST_PROP(retrieve_frame_over, (const flom::Motion &m)) {
@@ -127,8 +124,7 @@ RC_BOOST_PROP(retrieve_frame_over, (const flom::Motion &m)) {
   auto const expected_frame =
       m.frame_at(std::fmod(t, len)) + (last - init) * mul;
 
-  // Using non-strict version of operator== defined in operators.hpp
-  RC_ASSERT(frame == expected_frame);
+  FLOM_ALMOST_EQUAL(frame, expected_frame);
 }
 
 RC_BOOST_PROP(retrieve_frame_none_throw, (const flom::Motion &m)) {

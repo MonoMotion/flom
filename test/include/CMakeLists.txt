@@ -1,4 +1,3 @@
-#!/bin/bash
 #
 # Copyright 2018 coord.e
 #
@@ -18,8 +17,7 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-mkdir build && cd $_
-cmake .. -DCMAKE_CXX_COMPILER=${COMPILER} -DCONFIG=${BUILD_TYPE} -DUSE_LIBCXX=ON -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF -DENABLE_TEST=${ENABLE_TEST}
-make
-
-travis_wait ctest -VV -j"$(sysctl -n hw.ncpu)"
+file(GLOB HEADER_FILES *.hpp)
+add_custom_target(flom_test_headers SOURCES ${HEADER_FILES})
+enable_clang_format(flom_test_headers)
+enable_clang_tidy(flom_test_headers)

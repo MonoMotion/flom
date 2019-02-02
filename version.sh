@@ -23,7 +23,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-function main() {
+function detailed() {
   local annotated=$(git describe --tags --abbrev=0 2> /dev/null)
   local description=$(git describe --always)
   local replaced=${description/${annotated}-/${annotated}+}
@@ -31,4 +31,9 @@ function main() {
   echo $semver
 }
 
-main
+function simple() {
+  local annotated=$(git describe --tags --abbrev=0 2> /dev/null)
+  echo ${annotated#v}
+}
+
+${1:-detailed}

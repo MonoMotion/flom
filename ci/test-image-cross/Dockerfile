@@ -1,4 +1,3 @@
-#!/bin/bash
 #
 # Copyright 2018 coord.e
 #
@@ -18,8 +17,29 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-mkdir build && cd $_
-cmake .. -DCMAKE_CXX_COMPILER=${COMPILER} -DCONFIG=${BUILD_TYPE} -DUSE_LIBCXX=ON -DFORMAT_FILES_WITH_CLANG_FORMAT_BEFORE_EACH_BUILD=OFF -DCLANG_TIDY_ENABLE=OFF -DENABLE_TEST=${ENABLE_TEST}
-make
+ARG BASE_IMAGE=raspberry-pi
+ARG DEBIAN_VERSION=stretch
+FROM balenalib/${BASE_IMAGE}:${DEBIAN_VERSION}-build
 
-travis_wait ctest -VV -j"$(sysctl -n hw.ncpu)"
+ENV CXX="g++"
+ENV CC="gcc"
+ENV BUILD_TYPE="Release"
+
+COPY image-scripts/install_common.sh /
+COPY image-scripts/install_specific.sh /
+
+RUN ["cross-build-start"]
+
+RUN /install_common.sh
+RUN /install_specific.sh
+
+RUN ["cross-build-end"]
+
+COPY image-scripts/build.sh /
+COPY image-scripts/package.sh /
+
+WORKDIR /source
+
+ENTRYPOINT ["/usr/bin/resin-xbuild"]
+
+CMD ["-c", "bash /build.sh"]

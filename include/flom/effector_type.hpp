@@ -24,7 +24,7 @@
 
 #include <boost/operators.hpp>
 
-#include <optional>
+#include "flom/compat/optional.hpp"
 
 namespace flom {
 
@@ -32,20 +32,20 @@ enum class CoordinateSystem { World, Local };
 
 struct EffectorType : boost::operators<EffectorType> {
 private:
-  std::optional<CoordinateSystem> location_;
-  std::optional<CoordinateSystem> rotation_;
+  compat::optional<CoordinateSystem> location_;
+  compat::optional<CoordinateSystem> rotation_;
 
 public:
   EffectorType() = delete;
-  EffectorType(std::optional<CoordinateSystem> location,
-               std::optional<CoordinateSystem> rotation);
+  EffectorType(compat::optional<CoordinateSystem> location,
+               compat::optional<CoordinateSystem> rotation);
 
-  std::optional<CoordinateSystem> location() const;
-  std::optional<CoordinateSystem> rotation() const;
+  compat::optional<CoordinateSystem> location() const;
+  compat::optional<CoordinateSystem> rotation() const;
 
-  void set_location(std::optional<CoordinateSystem>);
+  void set_location(compat::optional<CoordinateSystem>);
   void clear_location();
-  void set_rotation(std::optional<CoordinateSystem>);
+  void set_rotation(compat::optional<CoordinateSystem>);
   void clear_rotation();
 
   Effector new_effector() const;

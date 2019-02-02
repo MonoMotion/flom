@@ -20,18 +20,15 @@
 #ifndef FLOM_EFFECTOR_HPP
 #define FLOM_EFFECTOR_HPP
 
-#include <optional>
+#include "flom/compat/optional.hpp"
 #include <type_traits>
 
 #include <boost/operators.hpp>
-#include <boost/qvm/quat.hpp>
-#include <boost/qvm/quat_operations.hpp>
-#include <boost/qvm/vec.hpp>
-#include <boost/qvm/vec_operations.hpp>
+
+#include <Eigen/Dense>
+#include <Eigen/Geometry>
 
 namespace flom {
-
-namespace qvm = boost::qvm;
 
 class Location
     : boost::addable<
@@ -41,17 +38,31 @@ class Location
               boost::equality_comparable<
                   Location, boost::multipliable<Location, std::size_t>>>> {
 public:
-  using value_type = qvm::vec<double, 3>;
+  using value_type = Eigen::Matrix<double, 3, 1>;
 
 private:
   value_type vector_;
 
 public:
   Location();
+  Location(double x, double y, double z);
+
   explicit Location(const value_type &);
 
   const value_type &vector() const;
   void set_vector(const value_type &);
+
+  double x() const;
+  double y() const;
+  double z() const;
+
+  std::tuple<double, double, double> xyz() const;
+
+  void set_x(double);
+  void set_y(double);
+  void set_z(double);
+
+  void set_xyz(double, double, double);
 
   Location &operator+=(const Location &);
   Location &operator-=(const Location &);
@@ -59,7 +70,6 @@ public:
 };
 
 bool operator==(const Location &, const Location &);
-bool almost_equal(const Location &, const Location &);
 
 struct Rotation
     : boost::addable<
@@ -69,17 +79,28 @@ struct Rotation
               boost::equality_comparable<
                   Rotation, boost::multipliable<Rotation, std::size_t>>>> {
 public:
-  using value_type = qvm::quat<double>;
+  using value_type = Eigen::Quaternion<double>;
 
 private:
   value_type quat_;
 
 public:
   Rotation();
+  Rotation(double w, double x, double y, double z);
+
   explicit Rotation(const value_type &);
 
   const value_type &quaternion() const;
   void set_quaternion(const value_type &);
+
+  double w() const;
+  double x() const;
+  double y() const;
+  double z() const;
+
+  std::tuple<double, double, double, double> wxyz() const;
+
+  void set_wxyz(double, double, double, double);
 
   Rotation &operator+=(const Rotation &);
   Rotation &operator-=(const Rotation &);
@@ -87,7 +108,6 @@ public:
 };
 
 bool operator==(const Rotation &, const Rotation &);
-bool almost_equal(const Rotation &, const Rotation &);
 
 struct Effector;
 
@@ -98,8 +118,8 @@ class EffectorDifference
               EffectorDifference,
               boost::multipliable<EffectorDifference, std::size_t>>> {
 private:
-  std::optional<Location> location_;
-  std::optional<Rotation> rotation_;
+  compat::optional<Location> location_;
+  compat::optional<Rotation> rotation_;
 
 public:
   EffectorDifference(const Effector &, const Effector &);
@@ -112,11 +132,11 @@ public:
   EffectorDifference &operator=(const EffectorDifference &) = default;
   EffectorDifference &operator=(EffectorDifference &&) = default;
 
-  const std::optional<Location> &location() const &;
-  std::optional<Location> location() &&;
+  const compat::optional<Location> &location() const &;
+  compat::optional<Location> location() &&;
 
-  const std::optional<Rotation> &rotation() const &;
-  std::optional<Rotation> rotation() &&;
+  const compat::optional<Rotation> &rotation() const &;
+  compat::optional<Rotation> rotation() &&;
 
   EffectorDifference &operator*=(std::size_t);
   EffectorDifference &operator+=(const EffectorDifference &);
@@ -125,27 +145,27 @@ public:
 };
 
 bool operator==(const EffectorDifference &, const EffectorDifference &);
-bool almost_equal(const EffectorDifference &, const EffectorDifference &);
 
 struct Effector : boost::addable<Effector, EffectorDifference> {
 private:
-  std::optional<Location> location_;
-  std::optional<Rotation> rotation_;
+  compat::optional<Location> location_;
+  compat::optional<Rotation> rotation_;
 
 public:
   Effector();
-  Effector(const std::optional<Location> &, const std::optional<Rotation> &);
+  Effector(const compat::optional<Location> &,
+           const compat::optional<Rotation> &);
 
-  const std::optional<Location> &location() const &;
-  std::optional<Location> location() &&;
+  const compat::optional<Location> &location() const &;
+  compat::optional<Location> location() &&;
 
-  void set_location(const std::optional<Location> &);
+  void set_location(const compat::optional<Location> &);
   void clear_location();
 
-  const std::optional<Rotation> &rotation() const &;
-  std::optional<Rotation> rotation() &&;
+  const compat::optional<Rotation> &rotation() const &;
+  compat::optional<Rotation> rotation() &&;
 
-  void set_rotation(const std::optional<Rotation> &);
+  void set_rotation(const compat::optional<Rotation> &);
   void clear_rotation();
 
   Effector new_compatible_effector() const;
@@ -157,10 +177,7 @@ public:
 
 bool operator==(const Effector &, const Effector &);
 bool operator!=(const Effector &, const Effector &);
-bool almost_equal(const Effector &, const Effector &);
 EffectorDifference operator-(const Effector &, const Effector &);
-
-bool almost_equal(double, double);
 
 } // namespace flom
 

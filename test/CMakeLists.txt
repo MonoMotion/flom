@@ -17,39 +17,21 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-cmake_minimum_required(VERSION 3.0.2)
+include_directories(include)
+add_subdirectory(include)
 
-add_executable(test_effector effector.cpp)
-flom_add_test(test_effector)
+add_subdirectory(lib)
 
-add_executable(test_location location.cpp)
-flom_add_test(test_location)
+function(flom_add_test target)
+  target_link_libraries(${target} PRIVATE flom_lib flom_test_lib rapidcheck)
+  add_dependencies(${target} flom_test_headers)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(${target} PUBLIC -Wno-global-constructors -Wno-disabled-macro-expansion)
+  endif()
+  add_test(NAME ${target} COMMAND ${target})
+  flom_set_compile_options(${target})
+  enable_clang_format(${target})
+  enable_clang_tidy(${target})
+endfunction()
 
-add_executable(test_rotation rotation.cpp)
-flom_add_test(test_rotation)
-
-add_executable(test_frame frame.cpp)
-flom_add_test(test_frame)
-
-add_executable(test_motion_keyframe motion_keyframe.cpp)
-flom_add_test(test_motion_keyframe)
-
-add_executable(test_motion_keyframe_range motion_keyframe_range.cpp)
-flom_add_test(test_motion_keyframe_range)
-
-add_executable(test_motion_frame motion_frame.cpp)
-flom_add_test(test_motion_frame)
-
-add_executable(test_motion_frame_range motion_frame_range.cpp)
-flom_add_test(test_motion_frame_range)
-
-add_executable(test_motion_io motion_io.cpp)
-if(USE_LIBCXX)
-  target_link_libraries(test_motion_io PRIVATE c++fs)
-else()
-  target_link_libraries(test_motion_io PRIVATE stdc++fs)
-endif()
-flom_add_test(test_motion_io)
-
-add_executable(test_motion_misc motion_misc.cpp)
-flom_add_test(test_motion_misc)
+add_subdirectory(bin)

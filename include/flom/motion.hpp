@@ -24,7 +24,7 @@
 #include "flom/effector_weight.hpp"
 #include "flom/frame.hpp"
 
-#include <fstream>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -37,13 +37,14 @@ enum class LoopType { None, Wrap };
 
 class FrameRange;
 class KeyframeRange;
+class ConstKeyframeRange;
 
 class Motion {
   friend bool operator==(const Motion &, const Motion &);
 
 public:
-  static Motion load(std::ifstream &);
-  static Motion load_json(std::ifstream &);
+  static Motion load(std::istream &);
+  static Motion load_json(std::istream &);
   static Motion load_json_string(std::string const &);
 
   Motion(const std::unordered_set<std::string> &joint_names,
@@ -62,8 +63,8 @@ public:
 
   bool is_in_range_at(double t) const;
 
-  void dump(std::ofstream &) const;
-  void dump_json(std::ofstream &) const;
+  void dump(std::ostream &) const;
+  void dump_json(std::ostream &) const;
   std::string dump_json_string() const;
 
   LoopType loop() const;
@@ -76,6 +77,8 @@ public:
   void insert_keyframe(double t, const Frame &);
   void delete_keyframe(double t, bool loose = true);
   KeyframeRange keyframes();
+  ConstKeyframeRange keyframes() const;
+  ConstKeyframeRange const_keyframes() const;
   void clear_keyframes();
 
   EffectorType effector_type(const std::string &) const;

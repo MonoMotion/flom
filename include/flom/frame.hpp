@@ -73,7 +73,6 @@ public:
 };
 
 bool operator==(const FrameDifference &, const FrameDifference &);
-bool almost_equal(const FrameDifference &, const FrameDifference &);
 
 struct Frame : boost::addable<Frame, FrameDifference> {
 private:
@@ -112,7 +111,6 @@ public:
 FrameDifference operator-(const Frame &, const Frame &);
 bool operator==(const Frame &, const Frame &);
 bool operator!=(const Frame &, const Frame &);
-bool almost_equal(const Frame &, const Frame &);
 
 } // namespace flom
 

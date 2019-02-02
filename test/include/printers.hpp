@@ -22,35 +22,14 @@
 
 #include <flom/flom.hpp>
 
-#include <boost/qvm/vec.hpp>
-#include <boost/qvm/quat.hpp>
-#include <boost/qvm/quat_access.hpp>
-
-namespace boost::qvm {
-
-template<class T>
-std::ostream &operator<<(std::ostream &os, const quat<T> &q) {
-  os << "quaternion(" << S(q) << "," << X(q) << "," << Y(q) << "," << Z(q)
-     << ")";
-  return os;
-}
-
-template<class T, int Dim>
-std::ostream &operator<<(std::ostream &os, const vec<T, Dim> &v) {
-  os << "vec(";
-  for(T e : v.a) {
-    os << e << ",";
-  }
-  os << ")";
-  return os;
-}
-
-} // namespace boost::qvm
+#include <boost/optional/optional_io.hpp>
 
 namespace flom {
 
 std::ostream &operator<<(std::ostream &os, const Rotation &v) {
-  os << "rotation(" << v.quaternion() << ")";
+  auto const &q = v.quaternion();
+  os << "rotation(" << q.w() << ", " << q.x() << ", " << q.y() << ", " << q.z()
+     << ")";
   return os;
 }
 
@@ -61,10 +40,10 @@ std::ostream &operator<<(std::ostream &os, const Location &v) {
 
 std::ostream &operator<<(std::ostream &os, const Effector &v) {
   os << "effector(";
-  if(v.location()) {
+  if (v.location()) {
     os << *v.location() << ",";
   }
-  if(v.rotation()) {
+  if (v.rotation()) {
     os << *v.rotation() << ",";
   }
   os << ")";
@@ -73,10 +52,10 @@ std::ostream &operator<<(std::ostream &os, const Effector &v) {
 
 std::ostream &operator<<(std::ostream &os, const EffectorDifference &v) {
   os << "effector_difference(";
-  if(v.location()) {
+  if (v.location()) {
     os << *v.location() << ",";
   }
-  if(v.rotation()) {
+  if (v.rotation()) {
     os << *v.rotation() << ",";
   }
   os << ")";
@@ -86,12 +65,12 @@ std::ostream &operator<<(std::ostream &os, const EffectorDifference &v) {
 std::ostream &operator<<(std::ostream &os, const FrameDifference &v) {
   os << "frame_difference(\n";
   os << "positions(";
-  for(auto const& [j, p] : v.positions()) {
-   os << j << ": " << p << ", ";
+  for (auto const &[j, p] : v.positions()) {
+    os << j << ": " << p << ", ";
   }
   os << ")\neffectors(";
-  for(auto const& [l, e] : v.effectors()) {
-   os << l << ": " << e << ", ";
+  for (auto const &[l, e] : v.effectors()) {
+    os << l << ": " << e << ", ";
   }
   os << "))";
   return os;
@@ -100,12 +79,12 @@ std::ostream &operator<<(std::ostream &os, const FrameDifference &v) {
 std::ostream &operator<<(std::ostream &os, const Frame &v) {
   os << "frame(\n";
   os << "positions(";
-  for(auto const& [j, p] : v.positions()) {
-   os << j << ": " << p << ", ";
+  for (auto const &[j, p] : v.positions()) {
+    os << j << ": " << p << ", ";
   }
   os << ")\neffectors(";
-  for(auto const& [l, e] : v.effectors()) {
-   os << l << ": " << e << ", ";
+  for (auto const &[l, e] : v.effectors()) {
+    os << l << ": " << e << ", ";
   }
   os << "))";
   return os;
@@ -117,6 +96,6 @@ std::ostream &operator<<(std::ostream &os, const Motion &v) {
   return os;
 }
 
-}
+} // namespace flom
 
 #endif

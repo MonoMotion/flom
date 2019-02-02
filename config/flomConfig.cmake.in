@@ -1,0 +1,18 @@
+set(flom_VERSION @flom_VERSION@)
+set(flom_VERSION_MAJOR @flom_VERSION_MAJOR@)
+set(flom_VERSION_MINOR @flom_VERSION_MINOR@)
+set(flom_VERSION_PATCH @flom_VERSION_PATCH@)
+set(flom_VERSION_TWEAK @flom_VERSION_TWEAK@)
+
+set(flom_DETAILED_VERSION @flom_DETAILED_VERSION@)
+
+@PACKAGE_INIT@
+
+find_package (Eigen3 REQUIRED NO_MODULE)
+
+set_and_check(flom_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@ ${EIGEN3_INCLUDE_DIR}")
+set_and_check(flom_LIB_DIR "@PACKAGE_LIB_INSTALL_DIR@")
+
+set(flom_LIBRARIES flom)
+
+check_required_components(flom)
