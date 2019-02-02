@@ -118,14 +118,14 @@ Motion Motion::Impl::from_protobuf(proto::Motion const &motion_proto) {
   // copy occurs...
   return m;
 }
-void Motion::dump(std::ofstream &f) const {
+void Motion::dump(std::ostream &f) const {
   auto const m = this->impl->to_protobuf();
   if (!m.SerializeToOstream(&f)) {
     throw errors::SerializationError{};
   }
 }
 
-void Motion::dump_json(std::ofstream &f) const {
+void Motion::dump_json(std::ostream &f) const {
   f << this->dump_json_string();
 }
 

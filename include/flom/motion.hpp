@@ -63,8 +63,8 @@ public:
 
   bool is_in_range_at(double t) const;
 
-  void dump(std::ofstream &) const;
-  void dump_json(std::ofstream &) const;
+  void dump(std::ostream &) const;
+  void dump_json(std::ostream &) const;
   std::string dump_json_string() const;
 
   LoopType loop() const;
