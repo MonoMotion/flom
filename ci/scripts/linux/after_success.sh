@@ -18,4 +18,9 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-docker run --rm -v $(pwd):/source -v $(pwd)/build:/build test /package.sh
+
+mkdir -p build/dist
+
+if ${BUILD_PACKAGE:-true}; then
+  docker run --rm -v $(pwd):/source -v $(pwd)/build:/build test /package.sh
+fi

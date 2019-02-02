@@ -18,18 +18,20 @@
 #
 
 ARG BASE_IMAGE=raspberry-pi
-FROM balenalib/${BASE_IMAGE}:buster-build
+ARG DEBIAN_VERSION=stretch
+FROM balenalib/${BASE_IMAGE}:${DEBIAN_VERSION}-build
 
 ENV CXX="g++"
 ENV CC="gcc"
 ENV BUILD_TYPE="Release"
 
+COPY image-scripts/install_common.sh /
+COPY image-scripts/install_specific.sh /
+
 RUN ["cross-build-start"]
 
-RUN DEBIAN_FRONTEND=noninteractive \
-    && apt-get update -y \
-    && apt-get install -y --no-install-recommends build-essential wget bash git ruby ruby-dev rpm bsdtar libboost-dev cmake libprotobuf-dev protobuf-compiler libeigen3-dev \
-    && gem install --no-document rake fpm
+RUN /install_common.sh
+RUN /install_specific.sh
 
 RUN ["cross-build-end"]
 

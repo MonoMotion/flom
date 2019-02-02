@@ -19,15 +19,15 @@ matrix:
   - os: linux
     env: COMPILER='clang++' BUILD_TYPE='Release'
   - os: linux
-    env: COMPILER='clang++' BUILD_TYPE='Debug'
+    env: COMPILER='clang++' BUILD_TYPE='Debug' PACKAGE=false
   - os: osx
     env: COMPILER='clang++' BUILD_TYPE='Release'
   - os: osx
-    env: COMPILER='clang++' BUILD_TYPE='Debug'
+    env: COMPILER='clang++' BUILD_TYPE='Debug' PACKAGE=false
   - os: linux
-    env: CROSS=-cross BASE_IMAGE=raspberry-pi COMPILER='g++' BUILD_TYPE='Release' ENABLE_TEST=OFF
+    env: CROSS=-cross BASE_IMAGE=raspberry-pi DEBIAN_VERSION=stretch COMPILER='clang++-4.0' BUILD_TYPE='Release' ENABLE_TEST=OFF
   - os: linux
-    env: CROSS=-cross BASE_IMAGE=raspberrypi3 COMPILER='g++' BUILD_TYPE='Release' ENABLE_TEST=OFF
+    env: CROSS=-cross BASE_IMAGE=raspberrypi3 DEBIAN_VERSION=stretch COMPILER='clang++-4.0' BUILD_TYPE='Release' ENABLE_TEST=OFF
 
 before_cache:
 - |
@@ -41,7 +41,6 @@ install:
 
 script:
 - cd ${TRAVIS_BUILD_DIR}
-- ${COMPILER} --version
 - source ci/scripts/${TRAVIS_OS_NAME}${CROSS}/script.sh
 
 after_success:

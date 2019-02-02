@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright 2018 coord.e
 #
@@ -17,24 +18,10 @@
 # along with Flom.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-ARG DEBIAN_VERSION=buster
-FROM debian:${DEBIAN_VERSION}-slim
+set -euo pipefail
 
-ENV RC_PARAMS="verbose_progress=1 verbose_shrinking=1"
-ENV CXX="clang++"
-ENV CC="clang"
-ENV BUILD_TYPE="Release"
+DEBIAN_FRONTEND=noninteractive
 
-COPY image-scripts/install_common.sh /
-COPY image-scripts/install_specific.sh /
-
-RUN /install_common.sh
-RUN /install_specific.sh
-
-COPY image-scripts/build.sh /
-COPY image-scripts/package.sh /
-
-VOLUME ["/source", "/build"]
-WORKDIR /source
-
-CMD ["/build.sh"]
+apt-get update -y
+apt-get install -y --no-install-recommends build-essential wget clang libc++-dev libc++abi-dev bash git ruby ruby-dev rpm bsdtar libboost-dev cmake libprotobuf-dev protobuf-compiler libeigen3-dev
+gem install --no-document rake fpm
