@@ -22,16 +22,6 @@
 
 #include <cstddef>
 
-
-#if defined(__GLIBCXX__) && (__GLIBCXX__ < 20190108)
-//
-// some libstdc++ implementation of std::optional doesn't allow
-// to hold a type with non-trivial copy ctor, so use boost::optional instead
-//
-// fixed in PR libstdc++/87854
-// https://github.com/gcc-mirror/gcc/commit/58e897da03b9a1aaf6861951806c7a8e15de1546
-//
-
 #include <boost/optional.hpp>
 
 namespace flom::compat {
@@ -39,29 +29,5 @@ template<typename T>
 using optional = boost::optional<T>;
 static inline auto nullopt = boost::none;
 }
-
-#elif __has_include(<optional>)
-
-#include <optional>
-
-namespace flom::compat {
-template<typename T>
-using optional = std::optional<T>;
-inline constexpr auto nullopt = std::nullopt;
-}
-
-#elif __has_include(<experimental/optional>)
-
-#include <experimental/optional>
-
-namespace flom::compat {
-template<typename T>
-using optional = std::experimental::optional<T>;
-inline constexpr auto nullopt = std::experimental::nullopt;
-}
-
-#else
-#error Could not find optional header
-#endif
 
 #endif
