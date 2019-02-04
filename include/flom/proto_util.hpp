@@ -28,7 +28,7 @@
 #include "motion.pb.h"
 #include "rotation.pb.h"
 
-#include "flom/optional.hpp"
+#include "flom/compat/optional.hpp"
 
 namespace flom::proto_util {
 
@@ -46,10 +46,10 @@ Rotation unpack_rotation(proto::Rotation const &);
 
 void pack_effector_type(EffectorType const &, proto::EffectorType *);
 proto::EffectorType::Type
-pack_coord_system(optional::optional<CoordinateSystem> const &);
+pack_coord_system(compat::optional<CoordinateSystem> const &);
 
 EffectorType unpack_effector_type(proto::EffectorType const &);
-optional::optional<CoordinateSystem>
+compat::optional<CoordinateSystem>
 unpack_coord_system(proto::EffectorType::Type const &);
 
 void pack_effector_weight(EffectorWeight const &, proto::EffectorWeight *);

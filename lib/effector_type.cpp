@@ -2,25 +2,25 @@
 
 namespace flom {
 
-EffectorType::EffectorType(optional::optional<CoordinateSystem> location,
-                           optional::optional<CoordinateSystem> rotation)
+EffectorType::EffectorType(compat::optional<CoordinateSystem> location,
+                           compat::optional<CoordinateSystem> rotation)
     : location_(location), rotation_(rotation) {}
 
-optional::optional<CoordinateSystem> EffectorType::location() const {
+compat::optional<CoordinateSystem> EffectorType::location() const {
   return this->location_;
 }
-optional::optional<CoordinateSystem> EffectorType::rotation() const {
+compat::optional<CoordinateSystem> EffectorType::rotation() const {
   return this->rotation_;
 }
 
-void EffectorType::set_location(optional::optional<CoordinateSystem> location) {
+void EffectorType::set_location(compat::optional<CoordinateSystem> location) {
   this->location_ = location;
 }
-void EffectorType::clear_location() { this->set_location(optional::nullopt); }
-void EffectorType::set_rotation(optional::optional<CoordinateSystem> rotation) {
+void EffectorType::clear_location() { this->set_location(compat::nullopt); }
+void EffectorType::set_rotation(compat::optional<CoordinateSystem> rotation) {
   this->rotation_ = rotation;
 }
-void EffectorType::clear_rotation() { this->set_rotation(optional::nullopt); }
+void EffectorType::clear_rotation() { this->set_rotation(compat::nullopt); }
 
 Effector EffectorType::new_effector() const {
   Effector e;

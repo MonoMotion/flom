@@ -189,17 +189,17 @@ Effector &Effector::operator+=(const EffectorDifference &other) {
   return *this;
 }
 
-const optional::optional<Location> &EffectorDifference::location() const & {
+const compat::optional<Location> &EffectorDifference::location() const & {
   return this->location_;
 }
-optional::optional<Location> EffectorDifference::location() && {
+compat::optional<Location> EffectorDifference::location() && {
   return std::move(this->location_);
 }
 
-const optional::optional<Rotation> &EffectorDifference::rotation() const & {
+const compat::optional<Rotation> &EffectorDifference::rotation() const & {
   return this->rotation_;
 }
-optional::optional<Rotation> EffectorDifference::rotation() && {
+compat::optional<Rotation> EffectorDifference::rotation() && {
   return std::move(this->rotation_);
 }
 
@@ -222,37 +222,36 @@ Effector interpolate(double t, Effector const &a, Effector const &b) {
   return e;
 }
 
-Effector::Effector()
-    : location_(optional::nullopt), rotation_(optional::nullopt) {}
-Effector::Effector(const optional::optional<Location> &location,
-                   const optional::optional<Rotation> &rotation)
+Effector::Effector() : location_(compat::nullopt), rotation_(compat::nullopt) {}
+Effector::Effector(const compat::optional<Location> &location,
+                   const compat::optional<Rotation> &rotation)
     : location_(location), rotation_(rotation) {}
 
-const optional::optional<Location> &Effector::location() const & {
+const compat::optional<Location> &Effector::location() const & {
   return this->location_;
 }
-optional::optional<Location> Effector::location() && {
+compat::optional<Location> Effector::location() && {
   return std::move(this->location_);
 }
 
-void Effector::set_location(const optional::optional<Location> &location) {
+void Effector::set_location(const compat::optional<Location> &location) {
   this->location_ = location;
 }
 
-void Effector::clear_location() { this->set_location(optional::nullopt); }
+void Effector::clear_location() { this->set_location(compat::nullopt); }
 
-const optional::optional<Rotation> &Effector::rotation() const & {
+const compat::optional<Rotation> &Effector::rotation() const & {
   return this->rotation_;
 }
-optional::optional<Rotation> Effector::rotation() && {
+compat::optional<Rotation> Effector::rotation() && {
   return std::move(this->rotation_);
 }
 
-void Effector::set_rotation(const optional::optional<Rotation> &rotation) {
+void Effector::set_rotation(const compat::optional<Rotation> &rotation) {
   this->rotation_ = rotation;
 }
 
-void Effector::clear_rotation() { this->set_rotation(optional::nullopt); }
+void Effector::clear_rotation() { this->set_rotation(compat::nullopt); }
 
 Effector Effector::new_compatible_effector() const {
   Effector e;
