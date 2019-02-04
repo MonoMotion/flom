@@ -20,7 +20,7 @@
 #ifndef FLOM_EFFECTOR_HPP
 #define FLOM_EFFECTOR_HPP
 
-#include "flom/compat/optional.hpp"
+#include "flom/optional.hpp"
 #include <type_traits>
 
 #include <boost/operators.hpp>
@@ -118,8 +118,8 @@ class EffectorDifference
               EffectorDifference,
               boost::multipliable<EffectorDifference, std::size_t>>> {
 private:
-  compat::optional<Location> location_;
-  compat::optional<Rotation> rotation_;
+  optional::optional<Location> location_;
+  optional::optional<Rotation> rotation_;
 
 public:
   EffectorDifference(const Effector &, const Effector &);
@@ -132,11 +132,11 @@ public:
   EffectorDifference &operator=(const EffectorDifference &) = default;
   EffectorDifference &operator=(EffectorDifference &&) = default;
 
-  const compat::optional<Location> &location() const &;
-  compat::optional<Location> location() &&;
+  const optional::optional<Location> &location() const &;
+  optional::optional<Location> location() &&;
 
-  const compat::optional<Rotation> &rotation() const &;
-  compat::optional<Rotation> rotation() &&;
+  const optional::optional<Rotation> &rotation() const &;
+  optional::optional<Rotation> rotation() &&;
 
   EffectorDifference &operator*=(std::size_t);
   EffectorDifference &operator+=(const EffectorDifference &);
@@ -148,24 +148,24 @@ bool operator==(const EffectorDifference &, const EffectorDifference &);
 
 struct Effector : boost::addable<Effector, EffectorDifference> {
 private:
-  compat::optional<Location> location_;
-  compat::optional<Rotation> rotation_;
+  optional::optional<Location> location_;
+  optional::optional<Rotation> rotation_;
 
 public:
   Effector();
-  Effector(const compat::optional<Location> &,
-           const compat::optional<Rotation> &);
+  Effector(const optional::optional<Location> &,
+           const optional::optional<Rotation> &);
 
-  const compat::optional<Location> &location() const &;
-  compat::optional<Location> location() &&;
+  const optional::optional<Location> &location() const &;
+  optional::optional<Location> location() &&;
 
-  void set_location(const compat::optional<Location> &);
+  void set_location(const optional::optional<Location> &);
   void clear_location();
 
-  const compat::optional<Rotation> &rotation() const &;
-  compat::optional<Rotation> rotation() &&;
+  const optional::optional<Rotation> &rotation() const &;
+  optional::optional<Rotation> rotation() &&;
 
-  void set_rotation(const compat::optional<Rotation> &);
+  void set_rotation(const optional::optional<Rotation> &);
   void clear_rotation();
 
   Effector new_compatible_effector() const;
