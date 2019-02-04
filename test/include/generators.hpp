@@ -70,7 +70,7 @@ template <> struct Arbitrary<flom::Effector> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
         [](Maybe<flom::Location> const &l, Maybe<flom::Rotation> const &r) {
-          flom::Effector e{flom::compat::nullopt, flom::compat::nullopt};
+          flom::Effector e{flom::optional::nullopt, flom::optional::nullopt};
           if (l) {
             e.set_location(*l);
           }
@@ -103,7 +103,7 @@ template <> struct Arbitrary<flom::EffectorType> {
   static auto arbitrary() -> decltype(auto) {
     return gen::apply(
         [](Maybe<flom::CoordinateSystem> l, Maybe<flom::CoordinateSystem> r) {
-          flom::compat::optional<flom::CoordinateSystem> loc, rot;
+          flom::optional::optional<flom::CoordinateSystem> loc, rot;
           if (l) {
             loc = *l;
           }
